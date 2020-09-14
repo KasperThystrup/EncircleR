@@ -8,4 +8,7 @@ app_server <- function( input, output, session ) {
   # List the first level callModules here
   r <- reactiveValues()
   callModule(mod_getAnnotation_server, "getAnnotation_ui_1", r)
+  callModule(mod_importMetadata_server, "importMetadata_ui_1", r)
+  callModule(mod_importSamples_server, "importSamples_ui_1", r)
+  callModule(mod_callFastp_server, "callFastp_ui_1", r)
 }

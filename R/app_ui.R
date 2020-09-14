@@ -42,7 +42,17 @@ app_ui <- function(request) {
           
           tabItem(
             tabName = "preparation",
-            mod_getAnnotation_ui("getAnnotation_ui_1")
+            column(
+              width = 12,
+              mod_getAnnotation_ui("getAnnotation_ui_1"),
+              mod_importMetadata_ui("importMetadata_ui_1")
+            ),
+            
+            column(
+              width = 12,
+              mod_importSamples_ui("importSamples_ui_1"),
+              mod_callFastp_ui("callFastp_ui_1")
+            )
           )
         )
       ),

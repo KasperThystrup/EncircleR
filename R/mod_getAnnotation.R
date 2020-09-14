@@ -39,15 +39,13 @@ mod_getAnnotation_ui <- function(id){
           inputId = ns("step"),
           label = "Download reference files",
           icon = icon("cart-arrow-down")
+        ),
+        
+        actionButton(
+          inputId = ns("qry_reset"),
+          label = "Reselect reference",
+          icon = icon("redo-alt")
         )
-      )
-    ),
-    column(
-      width = 1, 
-      actionButton(
-        inputId = ns("qry_reset"),
-        label = "Reselect reference",
-        icon = icon("redo-alt")
       )
     )
   )
@@ -65,6 +63,9 @@ mod_getAnnotation_server <- function(input, output, session, r){
   shinyjs::hideElement(id = "step")
   
   observeEvent(eventExpr = input$org, handlerExpr = {
+    r$select <- FALSE
+    shinyjs::hideElement(id = "step")
+    shinyjs::hideElement(id = "qry_reset")
 
     if (input$org %in% supported_organisms) {
       logger::log_info("Querying selected organism")
@@ -110,6 +111,7 @@ mod_getAnnotation_server <- function(input, output, session, r){
   
   # Select organisms
   observeEvent(eventExpr = input$step, handlerExpr = {
+    shinyjs::hideElement(id = "step")
     shiny::withProgress(expr = {
       Sys.sleep(0.75)
       logger::log_debug("Recording input and hiding inputs")
@@ -118,7 +120,6 @@ mod_getAnnotation_server <- function(input, output, session, r){
       r$build <- build
       r$org <- input$org
       r$rel <- input$rel
-      hide(id = "query")
       
       incProgress(amount = 0.25, message = "Looking up reference URLs")
       
@@ -136,17 +137,21 @@ mod_getAnnotation_server <- function(input, output, session, r){
       incProgress(amount = 0.75, message = "Downloading and unzipping reference genome")
       r$fa_fn <- downloadFile(url = urls$fa, out_dir = r$genome_dir)
       
-      incProgress(amount = 1, message = "Done!")
+      incProgress(
+        amount = 1,
+        message = paste(names(input$org), "Fasta and GTF file downloaded!")
+      )
       Sys.sleep(0.75)
       
       shinyjs::showElement(id = "qry_reset")
+      r$select <- TRUE
     }, value = 0, message = "Choices locked in")
   })
   
   # Reset query
   observeEvent(eventExpr = input$qry_reset, handlerExpr = {
     shinyjs::hideElement(id = "qry_reset")
-    show(id = "query")
+    shinyjs::showElement(id = "step")
   })
 }
     

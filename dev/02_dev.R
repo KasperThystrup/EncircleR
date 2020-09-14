@@ -22,12 +22,19 @@ usethis::use_package( "dplyr" )
 ## Add modules ----
 ## Create a module infrastructure in R/
 golem::add_module( name = "getAnnotation" )
+golem::add_module( name = "importMetadata" )
+golem::add_module( name = "setupExperiment" )
+golem::add_module( name = "callFastp" )
 
 ## Add helper functions ----
 ## Creates ftc_* and utils_*
 golem::add_fct( "ensemblReleases" ) 
 golem::add_fct( "referenceDownload" ) 
 golem::add_utils( "supportedOrganism" )
+golem::add_fct( "importMetadata" )
+golem::add_fct( "renderSamples" )
+golem::add_fct( "setupFastpCommands" )
+golem::add_utils( "supportedCompressions" )
 
 ## External resources
 ## Creates .js and .css files at inst/app/www
