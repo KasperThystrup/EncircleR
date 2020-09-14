@@ -3,14 +3,19 @@
 #' @param request Internal parameter for `{shiny}`. 
 #'     DO NOT REMOVE.
 #' @import shiny
+#' @import shinydashboard
+#' @importFrom shinyjs useShinyjs hideElement showElement
 #' @noRd
 app_ui <- function(request) {
   tagList(
     # Leave this function for adding external resources
     golem_add_external_resources(),
+    shinyjs::useShinyjs(),
+    
     # List the first level UI elements here 
-    fluidPage(
-      h1("EncircleR")
+    shinydashboard::dashboardPage(
+      header = dashboardHeader(), sidebar =  dashboardSidebar(),
+      body = dashboardBody(), title = "EncircleR"
     )
   )
 }
