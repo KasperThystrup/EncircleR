@@ -26,9 +26,9 @@ golem::fill_desc(
     "and performing circRNA quantification and identification",
     "from raw fastq files."
   ), # The Description of the package containing the App 
-  author_first_name = "AUTHOR_FIRST", # Your First Name
-  author_last_name = "AUTHOR_LAST", # Your Last Name
-  author_email = "AUTHOR@MAIL.COM", # Your Email
+  author_first_name = "Kasper Thystrup", # Your First Name
+  author_last_name = "Karstensen", # Your Last Name
+  author_email = "kathka@gmail.com", # Your Email
   repo_url = "https://github.com/KasperThystrup/EncircleR.git" # The URL of the GitHub Repo (optional) 
 )
 
