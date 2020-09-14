@@ -7,13 +7,24 @@
 downloadFile(url, out_dir)
 }
 \arguments{
-\item{url}{}
+\item{url}{Character with donwload URL}
 
-\item{out_dir}{}
+\item{out_dir}{Character vector stating the full path to the output directory}
 }
 \value{
 Downloaded and unzipped file name
 }
 \description{
 Download and decompress reference files
+}
+\examples{
+ah <- AnnotationHub()
+organism <- "Homo_sapiens"
+build <- "GRCh38"
+release <- 100
+qry <- subset(ah, species == "Homo sapiens", rdataprovider == "Ensembl")
+meta <- mcols(qry)
+urls <- getDownloadLinks(meta, organism, build, release)
+# Not run
+file1 <- downloadFile(url = urls[1], out_dir = "/tmp/file1"
 }

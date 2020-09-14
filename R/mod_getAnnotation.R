@@ -8,6 +8,7 @@
 #'
 #' @importFrom shiny NS tagList 
 #' @import shinyjs
+#' @import dplyr
 mod_getAnnotation_ui <- function(id){
   ns <- NS(id)
   tagList(
@@ -62,8 +63,6 @@ mod_getAnnotation_server <- function(input, output, session, r){
   shinyjs::hideElement(id = "qry_reset")
   shinyjs::hideElement(id = "rel")
   shinyjs::hideElement(id = "step")
-  
-  r <- reactiveValues()
   
   observeEvent(eventExpr = input$org, handlerExpr = {
 
@@ -129,7 +128,7 @@ mod_getAnnotation_server <- function(input, output, session, r){
       logger::log_debug("Determining target URLs")
       urls <- getDownloadLinks(meta = meta, organism = input$org, build = build, release = input$rel)
       
-      r$genome_dir <- file.path("Genome", paste("release", input$rel, sep = "-"), input$org)
+      r$genome_dir <- file.path("cache/Genome", paste("release", input$rel, sep = "-"), input$org)
       
       incProgress(amount = 0.5, message = "Downloading and unzipping reference annotation")
       r$gtf_fn <- downloadFile(url = urls$gtf, out_dir = r$genome_dir)

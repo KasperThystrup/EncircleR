@@ -14,8 +14,39 @@ app_ui <- function(request) {
     
     # List the first level UI elements here 
     shinydashboard::dashboardPage(
-      header = dashboardHeader(), sidebar =  dashboardSidebar(),
-      body = dashboardBody(), title = "EncircleR"
+      header = dashboardHeader(
+        title = "EncircleR - Fully automated circRNA analysis"
+      ),
+      sidebar = dashboardSidebar(
+        sidebarMenu(
+          menuItem(
+            tabName = "home",
+            icon = icon("home"),
+            text = "Home"
+          ),
+          
+          menuItem(
+            tabName = "preparation",
+            icon = icon("dna"),
+            text = "Read preparation"
+          )
+        )
+      ),
+        
+      body = dashboardBody(
+        tabItems(
+          tabItem(
+            tabName = "home",
+            tags$h1("Welcome!")
+          ),
+          
+          tabItem(
+            tabName = "preparation",
+            mod_getAnnotation_ui("getAnnotation_ui_1")
+          )
+        )
+      ),
+      title = "EncircleR"
     )
   )
 }

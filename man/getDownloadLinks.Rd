@@ -7,15 +7,26 @@
 getDownloadLinks(meta, organism, build, release)
 }
 \arguments{
-\item{organism}{}
+\item{meta}{Dataframe with metadata on queries from AnnotationHub::mcols}
 
-\item{build}{}
+\item{organism}{Character string with selected organism}
 
-\item{release}{}
+\item{build}{Character string with the reference genome build}
+
+\item{release}{Numeric value with selected Ensembl release}
 }
 \value{
 Named list with GTF and FA URLs
 }
 \description{
 Find links for reference files
+}
+\examples{
+ah <- AnnotationHub()
+organism <- "Homo_sapiens"
+build <- "GRCh38"
+release <- 100
+qry <- subset(ah, species == "Homo sapiens", rdataprovider == "Ensembl")
+meta <- mcols(qry)
+getDownloadLinks(meta, organism, build, release)
 }

@@ -1,9 +1,9 @@
 #' Find links for reference files
 #'
-#' @param meta
-#' @param organism 
-#' @param build 
-#' @param release 
+#' @param meta Dataframe with metadata on queries from AnnotationHub::mcols
+#' @param organism Character string with selected organism
+#' @param build Character string with the reference genome build
+#' @param release Numeric value with selected Ensembl release
 #'
 #' @return
 #' Named list with GTF and FA URLs
@@ -11,6 +11,13 @@
 #' @export
 #'
 #' @examples
+#' ah <- AnnotationHub()
+#' organism <- "Homo_sapiens"
+#' build <- "GRCh38"
+#' release <- 100
+#' qry <- subset(ah, species == "Homo sapiens", rdataprovider == "Ensembl")
+#' meta <- mcols(qry)
+#' getDownloadLinks(meta, organism, build, release)
 getDownloadLinks <- function(meta, organism, build, release) {
   gtf_ptrn <- paste(organism, build, release, "gtf", sep = ".")
   fa_ptrn <- paste0(
@@ -31,8 +38,8 @@ getDownloadLinks <- function(meta, organism, build, release) {
 
 #' Download and decompress reference files
 #'
-#' @param url 
-#' @param out_dir 
+#' @param url Character with donwload URL
+#' @param out_dir Character vector stating the full path to the output directory
 #'
 #' @return
 #' Downloaded and unzipped file name
@@ -40,6 +47,15 @@ getDownloadLinks <- function(meta, organism, build, release) {
 #' @export
 #'
 #' @examples
+#' ah <- AnnotationHub()
+#' organism <- "Homo_sapiens"
+#' build <- "GRCh38"
+#' release <- 100
+#' qry <- subset(ah, species == "Homo sapiens", rdataprovider == "Ensembl")
+#' meta <- mcols(qry)
+#' urls <- getDownloadLinks(meta, organism, build, release)
+#' # Not run
+#' file1 <- downloadFile(url = urls[1], out_dir = "/tmp/file1"
 downloadFile <- function(url, out_dir) {
   # Split url elements
   url_split <- strsplit(x = url, split = "/") %>%
