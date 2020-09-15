@@ -25,6 +25,8 @@ golem::add_module( name = "getAnnotation" )
 golem::add_module( name = "importMetadata" )
 golem::add_module( name = "setupExperiment" )
 golem::add_module( name = "callFastp" )
+golem::add_module( name = "STAR_idx" )
+golem::add_module( name = "STAR_call" )
 
 ## Add helper functions ----
 ## Creates ftc_* and utils_*
@@ -35,6 +37,9 @@ golem::add_fct( "importMetadata" )
 golem::add_fct( "renderSamples" )
 golem::add_fct( "setupFastpCommands" )
 golem::add_utils( "supportedCompressions" )
+golem::add_fct( "IdxCommands" )
+golem::add_fct( "STARCalls" )
+golem::add_utils( "check_cores" )
 
 ## External resources
 ## Creates .js and .css files at inst/app/www

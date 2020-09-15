@@ -1,4 +1,4 @@
-#' importSamples UI Function
+#' setupExperiment UI Function
 #'
 #' @description A shiny Module.
 #'
@@ -8,7 +8,7 @@
 #'
 #' @import shiny
 #' @importfrom shinydashboard box
-mod_importSamples_ui <- function(id){
+mod_setupExperiment_ui <- function(id){
   ns <- NS(id)
   tagList(
     div(
@@ -49,10 +49,10 @@ mod_importSamples_ui <- function(id){
   )
 }
 
-#' importSamples Server Function
+#' setupExperiment Server Function
 #'
 #' @noRd
-mod_importSamples_server <- function(input, output, session, r){
+mod_setupExperiment_server <- function(input, output, session, r){
   ns <- session$ns
   shinyjs::hide(id = "exp_setup")
   
@@ -84,8 +84,8 @@ mod_importSamples_server <- function(input, output, session, r){
 }
 
 # ## To be copied in the UI
-# # mod_importSamples_ui("importSamples_ui_1")
+# # mod_setupExperiment_ui("setupExperiment_ui_1")
 #
 # ## To be copied in the server
-# # callModule(mod_importSamples_server, "importSamples_ui_1")
+# # callModule(mod_setupExperiment_server, "setupExperiment_ui_1")
 

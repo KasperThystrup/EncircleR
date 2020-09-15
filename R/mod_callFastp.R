@@ -104,6 +104,7 @@ mod_callFastp_ui <- function(id){
 mod_callFastp_server <- function(input, output, session, r){
   ns <- session$ns
   shinyjs::hide(id = "fastp_setup")
+  r$trimmed <- TRUE
   
   observeEvent(eventExpr = r$show_settings, handlerExpr = {
     if (r$show_settings) {
@@ -114,6 +115,7 @@ mod_callFastp_server <- function(input, output, session, r){
   })
 
   observeEvent(eventExpr = input$run_fastp, handlerExpr = {
+    r$trimmed <- FALSE
     samples <- dplyr::pull(r$meta, Sample) %>%
       unique
 
@@ -123,6 +125,8 @@ mod_callFastp_server <- function(input, output, session, r){
       expr = {
         Sys.sleep(0.75)
         compressed <- "gz"
+        
+        r$paired <- input$paired
 
         for (smpl in samples) {
 
@@ -137,6 +141,7 @@ mod_callFastp_server <- function(input, output, session, r){
             overwrite = input$overwrite, threads = input$threads
           )
         }
+        r$trimmed <- TRUE
       }
     )
   })
