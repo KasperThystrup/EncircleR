@@ -27,7 +27,7 @@ app_ui <- function(request) {
           
           menuItem(
             tabName = "setup",
-            icon = icon("truck-loading"),
+            icon = icon("vials"),
             text = "Experimental setup"
           ),
           
@@ -49,16 +49,27 @@ app_ui <- function(request) {
           tabItem(
             tabName = "setup",
             column(
-              width = 6,
+              width = 3,
+              mod_importMetadata_ui("importMetadata_ui_1"),
+              mod_setupExperiment_ui("setupExperiment_ui_1")
+            ),
+            
+            column(
+              width = 3,
               mod_selectReferences_ui("selectReferences_ui_1")
               # ,
               # mod_importMetadata_ui("importMetadata_ui_1")
             ),
             column(
-              width = 6,
+              width = 3,
               mod_getAnnotation_ui("getAnnotation_ui_1")
               # mod_setupExperiment_ui("setupExperiment_ui_1"),
               # mod_STAR_idx_ui("STAR_idx_ui_1")
+            ),
+            
+            column(
+              width = 3,
+              mod_STAR_idx_ui("STAR_idx_ui_1")
             )
           ),
           

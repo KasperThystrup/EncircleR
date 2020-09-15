@@ -10,20 +10,37 @@
 mod_selectReferences_ui <- function(id){
   ns <- NS(id)
   tagList(
-    selectInput(
-      inputId = ns("ref_select"),
-      label = "Choose an existing reference genome",
-      choices = c(
-        "Please select a reference genome" = NA,
-        available_references),
-    ),
-    
-    verbatimTextOutput(outputId = ns("ref_status"), placeholder = TRUE),
-    
-    actionButton(
-      inputId = ns("ref_new"),
-      label = "New Reference Genome",
-      icon = icon("plus-circle")
+    div(
+      id = ns("ref"),
+      
+      selectInput(
+        inputId = ns("ref_select"),
+        label = "Choose an existing reference genome",
+        choices = c(
+          "Please select a reference genome" = NA,
+          available_references),
+      ),
+      
+      verbatimTextOutput(outputId = ns("ref_status"), placeholder = TRUE),
+      
+      column(
+        width = 6,
+        
+        actionButton(
+          inputId = ns("ref_new"),
+          label = "New Reference Genome",
+          icon = icon("plus-circle")
+        )
+      ),
+      
+      column(
+        width = 6,
+        actionButton(
+          inputId = ns("continue"),
+          label = "Continue",
+          icon = icon("play")
+        )
+      )
     )
   )
 }
@@ -33,13 +50,36 @@ mod_selectReferences_ui <- function(id){
 #' @noRd 
 mod_selectReferences_server <- function(input, output, session, r){
   ns <- session$ns
-  msgs <- reactiveValues(status = "No reference genome selected.")
   
+  hide(id = "ref")
+  observeEvent(eventExpr = r$exp_ready, handlerExpr = {
+    hide(id = "ref")
+    if (r$exp_ready)
+      show(id = "ref")
+  })
+  
+  shinyjs::hideElement(id = "continue")
+  # shinyjs::hideElement(id = "ref_select")
+  # shinyjs::hideElement(id = "ref_status")
+  # # shinyjs::hideElement(id = "ref_new")
+  # observeEvent(eventExpr = r$exp_ready, handlerExpr = {
+  #   shinyjs::hideElement(id = "ref_select")
+  #   shinyjs::hideElement(id = "ref_status")
+  #   # shinyjs::hideElement(id = "ref_new")
+  #   if (r$exp_ready){
+  #     shinyjs::showElement(id = "ref_select")
+  #     shinyjs::showElement(id = "ref_status")
+  #     # shinyjs::showElement(id = "ref_new")
+  #   }
+  # })
+  
+  msgs <- reactiveValues(status = "No reference genome selected.")
   observeEvent(eventExpr = input$ref_select, handlerExpr = {
-    shinyjs::showElement(id = "ref_new")
+    shinyjs::hideElement(id = "continue")
+    r$cache_dir <- "~/.EncircleR/Genome"
     
     if (input$ref_select %in% available_references) {
-      shinyjs::hideElement(id = "ref_new")
+      # shinyjs::hideElement(id = "ref_new")
       
       ref_name <- strsplit(x = input$ref_select, split = "/") %>%
         unlist %>%
@@ -50,7 +90,7 @@ mod_selectReferences_server <- function(input, output, session, r){
       ref_select <- input$ref_select
       names(ref_select) <- paste("Ensembl", ref_name)
       
-      shinyjs::hideElement(id = "ref_new")
+      # shinyjs::hideElement(id = "ref_new")
       
       logger::log_info("Determining selected reference genome")
       reference <- str_split(string = names(ref_select), pattern = " ") %>%
@@ -72,27 +112,31 @@ mod_selectReferences_server <- function(input, output, session, r){
       r$build <- build
       
       logger::log_debug("Determining reference genome directory")
-      r$genome_dir <- file.path("~/.EncircleR/Genome", r$rel, r$org)
+      r$genome_dir <- file.path(r$cache_dir, r$rel, r$org)
       
       logger::log_debug("Ensuring Genome index directory exists")
       r$star_dir <- file.path(r$genome_dir, "STAR")
       
-      
-      if (!dir.exists(r$star_dir)) {
-        msgs$status <- "Genome index directory was not found, please generate a new reference genome by selecting `New Reference Genome`."
-        r$ref_ready <- FALSE
-        shinyjs::showElement(id = "ref_new")
-      } else {
+      msgs$status <- "Genome index not found, please select `New Reference Genome`."
+      r$ref_ready <- FALSE
+      if (dir.exists(r$star_dir)) {
         msgs$status <- "Reference genome selected"
-        r$show_idx <- FALSE
+        r$select_ready <- FALSE
         r$ref_ready <- TRUE
+        r$star_dir <- file.path(r$genome_dir, "STAR")
+        shinyjs::showElement(id = "continue")
       }
     }
   })
   
   observeEvent(eventExpr = input$ref_new, handlerExpr = {
     if (!r$ref_ready)
-      r$show_idx <- TRUE
+      r$select_ready <- TRUE
+  })
+  
+  observeEvent(eventExpr = r$ref_ready, handlerExpr = {
+    if (r$ref_ready)
+      shinyjs::showElement(id = "continue")
   })
   
   output$ref_status <- renderText(msgs$status)

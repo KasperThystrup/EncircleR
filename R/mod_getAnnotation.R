@@ -12,11 +12,9 @@
 mod_getAnnotation_ui <- function(id){
   ns <- NS(id)
   tagList(
-    # shiny::div(
-    #   id = ns("ref_generate"),
+    shiny::div(
+      id = ns("ref"),
 
-      # shinydashboard::box(
-      # title = "Determine reference organism",
       selectInput(
         inputId = ns("org"),
         label = "Please select a host organism",
@@ -40,9 +38,8 @@ mod_getAnnotation_ui <- function(id){
         label = "Download reference files",
         icon = icon("cart-arrow-down")
       )
-    # )
+    )
   )
-  # )
 }
     
 #' getAnnotation Server Function
@@ -51,20 +48,22 @@ mod_getAnnotation_ui <- function(id){
 mod_getAnnotation_server <- function(input, output, session, r){
   ns <- session$ns
   
-  shinyjs::hideElement(id = "org")
+  hide(id = "ref")
   shinyjs::hideElement(id = "rel")
   shinyjs::hideElement(id = "step")
-  observeEvent(eventExpr = r$show_idx, handlerExpr = {
+  observeEvent(eventExpr = r$select_ready, handlerExpr = {
+    hide(id = "ref")
+    shinyjs::hideElement(id = "rel")
     withProgress(
       value = 0.5, message = "Determining whether reference genome is ready",
       expr = {
-        shinyjs::hideElement(id = "org")
-        if (r$show_idx) {
+        if (r$select_ready) {
+          
           incProgress(amount = 0.25, message = "Fetching information from AnnotationHub")
           logger::log_debug("Fetching annotation object")
           r$ah <- AnnotationHub::AnnotationHub()
-          shinyjs::showElement(id = "org")
           incProgress(amount = 0.25, message = "Information fetched")
+          show(id = "ref")
           Sys.sleep(0.75)
         }
       }
@@ -73,7 +72,6 @@ mod_getAnnotation_server <- function(input, output, session, r){
   
   
   observeEvent(eventExpr = input$org, handlerExpr = {
-    shinyjs::hideElement(id = "rel")
     shinyjs::hideElement(id = "step")
 
     if (input$org %in% supported_organisms) {
@@ -101,19 +99,23 @@ mod_getAnnotation_server <- function(input, output, session, r){
           min = extremes[1], max = extremes[2], value = extremes[2]
         )
         
+        
+        
         Sys.sleep(0.25)
       }, value = 0, message = "Fetching Annotation resource Ensembl releases")
       
       logger::log_debug("Showing elements after query")
+      shinyjs::showElement(id = "org")
       shinyjs::showElement(id = "rel")
       shinyjs::showElement(id = "step")
+      
     }
   })
   
   
   # Select organisms
   observeEvent(eventExpr = input$step, handlerExpr = {
-    r$select <- FALSE
+    r$annot_ready <- FALSE
     
     shinyjs::hideElement(id = "step")
     shiny::withProgress(expr = {
@@ -145,11 +147,12 @@ mod_getAnnotation_server <- function(input, output, session, r){
         amount = 1,
         message = paste(names(input$org), "Fasta and GTF file downloaded!")
       )
+      
       Sys.sleep(0.75)
       
-      r$select <- TRUE
-      shinyjs::hideElement(id = "org")
-      shinyjs::hideElement(id = "rel")
+      r$annot_ready <- TRUE
+      
+      shinyjs::showElement(id = "step")
     }, value = 0, message = "Choices locked in")
   })
 }

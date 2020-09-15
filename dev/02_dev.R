@@ -31,7 +31,7 @@ golem::add_module( name = "STAR_call" )
 
 ## Add helper functions ----
 ## Creates ftc_* and utils_*
-golem::add_utils( "selectReferences" )
+golem::add_fct( "selectReferences" )
 golem::add_fct( "ensemblReleases" ) 
 golem::add_fct( "referenceDownload" ) 
 golem::add_utils( "supportedOrganism" )

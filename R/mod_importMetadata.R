@@ -10,21 +10,14 @@
 mod_importMetadata_ui <- function(id){
   ns <- NS(id)
   tagList(
-    shiny::div(
-      id = ns("metadata"),
       
-      shinydashboard::box(
-        title = "Import metadata",
-  
-        fileInput(
-          inputId = ns("meta_file"),
-          label = "Please upload a Metadata file",
-          accept = ".tsv"
-        ),
-  
-        verbatimTextOutput(outputId = ns("file_status"))
-      )
-    )
+    fileInput(
+      inputId = ns("meta_file"),
+      label = "Please upload a Metadata file",
+      accept = ".tsv"
+    ),
+
+    verbatimTextOutput(outputId = ns("file_status"))
   )
 }
 
@@ -33,14 +26,6 @@ mod_importMetadata_ui <- function(id){
 #' @noRd
 mod_importMetadata_server <- function(input, output, session, r){
   ns <- session$ns
-  
-  observeEvent(eventExpr = r$select, handlerExpr = {
-    if(r$select) {
-      show(id = "metadata")
-    } else {
-      hide(id = "metadata")
-    }
-  })
 
   file_check <- reactiveValues(status = "Metadata file have not yet been uploaded")
 
@@ -49,7 +34,7 @@ mod_importMetadata_server <- function(input, output, session, r){
     logger::log_info("Uploading metadata")
     meta <- importMetadata(meta_fn = input$meta_file$datapath)
     r$meta <- meta
-    r$ready <- FALSE
+    r$meta_ready <- FALSE
 
     files_exists <- checkMetadataFilepaths(meta = meta)
 
@@ -64,7 +49,7 @@ mod_importMetadata_server <- function(input, output, session, r){
 
     if (all(files_exists)) {
       file_check$status <- "All sample files were located, ready to continue!"
-      r$ready <- TRUE
+      r$meta_ready <- TRUE
     }
   })
 

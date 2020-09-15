@@ -3,5 +3,7 @@ r$rel
 r$build
 r$genome_dir
 r$star_dir
-r$show_idx
+r$annot_ready
+r$idx_ready
+r$select_ready
 r$ref_ready
