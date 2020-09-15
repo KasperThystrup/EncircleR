@@ -60,7 +60,6 @@ mod_STAR_call_server <- function(input, output, session, r){
       unique
 
     # Progress counter
-    inc_vals <- 1
 
     withProgress(value = 0, min = 0, max = length(smpl) + 2, message = "Initiating STAR alignment", expr = {
       Sys.sleep(0.75)
@@ -70,6 +69,7 @@ mod_STAR_call_server <- function(input, output, session, r){
       )
 
       incProgress(amount = 1, message = "Attaching Genome into memory")
+      browser()
       attachSTARGenome(star = r$star, genome_dir = r$star_dir)
 
       lapply(smpl, function(smpl){

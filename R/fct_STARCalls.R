@@ -1,14 +1,13 @@
 attachSTARGenome <- function(star, genome_dir) {
-  tmp_load <- file.path(genome_dir, "tmp")
+  # tmp_load <- file.path(genome_dir, "tmp")
   # cmd_makedir <- paste("mkdir -p", tmp_load)
   # system(cmd_makedir)
 
   cmd_arguments <- list(
     systemCall = star,
     genomeDir = paste("--genomeDir", genome_dir),
-    outTmpDir = paste("--outTmpDir", tmp_load),
+    # outTmpDir = paste("--outTmpDir", tmp_load),
     genomeLoad = "--genomeLoad LoadAndExit",
-    outFileNamePrefix = paste("--outFileNamePrefix", tmp_load),
     outSAMtype = "--outSAMtype None"
   )
 
@@ -50,7 +49,6 @@ callSTAR <- function(
     runThreadN = paste("--runThreadN", threads),
     readFilesIn = paste("--readFilesIn", mate1, mate2),
     limitBAMsortRAM = paste("--limitBAMsortRAM", RAM_limit),
-    outFileNamePrefix = paste("outFileNamePrefix", file.path(out_dir, smpl)),
     outReadsUnmapped = "--outReadsUnmapped Fastq",
     outSAMtype = "--outSAMtype BAM SortedByCoordinate",
     outSAMunmapped = "--outSAMunmapped Within KeepPairs",

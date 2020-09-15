@@ -129,7 +129,7 @@ mod_getAnnotation_server <- function(input, output, session, r){
       logger::log_debug("Determining target URLs")
       urls <- getDownloadLinks(meta = meta, organism = input$org, build = build, release = input$rel)
       
-      r$genome_dir <- file.path("cache/Genome", paste("release", input$rel, sep = "-"), input$org)
+      r$genome_dir <- file.path("~/.EncircleR/Genome", paste("release", input$rel, sep = "-"), input$org)
       
       incProgress(amount = 0.5, message = "Downloading and unzipping reference annotation")
       r$gtf_fn <- downloadFile(url = urls$gtf, out_dir = r$genome_dir)

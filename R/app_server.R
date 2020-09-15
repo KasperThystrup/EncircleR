@@ -3,9 +3,11 @@
 #' @param input,output,session Internal parameters for {shiny}. 
 #'     DO NOT REMOVE.
 #' @import shiny
+#' @import logger
 #' @noRd
 app_server <- function( input, output, session ) {
   # List the first level callModules here
+  logger::log_shiny_input_changes(input)
   r <- reactiveValues()
   callModule(mod_getAnnotation_server, "getAnnotation_ui_1", r)
   callModule(mod_importMetadata_server, "importMetadata_ui_1", r)

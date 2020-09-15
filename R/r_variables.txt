@@ -10,3 +10,5 @@ r$select
 r$show_settings
 r$ready
 r$trimmed
+r$paired
+r$star_dir

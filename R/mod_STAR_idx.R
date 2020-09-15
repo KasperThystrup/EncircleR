@@ -70,7 +70,7 @@ mod_STAR_idx_server <- function(input, output, session, r){
 
         idx_exists <- FALSE
         logger::log_debug("Determining whether index folder exists")
-        if (dir.exists(r$genome_dir))
+        if (dir.exists(r$star_dir))
           idx_exists <- TRUE
 
         r$threads <- input$threads
