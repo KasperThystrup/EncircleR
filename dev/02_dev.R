@@ -21,6 +21,7 @@ usethis::use_package( "dplyr" )
 
 ## Add modules ----
 ## Create a module infrastructure in R/
+golem::add_module( name = "selectReferences" )
 golem::add_module( name = "getAnnotation" )
 golem::add_module( name = "importMetadata" )
 golem::add_module( name = "setupExperiment" )
@@ -30,6 +31,7 @@ golem::add_module( name = "STAR_call" )
 
 ## Add helper functions ----
 ## Creates ftc_* and utils_*
+golem::add_utils( "selectReferences" )
 golem::add_fct( "ensemblReleases" ) 
 golem::add_fct( "referenceDownload" ) 
 golem::add_utils( "supportedOrganism" )

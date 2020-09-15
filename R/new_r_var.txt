@@ -1,0 +1,7 @@
+r$org
+r$rel
+r$build
+r$genome_dir
+r$star_dir
+r$show_idx
+r$ref_ready

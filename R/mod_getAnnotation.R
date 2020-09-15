@@ -12,43 +12,37 @@
 mod_getAnnotation_ui <- function(id){
   ns <- NS(id)
   tagList(
-    shiny::div(
-      id = ns("query"),
+    # shiny::div(
+    #   id = ns("ref_generate"),
 
-      shinydashboard::box(
-        title = "Determine reference organism",
-        selectInput(
-          inputId = ns("org"),
-          label = "Please select a host organism",
-          choices = c(
-            "Select an organism" = NA,
-            supported_organisms
-          )
-        ),
-        
-        sliderInput(
-          inputId = ns("rel"),
-          label = "Please select an Ensembl release version", 
-          min = -1,
-          max = 1,
-          value = 0,
-          step = 1
-        ),
-        
-        actionButton(
-          inputId = ns("step"),
-          label = "Download reference files",
-          icon = icon("cart-arrow-down")
-        ),
-        
-        actionButton(
-          inputId = ns("qry_reset"),
-          label = "Reselect reference",
-          icon = icon("redo-alt")
+      # shinydashboard::box(
+      # title = "Determine reference organism",
+      selectInput(
+        inputId = ns("org"),
+        label = "Please select a host organism",
+        choices = c(
+          "Select an organism" = NA,
+          supported_organisms
         )
+      ),
+      
+      sliderInput(
+        inputId = ns("rel"),
+        label = "Please select an Ensembl release version", 
+        min = -1,
+        max = 1,
+        value = 0,
+        step = 1
+      ),
+      
+      actionButton(
+        inputId = ns("step"),
+        label = "Download reference files",
+        icon = icon("cart-arrow-down")
       )
-    )
+    # )
   )
+  # )
 }
     
 #' getAnnotation Server Function
@@ -57,15 +51,30 @@ mod_getAnnotation_ui <- function(id){
 mod_getAnnotation_server <- function(input, output, session, r){
   ns <- session$ns
   
-  logger::log_debug("Hiding elements when new organism selected")
-  shinyjs::hideElement(id = "qry_reset")
+  shinyjs::hideElement(id = "org")
   shinyjs::hideElement(id = "rel")
   shinyjs::hideElement(id = "step")
+  observeEvent(eventExpr = r$show_idx, handlerExpr = {
+    withProgress(
+      value = 0.5, message = "Determining whether reference genome is ready",
+      expr = {
+        shinyjs::hideElement(id = "org")
+        if (r$show_idx) {
+          incProgress(amount = 0.25, message = "Fetching information from AnnotationHub")
+          logger::log_debug("Fetching annotation object")
+          r$ah <- AnnotationHub::AnnotationHub()
+          shinyjs::showElement(id = "org")
+          incProgress(amount = 0.25, message = "Information fetched")
+          Sys.sleep(0.75)
+        }
+      }
+    )
+  })
+  
   
   observeEvent(eventExpr = input$org, handlerExpr = {
-    r$select <- FALSE
+    shinyjs::hideElement(id = "rel")
     shinyjs::hideElement(id = "step")
-    shinyjs::hideElement(id = "qry_reset")
 
     if (input$org %in% supported_organisms) {
       logger::log_info("Querying selected organism")
@@ -73,13 +82,13 @@ mod_getAnnotation_server <- function(input, output, session, r){
         incProgress(amount = 0.25, message = "Determining available EnsDb releases") 
         
         logger::log_debug("Listing available resources")
-        queries <- availableEnsemblReleases(ahub = ah, organism = input$org)
+        queries <- availableEnsemblReleases(ahub = r$ah, organism = input$org)
         logger::log_debug("Determining extremities")
         ens_extremes <- EnsDbExtremities(queries)
         
         incProgress(amount = 0.5, message = "Determining available reference releases") 
         logger::log_debug("Extracting reference metadata")
-        meta <- extractReferenceMeta(ahub = ah, organism = input$org, release = NULL)
+        meta <- extractReferenceMeta(ahub = r$ah, organism = input$org, release = NULL)
         logger::log_debug("Defining release extermities of reference and annotation objects")
         ref_extremes <- referenceExtremities(meta = meta)
         logger::log_debug("Selecting common extremities.")
@@ -98,19 +107,14 @@ mod_getAnnotation_server <- function(input, output, session, r){
       logger::log_debug("Showing elements after query")
       shinyjs::showElement(id = "rel")
       shinyjs::showElement(id = "step")
-    } else {
-      logger::log_debug("No input selected, hiding elements")
-      shinyjs::hideElement(id = "rel")
-      shinyjs::hideElement(id = "step")
     }
   })
   
-  logger::log_debug("Fetching annotation object")
-  ah <- AnnotationHub::AnnotationHub()
-  logger::log_info("Annotation object fetched")
   
   # Select organisms
   observeEvent(eventExpr = input$step, handlerExpr = {
+    r$select <- FALSE
+    
     shinyjs::hideElement(id = "step")
     shiny::withProgress(expr = {
       Sys.sleep(0.75)
@@ -124,7 +128,7 @@ mod_getAnnotation_server <- function(input, output, session, r){
       incProgress(amount = 0.25, message = "Looking up reference URLs")
       
       logger::log_debug("Extracting reference metadata")
-      meta <- extractReferenceMeta(ahub = ah, organism = input$org, release = input$rel)
+      meta <- extractReferenceMeta(ahub = r$ah, organism = input$org, release = input$rel)
       
       logger::log_debug("Determining target URLs")
       urls <- getDownloadLinks(meta = meta, organism = input$org, build = build, release = input$rel)
@@ -143,15 +147,10 @@ mod_getAnnotation_server <- function(input, output, session, r){
       )
       Sys.sleep(0.75)
       
-      shinyjs::showElement(id = "qry_reset")
       r$select <- TRUE
+      shinyjs::hideElement(id = "org")
+      shinyjs::hideElement(id = "rel")
     }, value = 0, message = "Choices locked in")
-  })
-  
-  # Reset query
-  observeEvent(eventExpr = input$qry_reset, handlerExpr = {
-    shinyjs::hideElement(id = "qry_reset")
-    shinyjs::showElement(id = "step")
   })
 }
     
