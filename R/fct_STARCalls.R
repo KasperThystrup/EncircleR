@@ -1,12 +1,12 @@
 attachSTARGenome <- function(star, genome_dir) {
-  # tmp_load <- file.path(genome_dir, "tmp")
-  # cmd_makedir <- paste("mkdir -p", tmp_load)
-  # system(cmd_makedir)
+  tmp_load <- file.path(genome_dir, "tmp")
+  cmd_makedir <- paste("mkdir -p", tmp_load)
+  system(cmd_makedir)
 
   cmd_arguments <- list(
     systemCall = star,
     genomeDir = paste("--genomeDir", genome_dir),
-    # outTmpDir = paste("--outTmpDir", tmp_load),
+    outFileNamePrefix = paste("--outFileNamePrefix", tmp_load),
     genomeLoad = "--genomeLoad LoadAndExit",
     outSAMtype = "--outSAMtype None"
   )
@@ -23,9 +23,6 @@ callSTAR <- function(
   star, genome_dir, threads, sample, meta, paired, out_dir, RAM_limit,
   chim_segMin, compression = "gz"
 ) {
-  # tmp_load <- file.path(genome_dir, "tmp")
-  # cmd_makedir <- paste("mkdir -p", tmp_load)
-  # system(cmd_makedir)
 
   cmd_makedir <- paste("mkdir -p", out_dir)
   system(cmd_makedir)
@@ -44,10 +41,10 @@ callSTAR <- function(
   cmd_arguments <- list(
     systemCall = star,
     runMode = "--runMode alignReads",
-    # outTmpDir = paste("--outTmpDir", tmp_load),
     genomeLoad = "--genomeLoad LoadAndKeep",
     runThreadN = paste("--runThreadN", threads),
     readFilesIn = paste("--readFilesIn", mate1, mate2),
+    outFileNamePrefix = paste("--outFileNamePrefix", file.path(out_dir, paste0(smpl, "."))),
     limitBAMsortRAM = paste("--limitBAMsortRAM", RAM_limit),
     outReadsUnmapped = "--outReadsUnmapped Fastq",
     outSAMtype = "--outSAMtype BAM SortedByCoordinate",
@@ -80,11 +77,10 @@ callSTAR <- function(
 
 
 dettachSTARGenome <- function(star, genome_dir) {
-  # tmp_load <- file.path(genome_dir, "tmp")
+  tmp_load <- file.path(genome_dir, "tmp")
   cmd_arguments <- list(
     systemCall = star,
-    genomeDir = paste("--genomeDir", tmp_load),
-    # outTmpDir = paste("--outTmpDir", tmp_load),
+    genomeDir = paste("--genomeDir", genome_dir),
     genomeLoad = "--genomeLoad Remove",
     outFileNamePrefix = paste("--outFileNamePrefix", tmp_load),
     outSAMtype = "--outSAMtype None"
@@ -96,7 +92,7 @@ dettachSTARGenome <- function(star, genome_dir) {
 
   system(cmd_dettach)
 
-  cmd_remove <- paste("rm -R", dirname(tmp_load))
-
-  system(cmd_remove)
+  # cmd_remove <- paste("rm -R", dirname(tmp_load))
+  # 
+  # system(cmd_remove)
 }

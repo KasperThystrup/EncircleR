@@ -40,6 +40,12 @@ mod_STAR_idx_ui <- function(id){
         inputId = ns("idx"),
         label = "Prepare STAR index",
         icon = icon("dolly")
+      ),
+      
+      checkboxInput(
+        inputId = ns("idx_overwrite"),
+        label = "Overwrite existing fastp files",
+        value = FALSE
       )
     )
   )
@@ -90,27 +96,26 @@ mod_STAR_idx_server <- function(input, output, session, r){
         logger::log_debug("Defining genome directory")
         r$star_dir <- file.path(r$genome_dir, "STAR")
 
-        idx_exists <- FALSE
         logger::log_debug("Determining whether index folder exists")
-        if (dir.exists(r$star_dir))
-          idx_exists <- TRUE
-
-        r$threads <- input$threads
-        incProgress(
-          amount = 0.15, session = session,
-          message = "Generating STAR index - This will take a while!"
-        )
-        # Generate STAR index generation command
-        logger::log_info("Generating genome index")
-
-        generateSTARidx(
-          star = input$star,
-          out_dir = r$star_dir,
-          fa_file = r$fa_fn,
-          gtf_file = r$gtf_fn,
-          threads = r$threads,
-          read_length = 100
-        )
+        browser()
+        if (!dir.exists(r$star_dir) | input$idx_overwrite) {
+  
+          incProgress(
+            amount = 0.15, session = session,
+            message = "Generating STAR index - This will take a while!"
+          )
+          # Generate STAR index generation command
+          logger::log_info("Generating genome index")
+  
+          generateSTARidx(
+            star = input$star,
+            out_dir = r$star_dir,
+            fa_file = r$fa_fn,
+            gtf_file = r$gtf_fn,
+            threads = r$threads,
+            read_length = 100
+          )
+        }
         
         incProgress(
           amount = 0.75, session = session,
@@ -125,6 +130,9 @@ mod_STAR_idx_server <- function(input, output, session, r){
         )
         
         r$idx_ready <- TRUE
+        r$annot_ready <- FALSE
+        r$select_ready <- FALSE
+        
     })
   })
 }

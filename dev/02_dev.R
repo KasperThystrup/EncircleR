@@ -28,6 +28,7 @@ golem::add_module( name = "setupExperiment" )
 golem::add_module( name = "callFastp" )
 golem::add_module( name = "STAR_idx" )
 golem::add_module( name = "STAR_call" )
+golem::add_module( name = "deplyCirculaR" )
 
 ## Add helper functions ----
 ## Creates ftc_* and utils_*

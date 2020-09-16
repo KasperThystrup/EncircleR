@@ -11,37 +11,45 @@ mod_STAR_call_ui <- function(id){
   ns <- NS(id)
   tagList(
     div(
-      id = ns("star_call"),
-      shinydashboard::box(
-        # textInput(
-        #   inputId = ns("sample_file"),
-        #   label = "Provide the full path to the top directory of the experiment",
-        #   value = "STAR"
-        # ),
+      id = ns("star_setup"),
+        
+      textInput(
+        inputId = ns("star"),
+        label = "Locate binary star file or provide default system call",
+        value = "star-seq-alignment"
+      ),
 
-        # checkboxInput(
-        #   inputId = ns("paired"),
-        #   label = "Paired end reads",
-        #   value = TRUE
-        # ),
+      numericInput(
+        inputId = ns("ram_lim"),
+        label = "RAM limit dedicated for BAM sorting",
+        value = 5e9, min = 1e6
+      ),
 
-        numericInput(
-          inputId = ns("ram_lim"),
-          label = "RAM limit dedicated for BAM sorting",
-          value = 5e9, min = 1e6
-        ),
+      numericInput(
+        inputId = ns("min_seq"),
+        label = "Minimal segment length on chimeric reads",
+        value = 20, min = 5
+      ),
+      
+      sliderInput(
+        inputId = ns("threads"),
+        label = "Determine number of cores",
+        min = 0,
+        max = max_cores,
+        value = 0,
+        step = 1
+      ),
 
-        numericInput(
-          inputId = ns("min_seq"),
-          label = "Minimal segment length on chimeric reads",
-          value = 20, min = 5
-        ),
-
-        actionButton(
-          inputId = ns("call"),
-          label = "Begin alignment",
-          icon = icon("star") # align-center ## microscope
-        )
+      actionButton(
+        inputId = ns("star_call"),
+        label = "Begin alignment",
+        icon = icon("star") # align-center ## microscope
+      ),
+      
+      checkboxInput(
+        inputId = ns("star_overwrite"),
+        label = "Overwrite alignment files",
+        value = FALSE
       )
     )
   )
@@ -52,8 +60,23 @@ mod_STAR_call_ui <- function(id){
 #' @noRd
 mod_STAR_call_server <- function(input, output, session, r){
   ns <- session$ns
+  
+  hide(id = "star_setup")
+  observeEvent(eventExpr = r$fastp_ready, handlerExpr = {
+    hide(id = "star_setup")
+    if (r$fastp_ready)
+      show(id = "star_setup")
+  })
+  
+  shinyjs::hideElement(id = "star_call")
+  observeEvent(eventExpr = input$threads, handlerExpr = {
+    shinyjs::hideElement(id = "star_call")
+    if (input$threads > 0)
+      shinyjs::showElement(id = "star_call")
+  })
 
-  observeEvent(eventExpr = input$call, handlerExpr = {
+  observeEvent(eventExpr = input$star_call, handlerExpr = {
+    r$star_ready <- FALSE
     logger::log_debug("Generating sample data table")
 
     smpl <- dplyr::pull(r$meta, Sample) %>%
@@ -68,25 +91,29 @@ mod_STAR_call_server <- function(input, output, session, r){
         message = "Loading genome index"
       )
 
-      incProgress(amount = 1, message = "Attaching Genome into memory")
       browser()
-      attachSTARGenome(star = r$star, genome_dir = r$star_dir)
+      
+      incProgress(amount = 1, message = "Attaching Genome into memory")
+      attachSTARGenome(star = input$star, genome_dir = r$star_dir)
 
-      lapply(smpl, function(smpl){
-
-        sample_subset <- subset(r$meta, Sample == smpl)
-        incProgress(amount = 1, message = paste("Aligning sample:", smpl))
-        callSTAR(
-          star = r$star, genome_dir = r$star_dir,
-          threads = r$threads, sample = smpl, meta = r$meta,
-          paired = r$paired, out_dir = r$exp_dir,
-          RAM_limit = input$ram_lim, chim_segMin = input$min_seq,
-          compression = "gz"
-        )
-      })
+      list.files(r$exp_dir)
+      if (input$star_overwrite)
+        lapply(smpl, function(smpl){
+  
+          sample_subset <- subset(r$meta, Sample == smpl)
+          incProgress(amount = 1, message = paste("Aligning sample:", smpl))
+          callSTAR(
+            star = input$star, genome_dir = r$star_dir,
+            threads = r$threads, sample = smpl, meta = r$meta,
+            paired = r$paired, out_dir = r$exp_dir,
+            RAM_limit = input$ram_lim, chim_segMin = input$min_seq,
+            compression = "gz"
+          )
+        })
 
       incProgress(amount = 1, message = "Dettaching genome and cleaning up")
-      dettachSTARGenome(star = r$star, genome_dir = star_dir)
+      dettachSTARGenome(star = input$star, genome_dir = r$star_dir)
+      r$star_ready <- TRUE
     })
   })
 

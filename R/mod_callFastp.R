@@ -14,84 +14,83 @@ mod_callFastp_ui <- function(id){
     div(
       id = ns("fastp_setup"),
 
-      shinydashboard::box(
-        title = "Read trimming and quality check",
-        textInput(
-          inputId = ns("fastp"),
-          label = "Please enter the system command or path to program",
-          placeholder = "Please enter system command or full path to fastp binary file",
-          value = "/home/kathka/miniconda3/bin/fastp"
-        ),
+      textInput(
+        inputId = ns("fastp"),
+        label = "Please enter the system command or path to program",
+        placeholder = "Please enter system command or full path to fastp binary file",
+        value = "/home/kathka/miniconda3/bin/fastp"
+      ),
 
+      sliderInput(
+        inputId = ns("threads"),
+        label = "Determine number of cores",
+        min = 0,
+        max = max_cores,
+        value = 0,
+        step = 1
+      ),
+
+      actionButton(
+        inputId = ns("run_fastp"),
+        label = "Begin read QC and Trimming",
+        icon = icon("sliders-h")
+      ),
+
+      checkboxInput(
+        inputId = ns("overwrite"),
+        label = "Overwrite existing trimmed reads",
+        value = FALSE
+      ),
+      
+      shinydashboard::box(
+
+        title = "Advanced settings",
+        collapsible = TRUE,
+        collapsed = TRUE,
         numericInput(
-          inputId = ns("threads"),
-          label = "Number of threads to run",
-          value = 1,
+          inputId = ns("trim_front"),
+          label = "Bases trimmed at the 5' tail",
+          value = 7,  ## should be 0 !!
+          min = 0,
           step = 1
         ),
 
-        actionButton(
-          inputId = ns("run_fastp"),
-          label = "Begin read QC and Trimming",
-          icon = icon("sliders-h")
+        checkboxInput(
+          inputId = ns("cut_front"),
+          label = "Drop low quality bases from the 5' tail",
+          value = TRUE  ## should be FALSE !!
+        ),
+
+        numericInput(
+          inputId = ns("trim_tail"),
+          label = "Bases trimmed at the 3' tail",
+          value = 7,
+          min = 0,  ## should be 0 !!
+          step = 1
         ),
 
         checkboxInput(
-          inputId = ns("overwrite"),
-          label = "Overwrite existing trimmed reads",
-          value = FALSE
+          inputId = ns("cut_tail"),
+          label = "Drop low quality bases from the 3' tail",
+          value = TRUE   ## should be FALSE !!
         ),
-        
-        shinydashboard::box(
 
-          title = "Advanced settings",
-          collapsible = TRUE,
-          collapsed = TRUE,
-          numericInput(
-            inputId = ns("trim_front"),
-            label = "Bases trimmed at the 5' tail",
-            value = 7,  ## should be 0 !!
-            min = 0,
-            step = 1
-          ),
-  
-          checkboxInput(
-            inputId = ns("cut_front"),
-            label = "Drop low quality bases from the 5' tail",
-            value = TRUE  ## should be FALSE !!
-          ),
-  
-          numericInput(
-            inputId = ns("trim_tail"),
-            label = "Bases trimmed at the 3' tail",
-            value = 7,
-            min = 0,  ## should be 0 !!
-            step = 1
-          ),
-  
-          checkboxInput(
-            inputId = ns("cut_tail"),
-            label = "Drop low quality bases from the 3' tail",
-            value = TRUE   ## should be FALSE !!
-          ),
-  
-          checkboxInput(
-            inputId = ns("overrep"),
-            label = "Overrepressentation analysis",
-            value = TRUE
-          ),
-  
-          checkboxInput(
-            inputId = ns("paired"),
-            label = "Paired end sequencing data",
-            value = TRUE
-          ),
-  
-          checkboxInput(
-            inputId = ns("correction"),
-            label = "Base correction (paired-end only)",
-            value = TRUE    ## should be FALSE !!
-          )
+        checkboxInput(
+          inputId = ns("overrep"),
+          label = "Overrepressentation analysis",
+          value = TRUE
+        ),
+
+        checkboxInput(
+          inputId = ns("paired"),
+          label = "Paired end sequencing data",
+          value = TRUE
+        ),
+
+        checkboxInput(
+          inputId = ns("correction"),
+          label = "Base correction (paired-end only)",
+          value = TRUE    ## should be FALSE !!
         )
       )
     )
@@ -106,16 +105,23 @@ mod_callFastp_server <- function(input, output, session, r){
   shinyjs::hide(id = "fastp_setup")
   r$trimmed <- TRUE
   
-  observeEvent(eventExpr = r$show_settings, handlerExpr = {
-    if (r$show_settings) {
-      shinyjs::show(id = "fastp_setup")
-    } else {
-      shinyjs::hide(id = "fastp_setup")
-    }
+  hide(id = "fastp_setup")
+  observeEvent(eventExpr = r$ref_ready, handlerExpr = {
+    hide(id = "fastp_setup")
+    if (r$ref_ready)
+      show(id = "fastp_setup")
+    
+  })
+  
+  shinyjs::hideElement(id = "run_fastp")
+  observeEvent(eventExpr = input$threads, handlerExpr = {
+    shinyjs::hideElement(id = "run_fastp")
+    if (input$threads > 0)
+      shinyjs::showElement(id = "run_fastp")
   })
 
   observeEvent(eventExpr = input$run_fastp, handlerExpr = {
-    r$trimmed <- FALSE
+    r$fastp_ready <- FALSE
     samples <- dplyr::pull(r$meta, Sample) %>%
       unique
 
@@ -141,7 +147,7 @@ mod_callFastp_server <- function(input, output, session, r){
             overwrite = input$overwrite, threads = input$threads
           )
         }
-        r$trimmed <- TRUE
+        r$fastp_ready <- TRUE
       }
     )
   })

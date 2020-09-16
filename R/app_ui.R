@@ -35,6 +35,12 @@ app_ui <- function(request) {
             tabName = "preparation",
             icon = icon("dna"),
             text = "Read preparation"
+          ),
+          
+          menuItem(
+            tabName = "circ",
+            icon = icon("microscope"),
+            text = "CircRNA analysis"
           )
         )
       ),
@@ -49,26 +55,19 @@ app_ui <- function(request) {
           tabItem(
             tabName = "setup",
             column(
-              width = 3,
+              width = 4,
               mod_importMetadata_ui("importMetadata_ui_1"),
               mod_setupExperiment_ui("setupExperiment_ui_1")
             ),
             
             column(
-              width = 3,
-              mod_selectReferences_ui("selectReferences_ui_1")
-              # ,
-              # mod_importMetadata_ui("importMetadata_ui_1")
-            ),
-            column(
-              width = 3,
+              width = 4,
+              mod_selectReferences_ui("selectReferences_ui_1"),
               mod_getAnnotation_ui("getAnnotation_ui_1")
-              # mod_setupExperiment_ui("setupExperiment_ui_1"),
-              # mod_STAR_idx_ui("STAR_idx_ui_1")
             ),
             
             column(
-              width = 3,
+              width = 4,
               mod_STAR_idx_ui("STAR_idx_ui_1")
             )
           ),
@@ -76,10 +75,19 @@ app_ui <- function(request) {
           tabItem(
             tabName = "preparation",
             column(
-              width = 12,
-              mod_callFastp_ui("callFastp_ui_1"),
+              width = 6,
+              mod_callFastp_ui("callFastp_ui_1")
+            ),
+            
+            column(
+              width = 6,
               mod_STAR_call_ui("STAR_call_ui_1")
             )
+          ),
+          
+          tabItem(
+            tabName = "circ",
+            mod_deplyCirculaR_ui("deplyCirculaR_ui_1")
           )
         )
       ),
