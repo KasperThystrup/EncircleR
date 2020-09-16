@@ -16,7 +16,7 @@ mod_STAR_call_ui <- function(id){
       textInput(
         inputId = ns("star"),
         label = "Locate binary star file or provide default system call",
-        value = "star-seq-alignment"
+        value = "/home/kathka/software/STAR/bin/Linux_x86_64/STAR"
       ),
 
       numericInput(
@@ -81,7 +81,8 @@ mod_STAR_call_server <- function(input, output, session, r){
 
     smpl <- dplyr::pull(r$meta, Sample) %>%
       unique
-
+    browser()
+    if (input$star_overwrite | dir.exists(file.path(r$smpl_dir, smpl))) {
     # Progress counter
 
     withProgress(value = 0, min = 0, max = length(smpl) + 2, message = "Initiating STAR alignment", expr = {
@@ -91,13 +92,12 @@ mod_STAR_call_server <- function(input, output, session, r){
         message = "Loading genome index"
       )
 
-      browser()
       
       incProgress(amount = 1, message = "Attaching Genome into memory")
       attachSTARGenome(star = input$star, genome_dir = r$star_dir)
 
       list.files(r$exp_dir)
-      if (input$star_overwrite)
+      
         lapply(smpl, function(smpl){
   
           sample_subset <- subset(r$meta, Sample == smpl)
@@ -105,7 +105,7 @@ mod_STAR_call_server <- function(input, output, session, r){
           callSTAR(
             star = input$star, genome_dir = r$star_dir,
             threads = r$threads, sample = smpl, meta = r$meta,
-            paired = r$paired, out_dir = r$exp_dir,
+            paired = r$paired, out_dir = r$smpl_dir,
             RAM_limit = input$ram_lim, chim_segMin = input$min_seq,
             compression = "gz"
           )

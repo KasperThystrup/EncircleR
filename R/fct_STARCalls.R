@@ -6,7 +6,7 @@ attachSTARGenome <- function(star, genome_dir) {
   cmd_arguments <- list(
     systemCall = star,
     genomeDir = paste("--genomeDir", genome_dir),
-    outFileNamePrefix = paste("--outFileNamePrefix", tmp_load),
+    outFileNamePrefix = paste("--outFileNamePrefix", tmp_load, "tmp-"),
     genomeLoad = "--genomeLoad LoadAndExit",
     outSAMtype = "--outSAMtype None"
   )

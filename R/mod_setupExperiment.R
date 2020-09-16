@@ -64,10 +64,13 @@ mod_setupExperiment_server <- function(input, output, session, r){
 
       incProgress(amount = 0.25, message = "Preparing experimental directory")
       # Check on experimental directory
-      cmd_makedir <- paste("mkdir -p", input$exp_dir)
+      r$exp_dir <- input$exp_dir
+      r$smpl_dir <- file.path(input$exp_dir, "Samples")
+      
+      
+      cmd_makedir <- paste("mkdir -p", r$smpl_dir)
 
       system(cmd_makedir)
-      r$exp_dir <- input$exp_dir
 
       incProgress(
         amount = 0.5,

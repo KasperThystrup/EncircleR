@@ -17,7 +17,7 @@ mod_STAR_idx_ui <- function(id){
       textInput(
         inputId = ns("star"),
         label = "Locate binary star file or provide default system call",
-        value = "star-seq-alignment"
+        value = "/home/kathka/software/STAR/bin/Linux_x86_64/STAR"
       ),
   
       sliderInput(
@@ -97,7 +97,6 @@ mod_STAR_idx_server <- function(input, output, session, r){
         r$star_dir <- file.path(r$genome_dir, "STAR")
 
         logger::log_debug("Determining whether index folder exists")
-        browser()
         if (!dir.exists(r$star_dir) | input$idx_overwrite) {
   
           incProgress(
