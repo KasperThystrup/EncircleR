@@ -17,7 +17,7 @@ mod_STAR_idx_ui <- function(id){
       textInput(
         inputId = ns("star"),
         label = "Locate binary star file or provide default system call",
-        value = "/home/kathka/software/STAR/bin/Linux_x86_64/STAR"
+        value = star_default
       ),
   
       sliderInput(
@@ -44,8 +44,14 @@ mod_STAR_idx_ui <- function(id){
       
       checkboxInput(
         inputId = ns("idx_overwrite"),
-        label = "Overwrite existing fastp files",
+        label = "Overwrite existing STAR index files",
         value = FALSE
+      ),
+      
+      checkboxInput(
+        inputId = ns("idx_cleanup"),
+        label = "Clean up Fasta and GTF files",
+        value = TRUE
       )
     )
   )
@@ -58,11 +64,6 @@ mod_STAR_idx_server <- function(input, output, session, r){
   ns <- session$ns
   
   hide(id = "star_idx")
-  # shinyjs::hideElement("star")
-  # shinyjs::hideElement("threads")
-  # shinyjs::hideElement("read_length")
-  # shinyjs::hideElement("idx")
-  
   observeEvent(eventExpr = input$threads, handlerExpr = {
     shinyjs::showElement(id = "idx")
     if (input$threads == 0)
@@ -71,16 +72,8 @@ mod_STAR_idx_server <- function(input, output, session, r){
   
   observeEvent(eventExpr = r$annot_ready, handlerExpr = {
     hide(id = "star_idx")
-    # shinyjs::hideElement("star")
-    # shinyjs::hideElement("threads")
-    # shinyjs::hideElement("read_length")
-    # shinyjs::hideElement("idx")
     if (r$annot_ready){
       show(id = "star_idx")
-      # shinyjs::hideElement("star")
-      # shinyjs::showElement("star_idx")
-      # shinyjs::showElement("threads")
-      # shinyjs::showElement("read_length")
     }
   })
   
@@ -111,9 +104,17 @@ mod_STAR_idx_server <- function(input, output, session, r){
             out_dir = r$star_dir,
             fa_file = r$fa_fn,
             gtf_file = r$gtf_fn,
-            threads = r$threads,
+            threads = input$threads,
             read_length = 100
           )
+          
+          if (input$idx_cleanup) {
+            cmd_rm_fa <- paste("rm", r$fa_fn)
+            system(cmd_rm_fa)
+            
+            cmd_rm_gtf <- paste("rm", r$gtf_fn)
+            system(cmd_rm_gtf)
+          }
         }
         
         incProgress(

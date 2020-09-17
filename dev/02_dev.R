@@ -32,6 +32,7 @@ golem::add_module( name = "deplyCirculaR" )
 
 ## Add helper functions ----
 ## Creates ftc_* and utils_*
+golem::add_utils( "DEFAULTS")
 golem::add_fct( "selectReferences" )
 golem::add_fct( "ensemblReleases" ) 
 golem::add_fct( "referenceDownload" ) 

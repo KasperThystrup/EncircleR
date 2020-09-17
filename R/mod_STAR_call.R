@@ -16,7 +16,7 @@ mod_STAR_call_ui <- function(id){
       textInput(
         inputId = ns("star"),
         label = "Locate binary star file or provide default system call",
-        value = "/home/kathka/software/STAR/bin/Linux_x86_64/STAR"
+        value = star_default
       ),
 
       numericInput(
@@ -79,13 +79,14 @@ mod_STAR_call_server <- function(input, output, session, r){
     r$star_ready <- FALSE
     logger::log_debug("Generating sample data table")
 
-    smpl <- dplyr::pull(r$meta, Sample) %>%
+    sample <- dplyr::pull(r$meta, Sample) %>%
       unique
-    browser()
-    if (input$star_overwrite | dir.exists(file.path(r$smpl_dir, smpl))) {
+    
+    
+    if (input$star_overwrite | any(dir.exists(file.path(r$smpl_dir, sample)))) {
     # Progress counter
 
-    withProgress(value = 0, min = 0, max = length(smpl) + 2, message = "Initiating STAR alignment", expr = {
+    withProgress(value = 0, min = 0, max = length(sample) + 2, message = "Initiating STAR alignment", expr = {
       Sys.sleep(0.75)
       incProgress(
         amount = 0.15, session = session,
@@ -93,32 +94,30 @@ mod_STAR_call_server <- function(input, output, session, r){
       )
 
       
-      incProgress(amount = 1, message = "Attaching Genome into memory")
-      attachSTARGenome(star = input$star, genome_dir = r$star_dir)
+      # incProgress(amount = 1, message = "Attaching Genome into memory")
+      # attachSTARGenome(star = input$star, genome_dir = r$star_dir)   ### Not sure how to set up with bam sorting limit
 
       list.files(r$exp_dir)
       
-        lapply(smpl, function(smpl){
+        lapply(sample, function(smpl){
   
           sample_subset <- subset(r$meta, Sample == smpl)
           incProgress(amount = 1, message = paste("Aligning sample:", smpl))
           callSTAR(
             star = input$star, genome_dir = r$star_dir,
-            threads = r$threads, sample = smpl, meta = r$meta,
+            threads = input$threads, sample = smpl, meta = r$meta,
             paired = r$paired, out_dir = r$smpl_dir,
             RAM_limit = input$ram_lim, chim_segMin = input$min_seq,
             compression = "gz"
           )
         })
 
-      incProgress(amount = 1, message = "Dettaching genome and cleaning up")
-      dettachSTARGenome(star = input$star, genome_dir = r$star_dir)
+      # incProgress(amount = 1, message = "Dettaching genome and cleaning up")
+      # dettachSTARGenome(star = input$star, genome_dir = r$star_dir)
       r$star_ready <- TRUE
     })
+    }
   })
-
-
-
 }
 
 ### To be copied in the UI

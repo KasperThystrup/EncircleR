@@ -2,3 +2,4 @@
 .RData
 .Rproj.user
 cache*
+R/utils_DEFAULTS.R

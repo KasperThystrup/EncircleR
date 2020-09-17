@@ -84,7 +84,7 @@ mod_getAnnotation_server <- function(input, output, session, r){
         logger::log_debug("Determining extremities")
         ens_extremes <- EnsDbExtremities(queries)
         
-        incProgress(amount = 0.5, message = "Determining available reference releases") 
+        incProgress(amount = 0.25, message = "Determining available reference releases") 
         logger::log_debug("Extracting reference metadata")
         meta <- extractReferenceMeta(ahub = r$ah, organism = input$org, release = NULL)
         logger::log_debug("Defining release extermities of reference and annotation objects")
@@ -92,7 +92,7 @@ mod_getAnnotation_server <- function(input, output, session, r){
         logger::log_debug("Selecting common extremities.")
         extremes <- determineExtremities(ens_extremes, ref_extremes)
         
-        incProgress(amount = 0.75, message = "Updating available releases")
+        incProgress(amount = 0.25, message = "Updating available releases")
         
         updateSliderInput(
           session = session, inputId = "rel",
@@ -137,14 +137,14 @@ mod_getAnnotation_server <- function(input, output, session, r){
       
       r$genome_dir <- file.path("~/.EncircleR/Genome", paste("release", input$rel, sep = "-"), input$org)
       
-      incProgress(amount = 0.5, message = "Downloading and unzipping reference annotation")
+      incProgress(amount = 0.25, message = "Downloading and unzipping reference annotation")
       r$gtf_fn <- downloadFile(url = urls$gtf, out_dir = r$genome_dir)
       
-      incProgress(amount = 0.75, message = "Downloading and unzipping reference genome")
+      incProgress(amount = 0.25, message = "Downloading and unzipping reference genome")
       r$fa_fn <- downloadFile(url = urls$fa, out_dir = r$genome_dir)
       
       incProgress(
-        amount = 1,
+        amount = 0.25,
         message = paste(names(input$org), "Fasta and GTF file downloaded!")
       )
       

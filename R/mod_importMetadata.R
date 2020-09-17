@@ -32,11 +32,10 @@ mod_importMetadata_server <- function(input, output, session, r){
   observeEvent(eventExpr = input$meta_file, handlerExpr = {
 
     logger::log_info("Uploading metadata")
-    meta <- importMetadata(meta_fn = input$meta_file$datapath)
-    r$meta <- meta
+    r$meta <- importMetadata(meta_fn = input$meta_file$datapath)
     r$meta_ready <- FALSE
 
-    files_exists <- checkMetadataFilepaths(meta = meta)
+    files_exists <- checkMetadataFilepaths(meta = r$meta)
 
     file_check$status <- paste(
       "Missing files:",

@@ -17,7 +17,7 @@ mod_setupExperiment_ui <- function(id){
         inputId = ns("exp_dir"),
         label = "Please enter the desired output path of the experimental directory",
         placeholder = "Enter the full path to the top folder",
-        value = "/home/kathka/Projects/Conceptual/fastR/Experiment"
+        value = exp_default
       ),
   
       actionButton(

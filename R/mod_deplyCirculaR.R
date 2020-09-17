@@ -114,7 +114,7 @@ mod_deplyCirculaR_server <- function(input, output, session, r){
         ahdb <- ahdb[[names(ahdb)]]
         
         incProgress(
-          amount = 0.15, session = session, message = "Generating splice junction site"
+          amount = 0.15, session = session, message = "Generating database of known splice junctions. This can take some time!"
         )
         
         known_junctions <- circulaR::constructSJDB(

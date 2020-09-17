@@ -59,19 +59,6 @@ mod_selectReferences_server <- function(input, output, session, r){
   })
   
   shinyjs::hideElement(id = "continue")
-  # shinyjs::hideElement(id = "ref_select")
-  # shinyjs::hideElement(id = "ref_status")
-  # # shinyjs::hideElement(id = "ref_new")
-  # observeEvent(eventExpr = r$exp_ready, handlerExpr = {
-  #   shinyjs::hideElement(id = "ref_select")
-  #   shinyjs::hideElement(id = "ref_status")
-  #   # shinyjs::hideElement(id = "ref_new")
-  #   if (r$exp_ready){
-  #     shinyjs::showElement(id = "ref_select")
-  #     shinyjs::showElement(id = "ref_status")
-  #     # shinyjs::showElement(id = "ref_new")
-  #   }
-  # })
   
   msgs <- reactiveValues(status = "No reference genome selected.")
   observeEvent(eventExpr = input$ref_select, handlerExpr = {
@@ -79,7 +66,7 @@ mod_selectReferences_server <- function(input, output, session, r){
       value = 0, session = session, message = "Searching for existing files",
       expr = {
         shinyjs::showElement(id = "ref_new")
-        r$cache_dir <- "~/.EncircleR/Genome"
+        r$cache_dir <- cache_default
         r$ref_ready <- FALSE
         
         if (input$ref_select %in% available_references) {
@@ -116,12 +103,13 @@ mod_selectReferences_server <- function(input, output, session, r){
           r$build <- supported_builds[build.idx]
           
           logger::log_debug("Determining reference genome directory")
-          r$genome_dir <- file.path(r$cache_dir, r$rel, r$org)
+          r$genome_dir <- file.path(r$cache_dir, "Genome", r$rel, r$org)
           
           logger::log_debug("Ensuring Genome index directory exists")
           r$star_dir <- file.path(r$genome_dir, "STAR")
           
           msgs$status <- "Genome index not found, please select `New Reference Genome`."
+
           if (dir.exists(r$star_dir)) {
             incProgress(
               amount = 0.25, session = session, 

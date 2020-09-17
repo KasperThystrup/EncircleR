@@ -1,5 +1,5 @@
 attachSTARGenome <- function(star, genome_dir) {
-  tmp_load <- file.path(genome_dir, "tmp")
+  tmp_load <- file.path(genome_dir, "tmp/")
   cmd_makedir <- paste("mkdir -p", tmp_load)
   system(cmd_makedir)
 
@@ -27,12 +27,52 @@ callSTAR <- function(
   cmd_makedir <- paste("mkdir -p", out_dir)
   system(cmd_makedir)
 
-  mate1 <- subset(meta, Mate == 1) %>%
+  mate1_raw <- subset(meta, Mate == 1 & Sample == sample) %>%
     dplyr::pull(var = Filepath)
+  
+  mate1_dir <- dirname(mate1_raw)
+  mate1_split <- strsplit(x = mate1_raw, split = "/") %>%
+    unlist %>%
+    tail(1)
+  
+  mate1_file <- strsplit(x = mate1_split, split = "\\.") %>%
+    unlist %>%
+    head(1)
+  mate1_ext <- fileExt(mate1_split)
+  
+  mate1 <- file.path(
+    out_dir, sample, "fastp",
+    paste(
+      paste(mate1_file, "trimmed", sep = "_"),
+      paste(mate1_ext, collapse = "."),
+      sep = "."
+    )
+  )
+  
   mate2 <- ""
-  if (paired)
-    mate2 <- subset(meta, Mate == 2) %>%
-    dplyr::pull(var = Filepath)
+  if (paired){
+    mate2_raw <- subset(meta, Mate == 2 & Sample == sample) %>%
+      dplyr::pull(var = Filepath)
+    
+    mate2_dir <- dirname(mate2_raw)
+    mate2_split <- strsplit(x = mate2_raw, split = "/") %>%
+      unlist %>%
+      tail(1)
+    
+    mate2_file <- strsplit(x = mate2_split, split = "\\.") %>%
+      unlist %>%
+      head(1)
+    mate2_ext <- fileExt(mate2_split)
+    
+    mate2 <- file.path(
+      out_dir, sample, "fastp",
+      paste(
+        paste(mate2_file, "trimmed", sep = "_"),
+        paste(mate2_ext, collapse = "."),
+        sep = "."
+      )
+    )
+  }
 
   readFilesCommand = ""
   if (compression == "gz")
@@ -41,11 +81,13 @@ callSTAR <- function(
   cmd_arguments <- list(
     systemCall = star,
     runMode = "--runMode alignReads",
-    genomeLoad = "--genomeLoad LoadAndKeep",
+    genomeDir = paste("--genomeDir", genome_dir),
+    genomeLoad = "--genomeLoad NoSharedMemory",
+    # genomeLoad = "--genomeLoad LoadAndKeep",
     runThreadN = paste("--runThreadN", threads),
-    readFilesIn = paste("--readFilesIn", mate1, mate2),
-    outFileNamePrefix = paste("--outFileNamePrefix", file.path(out_dir, paste0(smpl, "."))),
-    limitBAMsortRAM = paste("--limitBAMsortRAM", RAM_limit),
+    readFilesIn = paste("--readFilesIn", paste(mate1, mate2, collapse = " ")),
+    outFileNamePrefix = paste("--outFileNamePrefix", file.path(out_dir, sample, "STAR", paste0(sample, "_"))),
+    # limitBAMsortRAM = paste("--limitBAMsortRAM", RAM_limit),
     outReadsUnmapped = "--outReadsUnmapped Fastq",
     outSAMtype = "--outSAMtype BAM SortedByCoordinate",
     outSAMunmapped = "--outSAMunmapped Within KeepPairs",
@@ -56,16 +98,14 @@ callSTAR <- function(
     readFilesCommand = readFilesCommand
   )
 
-
+  
   cmd_report <- tibble::tibble(Argument = names(cmd_arguments), Input = unlist(cmd_arguments))
 
   readr::write_tsv(
     x = cmd_report,
     path = file.path(
       out_dir,
-      paste(
-        dplyr::pull(meta, Sample) %>% unique,"STAR_call.tsv"
-      )
+      paste(sample,"STAR_call.tsv")
     )
   )
 
@@ -77,12 +117,12 @@ callSTAR <- function(
 
 
 dettachSTARGenome <- function(star, genome_dir) {
-  tmp_load <- file.path(genome_dir, "tmp")
+  tmp_load <- file.path(genome_dir, "tmp/")
   cmd_arguments <- list(
     systemCall = star,
     genomeDir = paste("--genomeDir", genome_dir),
     genomeLoad = "--genomeLoad Remove",
-    outFileNamePrefix = paste("--outFileNamePrefix", tmp_load),
+    outFileNamePrefix = paste("--outFileNamePrefix", tmp_load, "tmp-"),
     outSAMtype = "--outSAMtype None"
   )
 
@@ -92,7 +132,7 @@ dettachSTARGenome <- function(star, genome_dir) {
 
   system(cmd_dettach)
 
-  # cmd_remove <- paste("rm -R", dirname(tmp_load))
-  # 
-  # system(cmd_remove)
+  cmd_remove <- paste("rm -R", tmp_load)
+
+  system(cmd_remove)
 }
