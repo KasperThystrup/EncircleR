@@ -38,18 +38,20 @@ library(EncircleR)
 ## basic example code
 ```
 
-What is special about using `README.Rmd` instead of just `README.md`? You can include R chunks like so:
+# How to run
+Clone the repository and open `EncircleR.Rproj` with Rstudio.
+First up open `R/utils_DEFUALTS.R` and set the appropriate values
 
-```{r cars}
-summary(cars)
-```
+Next: Try to run the entire script in `dev/run_dev.R`, install any packages that is missing.
 
-You'll still need to render `README.Rmd` regularly, to keep `README.md` up-to-date.
+The process is stepwise, where options by default are hidden, until the appropriate steps have been taken. Note that STAR_idx takes ALOT of RAM and FASTP and STAR alignment takes a lot of cpu time as well.
 
-You can also embed plots, for example:
+The app requires gz compressed (or uncompressed) fastq files, a metadata file with the following columns:
 
-```{r pressure, echo = FALSE}
-plot(pressure)
-```
+1. Sample name
+2. Full filepath
+3. Read Mate
 
-In that case, don't forget to commit and push the resulting figure files, so they display on GitHub!
+The app currently copies (option to move instead) fastq files to a experimental directory (default set in `R/utils_DEFAULTS.R`
+fastp and STAR is run on each sample, and relocated systematically
+Finally, the circulaR algorithm is used to run circRNA analysis (circulaR must be installed, but have not yet been uplaoded to github)
