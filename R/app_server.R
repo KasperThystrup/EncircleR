@@ -17,4 +17,5 @@ app_server <- function( input, output, session ) {
   callModule(mod_callFastp_server, "callFastp_ui_1", r)
   callModule(mod_STAR_call_server, "STAR_call_ui_1", r)
   callModule(mod_deplyCirculaR_server, "deplyCirculaR_ui_1", r)
+  callModule(mod_mappingPlots_server, "mappingPlots_ui_1", r)
 }

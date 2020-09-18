@@ -86,7 +86,7 @@ callSTAR <- function(
     # genomeLoad = "--genomeLoad LoadAndKeep",
     runThreadN = paste("--runThreadN", threads),
     readFilesIn = paste("--readFilesIn", paste(mate1, mate2, collapse = " ")),
-    outFileNamePrefix = paste("--outFileNamePrefix", file.path(out_dir, sample, "STAR", paste0(sample, "_"))),
+    outFileNamePrefix = paste("--outFileNamePrefix", file.path(out_dir, sample, "STAR", paste0(sample, "."))),
     # limitBAMsortRAM = paste("--limitBAMsortRAM", RAM_limit),
     outReadsUnmapped = "--outReadsUnmapped Fastq",
     outSAMtype = "--outSAMtype BAM SortedByCoordinate",
@@ -105,7 +105,7 @@ callSTAR <- function(
     x = cmd_report,
     path = file.path(
       out_dir,
-      paste(sample,"STAR_call.tsv")
+      paste(sample, "STAR", "STAR_call.tsv")
     )
   )
 

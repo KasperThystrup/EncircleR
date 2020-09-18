@@ -33,7 +33,9 @@ golem::fill_desc(
 )
 
 ## Set {golem} options ----
-golem::set_golem_options()
+golem::set_golem_options(
+  golem_version = "0.0.0.9001"
+)
 
 ## Create Common Files ----
 ## See ?usethis for more information

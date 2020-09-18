@@ -29,6 +29,7 @@ golem::add_module( name = "callFastp" )
 golem::add_module( name = "STAR_idx" )
 golem::add_module( name = "STAR_call" )
 golem::add_module( name = "deplyCirculaR" )
+golem::add_module( name = "mappingPlots" )
 
 ## Add helper functions ----
 ## Creates ftc_* and utils_*
@@ -44,6 +45,8 @@ golem::add_utils( "supportedCompressions" )
 golem::add_fct( "IdxCommands" )
 golem::add_fct( "STARCalls" )
 golem::add_utils( "check_cores" )
+golem::add_fct( "generateAlignmentStats" )
+
 
 ## External resources
 ## Creates .js and .css files at inst/app/www

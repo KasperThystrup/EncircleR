@@ -82,8 +82,8 @@ mod_STAR_call_server <- function(input, output, session, r){
     sample <- dplyr::pull(r$meta, Sample) %>%
       unique
     
-    
-    if (input$star_overwrite | any(dir.exists(file.path(r$smpl_dir, sample)))) {
+    r$star_ready <- FALSE
+    if (input$star_overwrite | any(!dir.exists(file.path(r$smpl_dir, sample)))) {
     # Progress counter
 
     withProgress(value = 0, min = 0, max = length(sample) + 2, message = "Initiating STAR alignment", expr = {
@@ -114,9 +114,10 @@ mod_STAR_call_server <- function(input, output, session, r){
 
       # incProgress(amount = 1, message = "Dettaching genome and cleaning up")
       # dettachSTARGenome(star = input$star, genome_dir = r$star_dir)
-      r$star_ready <- TRUE
     })
     }
+    r$star_ready <- TRUE
+    
   })
 }
 

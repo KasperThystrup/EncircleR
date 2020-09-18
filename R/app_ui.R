@@ -41,6 +41,12 @@ app_ui <- function(request) {
             tabName = "circ",
             icon = icon("microscope"),
             text = "CircRNA analysis"
+          ),
+          
+          menuItem(
+            tabName = "results",
+            icon = icon("book"),
+            text = "Results"
           )
         )
       ),
@@ -88,6 +94,11 @@ app_ui <- function(request) {
           tabItem(
             tabName = "circ",
             mod_deplyCirculaR_ui("deplyCirculaR_ui_1")
+          ),
+          
+          tabItem(
+            tabName = "results",
+            mod_mappingPlots_ui("mappingPlots_ui_1")
           )
         )
       ),

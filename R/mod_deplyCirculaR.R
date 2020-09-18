@@ -14,39 +14,46 @@ mod_deplyCirculaR_ui <- function(id){
   tagList(
     div(
       id = ns("circ_call"),
-      
-      textInput(
-        inputId = ns("exp_name"),
-        label = "Name the experiment",
-        placeholder = "Please provide a name for your experiment"
-      ),
-      
-      sliderInput(
-        inputId = ns("threads"),
-        label = "Determine number of cores",
-        min = 0,
-        max = max_cores,
-        value = 0,
-        step = 1
-      ),
-      
-      selectInput(
-        inputId = ns("direction"),
-        label = "Sequencing directionality",
-        choices = c(
-          "First read first strand" = TRUE,
-          "First read second strand" = FALSE,
-          "Unstranded" = NULL
+      div(
+        textInput(
+          inputId = ns("exp_name"),
+          label = "Name the experiment",
+          placeholder = "Please provide a name for your experiment"
         ),
-      ),
-      
-      checkboxInput(inputId = ns("paired"), label = "Paired end reads", value = TRUE),
-      
-      actionButton(
-        inputId = ns("circular"),
-        label = "Perform circRNA analysis",
-        icon = icon("circle-notch")
-      ),
+        
+        sliderInput(
+          inputId = ns("threads"),
+          label = "Determine number of cores",
+          min = 0,
+          max = max_cores,
+          value = 0,
+          step = 1
+        ),
+        
+        selectInput(
+          inputId = ns("direction"),
+          label = "Sequencing directionality",
+          choices = c(
+            "First read first strand" = TRUE,
+            "First read second strand" = FALSE,
+            "Unstranded" = NULL
+          ),
+        ),
+        
+        checkboxInput(inputId = ns("paired"), label = "Paired end reads", value = TRUE),
+        
+        checkboxInput(
+          inputId = ns("circ_qc"),
+          label = "Calculate quality parametrics",
+          value = TRUE
+        ),
+        
+        actionButton(
+          inputId = ns("circular"),
+          label = "Perform circRNA analysis",
+          icon = icon("circle-notch")
+        )
+      ), 
       
       shinydashboard::box(
         title = "Advanced settings",
@@ -67,6 +74,25 @@ mod_deplyCirculaR_ui <- function(id){
         ),
         helpText(
           "Enable if the process fails during generation of database of known splice junction sites"
+        ),
+        
+        numericInput(
+          inputId = ns("max_genom_dist"),
+          label = "Max genomic distance",
+          value = 1e5,
+          step = 1
+        ),
+        
+        checkboxInput(
+          inputId = ns("span_only"),
+          label = "Only include Backsplice junction Spanning reads (enable this to exclude backsplice spanning reads=",
+          value = TRUE
+        ),
+        
+        checkboxInput(
+          inputId = ns("rm_bad_pairs"),
+          label = "Remove bad read mate pairs",
+          value = TRUE
         )
       )
     )
@@ -90,7 +116,7 @@ mod_deplyCirculaR_server <- function(input, output, session, r){
   
   observeEvent(eventExpr = input$threads, handlerExpr = {
     shinyjs::hideElement(id = "circular")
-    if (input$threads > 0)
+    if (input$threads > 0 & !is.null(input$exp_name))
       shinyjs::showElement(id = "circular")
   })
   
@@ -114,7 +140,8 @@ mod_deplyCirculaR_server <- function(input, output, session, r){
         ahdb <- ahdb[[names(ahdb)]]
         
         incProgress(
-          amount = 0.15, session = session, message = "Generating database of known splice junctions. This can take some time!"
+          amount = 0.15, session = session,
+          message = "Generating database of known splice junctions. This can take some time!"
         )
         
         known_junctions <- circulaR::constructSJDB(
@@ -130,28 +157,33 @@ mod_deplyCirculaR_server <- function(input, output, session, r){
           message = "Importing backsplice junction reads"
         )
         
-        experiment <- circulaR::circExperiment(
+        object <- circulaR::circExperiment(
           path = r$exp_dir,
           name = input$exp_name
         )
         
-        if (input$paired & is.null(input$direction))
+        if (input$paired & is.null(input$direction)) {
           updateSelectInput(session = session, inputId = "Direction", selected = FALSE)
+        } else {
+          r$direction <- as.logical(input$direction)  ## Input is not logical
+        }
         
-        experiment <- circulaR::locateSamples(
-          object = experiment, organism = r$org, gb = r$build,
-          firstread.firststrand = input$direction, paired.end = input$paired
+        object <- circulaR::locateSamples(
+          object = object, organism = r$org, gb = r$build,
+          firstread.firststrand = r$direction, paired.end = input$paired
         )
         
-        
-        experiment <- circulaR::readBSJdata(
-          object = experiment,
+        object <- circulaR::readBSJdata(
+          object = object,
           chromosomes = chrom,
+          maxGenomicDist = input$max_genom_dist,
+          onlySpanning = FALSE,
+          removeBadPairs = FALSE,
           cores = input$threads
         )
         
-        experiment <- circulaR::readLSJdata(
-          object = experiment,
+        object <- circulaR::readLSJdata(
+          object = object,
           chromosomes = chrom,
           cores = input$threads
         )
@@ -161,18 +193,49 @@ mod_deplyCirculaR_server <- function(input, output, session, r){
           message = "Comparing backsplice junction to known splice sites"
         )
         
-        experiment <- circulaR::compareToKnownJunctions(
-          object = experiment, known.junctions = known_junctions,
+        object <- circulaR::compareToKnownJunctions(
+          object = object, known.junctions = known_junctions,
           cores = input$threads
         )
         
-        experiment_nofilt <- circulaR::summarizeBSJreads(
-          object = experiment, cores = input$threads, applyFilter = FALSE
+        incProgress(
+          amount = 0.15, session = session,
+          message = "calculating overall backsplice junction statistics"
         )
         
-        experiment <- circulaR::summarizeBSJreads(
-          object = experiment, cores = input$threads, applyFilter = TRUE
+        object <- circulaR::summarizeBSJreads(
+          object = object, cores = input$threads, applyFilter = TRUE
         )
+        
+        incProgress(
+          amount = 0.15, session = session,
+          message = "Updating filters"
+        )
+        
+        if (input$rm_bad_pairs) {
+          PEok_filter <- lapply(circulaR::bsj.reads(object), function(sample) {
+            dplyr::pull(sample, PEok)
+          })
+          
+          object <- circulaR::addFilter(
+            object = object, filter = PEok_filter, mode = "strict"
+          )
+        }
+        
+        if (input$span_only) {
+          span_filt <- lapply(circulaR::bsj.reads(object), function(sample) {
+            types <- dplyr::pull(sample, X7)
+            
+            types > -1
+          })
+          
+          object <- circulaR::addFilter(
+            object = object, filter = span_filt, mode = "strict"
+          )
+        }
+        # saveRDS(object = object, file  = paste0("~/Projects/Conceptual/EncircleR/cache/Experiment/Saves/", input$exp_name, ".RData"))
+        
+        r$object <- object
       })
     
   })
