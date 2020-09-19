@@ -13,10 +13,13 @@ mod_mappingPlots_ui <- function(id){
     shinydashboard::box(
       title = "Mapping statistics",
       plotOutput(outputId = ns("alignPercent")),
-      actionButton(inputId = ns("dl_alignPerc.pdf"), label = "pdf", icon = icon("download")),
-      actionButton(inputId = ns("dl_alignPerc.tsv"), label = "tsv", icon = icon("download")),
-      actionButton(inputId = ns("dl_alignPerc.pdf"), label = "pdf", icon = icon("download"))
-    )
+      "The linear mapping statistics of each sample shown in percentages",
+      
+      plotOutput(ns("SJvsLibSize")),
+      "Splice junctions compared to Total Library size, the dashed line denotes the linear ratio, calculated with a linar model"
+    ),
+    
+    
   )
 }
     
@@ -26,9 +29,15 @@ mod_mappingPlots_ui <- function(id){
 mod_mappingPlots_server <- function(input, output, session, r){
   ns <- session$ns
   
-  output$alignPercent <- renderPlot(plotAlignmentPecentages(r$object))
-  
- 
+  observeEvent(eventExpr = r$filt_ready, handlerExpr = {
+    
+    if (r$circ_ready) {
+      output$alignPercent <- renderPlot(plotAlignmentPecentages(r$object))
+      
+      browser()
+      output$SJvsLibSize <- renderPlot(plotSpliceLibSize(r$object))
+    }
+  })
 }
     
 ## To be copied in the UI

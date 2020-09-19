@@ -126,6 +126,8 @@ mod_deplyCirculaR_server <- function(input, output, session, r){
       value = 0, session = session, message = "Initiating circRNA analysis",
       expr = {
         
+        r$filt_ready <- FALSE
+        
         incProgress(
           amount = 0.15, session = session, 
           message = "Checking for exising datasets"
@@ -184,6 +186,7 @@ mod_deplyCirculaR_server <- function(input, output, session, r){
             firstread.firststrand = r$direction, paired.end = input$paired
           )
           
+          browser()
           object <- circulaR::readBSJdata(
             object = object,
             chromosomes = chrom,
@@ -239,6 +242,8 @@ mod_deplyCirculaR_server <- function(input, output, session, r){
               
               types > -1
             })
+            
+            r$filt_ready <- TRUE
             
             object <- circulaR::addFilter(
               object = object, filter = span_filt, mode = "strict"

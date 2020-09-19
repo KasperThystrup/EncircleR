@@ -56,9 +56,10 @@ plotSpliceLibSize <- function(object) {
   if (nrow(stts_SvsLS) < 2)
     return(FALSE)
   
-  ggplot(data = stts_SvsLS, mapping = aes(x = splice_total, y = reads_total, colour = sample)) +
-    geom_point(alpha = 0.05, size = 2) + 
+  ggplot(data = stts_SvsLS, mapping = aes(x = splice_total, y = reads_total)) +
+    geom_point(alpha = 0.5, size = 2) + 
     stat_smooth(geom = "line", method = "lm", linetype = "dashed") +
+    labs(x = "Total splice junctions", y = "Total reads") +
     my_theme
 }
 
