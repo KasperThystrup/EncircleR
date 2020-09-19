@@ -18,16 +18,8 @@ mod_deplyCirculaR_ui <- function(id){
         textInput(
           inputId = ns("exp_name"),
           label = "Name the experiment",
+          value = "Test",
           placeholder = "Please provide a name for your experiment"
-        ),
-        
-        sliderInput(
-          inputId = ns("threads"),
-          label = "Determine number of cores",
-          min = 0,
-          max = max_cores,
-          value = 0,
-          step = 1
         ),
         
         selectInput(
@@ -46,6 +38,15 @@ mod_deplyCirculaR_ui <- function(id){
           inputId = ns("circ_qc"),
           label = "Calculate quality parametrics",
           value = TRUE
+        ),
+        
+        sliderInput(
+          inputId = ns("threads"),
+          label = "Determine number of cores",
+          min = 0,
+          max = max_cores,
+          value = 0,
+          step = 1
         ),
         
         actionButton(
@@ -127,114 +128,126 @@ mod_deplyCirculaR_server <- function(input, output, session, r){
         
         incProgress(
           amount = 0.15, session = session, 
-          message = "Getting EnsDb object for annotation"
-        )
-        ah_title <- paste(
-          "Ensembl", extractEnsemblReleaseNumerics(r$rel), "EnsDb for", names(r$org)
-        )
-
-        ahdb <- AnnotationHub::subset(r$ah, title == ah_title)
-        if (length(ahdb) != 1)
-          stop("Something went wrong, select or create a new reference gnome!")
-        
-        ahdb <- ahdb[[names(ahdb)]]
-        
-        incProgress(
-          amount = 0.15, session = session,
-          message = "Generating database of known splice junctions. This can take some time!"
+          message = "Checking for exising datasets"
         )
         
-        known_junctions <- circulaR::constructSJDB(
-          annotationDB = ahdb, force = input$sjdb_overwrite
-        )
-        
-        chrom <- seqlevels(ahdb)
-        if (input$chr_standard)
-          chrom <- standardChromosomes(ahdb)
-        
-        incProgress(
-          amount = 0.15, session = session,
-          message = "Importing backsplice junction reads"
-        )
-        
-        object <- circulaR::circExperiment(
-          path = r$exp_dir,
-          name = input$exp_name
-        )
-        
-        if (input$paired & is.null(input$direction)) {
-          updateSelectInput(session = session, inputId = "Direction", selected = FALSE)
+        load_results <- file.path(r$cache_dir, "Saves", paste.(input$exp_name, "RData"))
+        if (file.exists(load_results)) {
+          object <-  readRDS(load_results)
         } else {
-          r$direction <- as.logical(input$direction)  ## Input is not logical
-        }
         
-        object <- circulaR::locateSamples(
-          object = object, organism = r$org, gb = r$build,
-          firstread.firststrand = r$direction, paired.end = input$paired
-        )
-        
-        object <- circulaR::readBSJdata(
-          object = object,
-          chromosomes = chrom,
-          maxGenomicDist = input$max_genom_dist,
-          onlySpanning = FALSE,
-          removeBadPairs = FALSE,
-          cores = input$threads
-        )
-        
-        object <- circulaR::readLSJdata(
-          object = object,
-          chromosomes = chrom,
-          cores = input$threads
-        )
-        
-        incProgress(
-          amount = 0.15, session = session,
-          message = "Comparing backsplice junction to known splice sites"
-        )
-        
-        object <- circulaR::compareToKnownJunctions(
-          object = object, known.junctions = known_junctions,
-          cores = input$threads
-        )
-        
-        incProgress(
-          amount = 0.15, session = session,
-          message = "calculating overall backsplice junction statistics"
-        )
-        
-        object <- circulaR::summarizeBSJreads(
-          object = object, cores = input$threads, applyFilter = TRUE
-        )
-        
-        incProgress(
-          amount = 0.15, session = session,
-          message = "Updating filters"
-        )
-        
-        if (input$rm_bad_pairs) {
-          PEok_filter <- lapply(circulaR::bsj.reads(object), function(sample) {
-            dplyr::pull(sample, PEok)
-          })
-          
-          object <- circulaR::addFilter(
-            object = object, filter = PEok_filter, mode = "strict"
+          incProgress(
+            amount = 0.15, session = session, 
+            message = "Getting EnsDb object for annotation"
           )
-        }
-        
-        if (input$span_only) {
-          span_filt <- lapply(circulaR::bsj.reads(object), function(sample) {
-            types <- dplyr::pull(sample, X7)
+          ah_title <- paste(
+            "Ensembl", extractEnsemblReleaseNumerics(r$rel), "EnsDb for", names(r$org)
+          )
+  
+          ahdb <- AnnotationHub::subset(r$ah, title == ah_title)
+          if (length(ahdb) != 1)
+            stop("Something went wrong, select or create a new reference gnome!")
+          
+          ahdb <- ahdb[[names(ahdb)]]
+          
+          incProgress(
+            amount = 0.15, session = session,
+            message = "Generating database of known splice junctions. This can take some time!"
+          )
+          
+          known_junctions <- circulaR::constructSJDB(
+            annotationDB = ahdb, force = input$sjdb_overwrite
+          )
+          
+          chrom <- seqlevels(ahdb)
+          if (input$chr_standard)
+            chrom <- standardChromosomes(ahdb)
+          
+          incProgress(
+            amount = 0.15, session = session,
+            message = "Importing backsplice junction reads"
+          )
+          
+          object <- circulaR::circExperiment(
+            path = r$exp_dir,
+            name = input$exp_name
+          )
+          
+          if (input$paired & is.null(input$direction)) {
+            updateSelectInput(session = session, inputId = "Direction", selected = FALSE)
+          } else {
+            r$direction <- as.logical(input$direction)  ## Input is not logical
+          }
+          
+          object <- circulaR::locateSamples(
+            object = object, organism = r$org, gb = r$build,
+            firstread.firststrand = r$direction, paired.end = input$paired
+          )
+          
+          object <- circulaR::readBSJdata(
+            object = object,
+            chromosomes = chrom,
+            maxGenomicDist = input$max_genom_dist,
+            onlySpanning = FALSE,
+            removeBadPairs = FALSE,
+            cores = input$threads
+          )
+          
+          object <- circulaR::readLSJdata(
+            object = object,
+            chromosomes = chrom,
+            cores = input$threads
+          )
+          
+          incProgress(
+            amount = 0.15, session = session,
+            message = "Comparing backsplice junction to known splice sites"
+          )
+          
+          object <- circulaR::compareToKnownJunctions(
+            object = object, known.junctions = known_junctions,
+            cores = input$threads
+          )
+          
+          incProgress(
+            amount = 0.15, session = session,
+            message = "calculating overall backsplice junction statistics"
+          )
+          
+          object <- circulaR::summarizeBSJreads(
+            object = object, cores = input$threads, applyFilter = TRUE
+          )
+          
+          incProgress(
+            amount = 0.15, session = session,
+            message = "Updating filters"
+          )
+          
+          if (input$rm_bad_pairs) {
+            PEok_filter <- lapply(circulaR::bsj.reads(object), function(sample) {
+              dplyr::pull(sample, PEok)
+            })
             
-            types > -1
-          })
+            object <- circulaR::addFilter(
+              object = object, filter = PEok_filter, mode = "strict"
+            )
+          }
           
-          object <- circulaR::addFilter(
-            object = object, filter = span_filt, mode = "strict"
-          )
+          if (input$span_only) {
+            span_filt <- lapply(circulaR::bsj.reads(object), function(sample) {
+              types <- dplyr::pull(sample, X7)
+              
+              types > -1
+            })
+            
+            object <- circulaR::addFilter(
+              object = object, filter = span_filt, mode = "strict"
+            )
+          }
+          saveRDS(object = object, file  = load_results)
         }
-        # saveRDS(object = object, file  = paste0("~/Projects/Conceptual/EncircleR/cache/Experiment/Saves/", input$exp_name, ".RData"))
         
+        r$exp_name <- input$exp_name
         r$object <- object
       })
     
