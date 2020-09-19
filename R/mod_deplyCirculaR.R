@@ -96,6 +96,47 @@ mod_deplyCirculaR_ui <- function(id){
           value = TRUE
         )
       )
+    ),
+    div(
+      id = ns("filter"),
+      
+      shinydashboard::box(
+        title = "Filtration",
+        
+        sliderInput(
+          inputId = ns("min_samples"), 
+          label = "Minimum sample abbundance", 
+          value = 1,
+          min = 1,
+          max = 1
+        ),
+        
+        sliderInput(
+          inputId = ns("min_count"),
+          label = "Minimum count value",
+          value = 1,
+          min = 1,
+          max = 1
+        ),
+        
+        actionButton(
+          inputId = ns("filter_reads"),
+          label = "Filter reads",
+          icon = icon("funnel")
+        ),
+        
+        checkboxInput(
+          inputId = ns("filter_cleanup"),
+          label = "Remove backsplice reads that fails filtration criteria",
+          value = TRUE
+        ),
+        
+        helpText("Chose this option to clean up RAM and object size"),
+        
+        actionButton(
+          inputId = ns("save"), label = "Save object", icon = icon("save")
+        )
+      )
     )
   )
 }
@@ -121,6 +162,32 @@ mod_deplyCirculaR_server <- function(input, output, session, r){
       shinyjs::showElement(id = "circular")
   })
   
+  hide(id = "filter")
+  observeEvent(eventExpr = r$filt_ready, handlerExpr = {
+    hide(id = "filter")
+    if (r$filt_ready){
+      nsamples <- samples(r$object) %>% length
+      
+      updateSliderInput(
+        session = session,
+        inputId = "min_samples",
+        max = nsamples
+      )
+      
+      meancount <- bsj.reads(object) %>% lapply(nrow) %>% unlist %>% mean
+      ncount <- 0.01 * meancount %>% round
+      
+      updateSliderInput(
+        session = session,
+        inputId = "min_count",
+        max = ncount
+      )
+      
+      show(id = "filter")
+    }
+      
+  })
+  
   observeEvent(eventExpr = input$circular, handlerExpr = {
     withProgress(
       value = 0, session = session, message = "Initiating circRNA analysis",
@@ -133,9 +200,9 @@ mod_deplyCirculaR_server <- function(input, output, session, r){
           message = "Checking for exising datasets"
         )
         
-        load_results <- file.path(r$cache_dir, "Saves", paste.(input$exp_name, "RData"))
-        if (file.exists(load_results)) {
-          object <-  readRDS(load_results)
+        r$exp_file <- file.path(r$cache_dir, "Saves", paste.(input$exp_name, "RData"))
+        if (file.exists(r$exp_file)) {
+          object <-  readRDS(r$exp_file)
         } else {
         
           incProgress(
@@ -249,7 +316,6 @@ mod_deplyCirculaR_server <- function(input, output, session, r){
               object = object, filter = span_filt, mode = "strict"
             )
           }
-          saveRDS(object = object, file  = load_results)
         }
         
         r$exp_name <- input$exp_name
@@ -257,7 +323,43 @@ mod_deplyCirculaR_server <- function(input, output, session, r){
       })
     
   })
- 
+  
+  observeEvent(eventExpr = input$filter_reads, handlerExpr = {
+    
+    # Generate filter that ensures BSJ are covered with in 1 or more samples with more than one read
+    low_abbund_tab <- bsj.reads(object, returnAs = "table") %>%
+      dplyr::filter(include.read) %>%
+      group_by(bsID) %>%
+      summarise(n.samples = length(unique(sample.id)), totalCount = n()) %>%
+      dplyr::filter(n.samples >= input$min_sample & totalCount >= input$min_count) %>%
+      .$bsID
+    
+    # Convert filter to list of lists
+    low_abbund_filt <- bsj.reads(r$object) %>%
+      lapply(function(x)x$bsID %in% low_abbund_tab)
+    
+    r$object <- circulaR::addFilter(r$object, low_abbund_filt, mode = "strict")
+    
+    # Convert filter to list of lists
+    count_filt <- bsj.reads(object) %>%
+      lapply(function(x)x$bsID %in% count_filt_tab)
+    
+    r$object <- circulaR::addFilter(
+      object = r$object, filter = count_filt, mode = "strict"
+    )
+    
+    if (input$filter_cleanup) {
+      bsj.reads(r$object) <- lapply(bsj.reads(r$object), function(smpl) {
+        dplyr::filter(smpl, include.read)
+      })
+      
+      r$object <- summarizeBSJreads(r$object)
+    }
+  })
+
+  observeEvent(eventExpr = input$save, handlerExpr = {
+    saveRDS(object = r$object, file  = r$exp_file)
+  })
 }
     
 ## To be copied in the UI
