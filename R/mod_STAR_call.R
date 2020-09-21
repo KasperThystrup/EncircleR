@@ -36,7 +36,7 @@ mod_STAR_call_ui <- function(id){
         label = "Determine number of cores",
         min = 0,
         max = max_cores,
-        value = 0,
+        value = 4,
         step = 1
       ),
 

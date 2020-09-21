@@ -10,16 +10,19 @@
 mod_mappingPlots_ui <- function(id){
   ns <- NS(id)
   tagList(
-    shinydashboard::box(
-      title = "Mapping statistics",
-      plotOutput(outputId = ns("alignPercent")),
-      "The linear mapping statistics of each sample shown in percentages",
-      
-      plotOutput(ns("SJvsLibSize")),
-      "Splice junctions compared to Total Library size, the dashed line denotes the linear ratio, calculated with a linar model"
-    ),
-    
-    
+    div(
+      id = "mapping",
+      shinydashboard::box(
+        title = "Mapping statistics",
+        plotOutput(outputId = ns("alignPercent")),
+        "The linear mapping statistics of each sample shown in percentages",
+        
+        plotOutput(ns("SJvsLibSize")),
+        "Splice junctions compared to Total Library size, the dashed line denotes the linear ratio, calculated with a linar model",
+        
+        plotOutput(ns("readStats"))
+      )
+    )
   )
 }
     
@@ -33,9 +36,11 @@ mod_mappingPlots_server <- function(input, output, session, r){
     
     if (r$circ_ready) {
       output$alignPercent <- renderPlot(plotAlignmentPecentages(r$object))
-      
       browser()
+      
       output$SJvsLibSize <- renderPlot(plotSpliceLibSize(r$object))
+      
+      output$readStats <- renderPlot(plotReadStats(r$object))
     }
   })
 }

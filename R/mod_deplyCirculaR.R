@@ -45,7 +45,7 @@ mod_deplyCirculaR_ui <- function(id){
           label = "Determine number of cores",
           min = 0,
           max = max_cores,
-          value = 0,
+          value = 4,
           step = 1
         ),
         
@@ -186,20 +186,19 @@ mod_deplyCirculaR_server <- function(input, output, session, r){
             firstread.firststrand = r$direction, paired.end = input$paired
           )
           
-          browser()
           object <- circulaR::readBSJdata(
             object = object,
             chromosomes = chrom,
             maxGenomicDist = input$max_genom_dist,
             onlySpanning = FALSE,
             removeBadPairs = FALSE,
-            cores = input$threads
+            cores = 1  ## Reading Backsplice data with multicores sometimes leads to an error
           )
           
           object <- circulaR::readLSJdata(
             object = object,
             chromosomes = chrom,
-            cores = input$threads
+            cores = 1  ## Disabled since readBSJdata with multicore sometimes fails
           )
           
           incProgress(
@@ -250,10 +249,12 @@ mod_deplyCirculaR_server <- function(input, output, session, r){
             )
           }
           saveRDS(object = object, file  = load_results)
+          
         }
         
         r$exp_name <- input$exp_name
         r$object <- object
+        r$circ_ready = TRUE # Should be filt_ready??
       })
     
   })

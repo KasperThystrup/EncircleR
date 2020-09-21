@@ -64,4 +64,39 @@ plotSpliceLibSize <- function(object) {
 }
 
 
+chimericReadStats <- function(object) {
+  smpls <- circulaR::samples(object)
+  
+  readStats <- lapply(X = seq_along(smpls), FUN = function(i) {
+    smpl <- smpls[[i]]
+    
+    stats_raw <- dplyr::summarise(
+      circulaR::bsj.reads(smpl),
+      sample = circulaR::sample.id(smpl),
+      encompassing = sum(X7 == "-1"),
+      spanning = sum(X7 != "-1"),
+      bad_pairs = sum(!PEok),
+      good_pairs = sum(PEok)
+    )
+    
+    tidyr::pivot_longer(
+      data = stats_raw, cols = -sample, names_to = "stat", values_to = "count"
+    )
+  }) %>%
+    do.call(what = rbind)
+  
+  return(readStats)
+}
+
+
+plotReadStats <- function(object) {
+  readStats <- chimericReadStats(object)
+  
+  ggplot(data = readStats, mapping = aes(x = stat, y = count)) +
+    geom_boxplot(outlier.shape = NA) +
+    geom_jitter(height = 0, width = 0.05) +
+    scale_y_log10(label = scales::number) +
+    my_theme
+}
+
 
