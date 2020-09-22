@@ -73,10 +73,10 @@ chimericReadStats <- function(object) {
     stats_raw <- dplyr::summarise(
       circulaR::bsj.reads(smpl),
       sample = circulaR::sample.id(smpl),
-      encompassing = sum(X7 == "-1"),
-      spanning = sum(X7 != "-1"),
-      bad_pairs = sum(!PEok),
-      good_pairs = sum(PEok)
+      Encompassing = sum(X7 == "-1"),
+      `Read spanning` = sum(X7 != "-1"),
+      `Bad read pairs` = sum(!PEok),
+      `Good read pairs` = sum(PEok)
     )
     
     tidyr::pivot_longer(

@@ -111,6 +111,9 @@ mod_selectReferences_server <- function(input, output, session, r){
           msgs$status <- "Genome index not found, please select `New Reference Genome`."
 
           if (dir.exists(r$star_dir)) {
+            
+            
+            
             incProgress(
               amount = 0.25, session = session, 
               message = "Reference files found, loading AnnotationHub."
