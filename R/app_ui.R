@@ -93,12 +93,21 @@ app_ui <- function(request) {
           
           tabItem(
             tabName = "circ",
-            mod_deplyCirculaR_ui("deplyCirculaR_ui_1")
+            column(
+              width = 6,
+              mod_deplyCirculaR_ui("deplyCirculaR_ui_1")
+            ),
+            
+            column(
+              width = 6,
+              mod_applyFilters_ui("applyFilters_ui_1")
+            )
           ),
           
           tabItem(
             tabName = "results",
-            mod_mappingPlots_ui("mappingPlots_ui_1")
+            
+              mod_mappingPlots_ui("mappingPlots_ui_1")
           )
         )
       ),
