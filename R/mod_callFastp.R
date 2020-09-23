@@ -18,7 +18,7 @@ mod_callFastp_ui <- function(id){
         inputId = ns("fastp"),
         label = "Please enter the system command or path to program",
         placeholder = "Please enter system command or full path to fastp binary file",
-        value = "/home/kathka/miniconda3/bin/fastp"
+        value = fastp_default
       ),
 
       sliderInput(
