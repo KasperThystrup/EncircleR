@@ -13,63 +13,64 @@ mod_applyFilters_ui <- function(id){
     div(
       id = ns("filter"),
       
-      shinydashboard::box(
-        title = "Filtration",
-        
-        sliderInput(
-          inputId = ns("min_samples"), 
-          label = "Minimum sample abbundance", 
-          value = 2,
-          min = 1,
-          max = 1,
-          step = 1
-        ),
-        
-        sliderInput(
-          inputId = ns("min_count"),
-          label = "Minimum count value",
-          value = 2,
-          min = 0,
-          max = 20,
-          step = 1
-        ),
-        
-        checkboxInput(
-          inputId = ns("span_only"),
-          label = "Only include Backsplice junction Spanning reads (enable this to exclude backsplice spanning reads)",
-          value = TRUE
-        ),
-        
-        checkboxInput(
-          inputId = ns("rm_bad_pairs"),
-          label = "Remove bad read mate pairs",
-          value = TRUE
-        ),
-        
-        
+      sliderInput(
+        inputId = ns("min_samples"), 
+        label = "Minimum sample abbundance", 
+        value = 2,
+        min = 1,
+        max = 1,
+        step = 1
+      ),
+      
+      sliderInput(
+        inputId = ns("min_count"),
+        label = "Minimum count value",
+        value = 2,
+        min = 0,
+        max = 20,
+        step = 1
+      ),
+      
+      checkboxInput(
+        inputId = ns("span_only"),
+        label = "Only include Backsplice junction Spanning reads (enable this to exclude backsplice spanning reads)",
+        value = TRUE
+      ),
+      
+      checkboxInput(
+        inputId = ns("rm_bad_pairs"),
+        label = "Remove bad read mate pairs",
+        value = TRUE
+      ),
+      
+      checkboxInput(
+        inputId = ns("junctionoverlap"),
+        label = "Only keep backsplice reads, which perfectly overlaps with known junction sites",
+        value = TRUE
+      ),
+      
+      actionButton(
+        inputId = ns("filter_reads"),
+        label = "Filter reads",
+        icon = icon("funnel")
+      ),
+      
+      helpText("Chose this option to clean up RAM and object size"),
+      
+      verbatimTextOutput(outputId = ns("circs")),
+      
+      column(
+        width = 6, 
         actionButton(
-          inputId = ns("filter_reads"),
-          label = "Filter reads",
-          icon = icon("funnel")
-        ),
-        
-        helpText("Chose this option to clean up RAM and object size"),
-        
-        verbatimTextOutput(outputId = ns("circs")),
-        
-        column(
-          width = 6, 
-          actionButton(
-            inputId = ns("reset"), label = "Reset filter", icon = icon("undo")
-          )
-        ),
-        
-        column(
-          width = 6,
-          actionButton(
-            inputId = ns("save"), label = "Save object", icon = icon("save")
-            )
+          inputId = ns("reset"), label = "Reset filter", icon = icon("undo")
         )
+      ),
+      
+      column(
+        width = 6,
+        actionButton(
+          inputId = ns("save"), label = "Save object", icon = icon("save")
+          )
       )
     )
   )
@@ -108,6 +109,8 @@ mod_applyFilters_server <- function(input, output, session, r){
   observeEvent(eventExpr = input$filter_reads, handlerExpr = {
     withProgress(value = 0, message = "Identifying filtration criteria", expr = {
       
+      r$circ_ready <- FALSE
+      
       incProgress(
         amount = 0.15, session = session,
         message = "Updating filters"
@@ -136,7 +139,39 @@ mod_applyFilters_server <- function(input, output, session, r){
         )
       }
       
-      r$circ_ready <- FALSE
+      if (input$junctionoverlap) {
+        incProgress(amount = 0.15, message = "Filtering by perfect donor and acceptor overlap")
+        bsID_summarized <- bsj.reads(r$object, returnAs = "table") %>%
+          dplyr::filter(include.read) %>%
+          group_by(bsID) %>%
+          summarize(
+            donorPerfect = ifelse(
+              donor.closest.type == "donor" & shiftDonorToNearestJ == 0,
+              TRUE, FALSE
+            ),
+            acceptorPerfect = ifelse(
+              acceptor.closest.type == "acceptor" & shiftAcceptorToNearestJ == 0,
+              TRUE, FALSE
+            ),
+            
+            perfectOverlap = donorPerfect & acceptorPerfect
+            
+          )
+        
+        bsID_passed <- dplyr::filter(
+          bsID_summarized,
+          perfectOverlap
+        ) %>%
+          dplyr::pull(bsID)
+        
+        
+        bsID_included <- bsj.reads(r$object) %>%
+          lapply(function(x)x$bsID %in% bsID_passed)
+        
+        r$object <- circulaR::addFilter(r$object, bsID_included, mode = "strict")
+        
+      }
+      
       
       # Generate filter that ensures BSJ are covered with in 1 or more samples with more than one read
       bsID_summarized <- bsj.reads(r$object, returnAs = "table") %>%
@@ -147,7 +182,6 @@ mod_applyFilters_server <- function(input, output, session, r){
           totalCount = n()
         )
       
-      # if (input$independent) {
       
       incProgress(amount = 0.5, session = session, message = "Identifying passed backsplice reads")
       
@@ -169,16 +203,16 @@ mod_applyFilters_server <- function(input, output, session, r){
       r$object <- summarizeBSJreads(r$object)
       
       output$circs <- renderText({
-        paste("Unique backsplice reads which passed filtration:", length(bsID_passed))
+        paste("Unique detected backsplice junctions which passed filtration:", length(bsID_passed))
       })
     
-      r$circ_ready <- TRUE
     })
     
-    
+    r$circ_ready <- TRUE
   })
   
   observeEvent(eventExpr = input$save, handlerExpr = {
+    withProgress(value = 0.25, message = "Saving object")
     saveRDS(object = r$object, file  = r$exp_file)
   })
 }

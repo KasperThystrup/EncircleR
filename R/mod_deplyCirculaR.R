@@ -49,6 +49,12 @@ mod_deplyCirculaR_ui <- function(id){
           step = 1
         ),
         
+        checkboxInput(
+          inputId = ns("overwrite"),
+          label = "Overwrite previous circRNA object",
+          value = FALSE
+        ),
+        
         actionButton(
           inputId = ns("circular"),
           label = "Perform circRNA analysis",
@@ -122,7 +128,7 @@ mod_deplyCirculaR_server <- function(input, output, session, r){
         )
         
         r$exp_file <- file.path(r$cache_dir, "Saves", paste.(input$exp_name, "RData"))
-        if (file.exists(r$exp_file)) {
+        if (file.exists(r$exp_file) & !input$overwrite) {
           object <-  readRDS(r$exp_file)
         } else {
         

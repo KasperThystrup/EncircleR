@@ -32,7 +32,7 @@ mod_mappingPlots_ui <- function(id){
 mod_mappingPlots_server <- function(input, output, session, r){
   ns <- session$ns
   
-  observeEvent(eventExpr = r$r$circ_ready, handlerExpr = {
+  observeEvent(eventExpr = r$circ_ready, handlerExpr = {
     
     if (r$circ_ready) {
       output$alignPercent <- renderPlot(plotAlignmentPecentages(r$object))
