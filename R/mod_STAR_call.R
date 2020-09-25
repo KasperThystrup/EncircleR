@@ -82,8 +82,9 @@ mod_STAR_call_server <- function(input, output, session, r){
     sample <- dplyr::pull(r$meta, Sample) %>%
       unique
     
-    r$star_ready <- FALSE
-    if (input$star_overwrite | any(!dir.exists(file.path(r$smpl_dir, sample)))) {
+    
+    
+    if (input$star_overwrite | any(!dir.exists(file.path(r$smpl_dir, sample, "STAR")))) {
     # Progress counter
 
     withProgress(value = 0, min = 0, max = length(sample) + 2, message = "Initiating STAR alignment", expr = {
