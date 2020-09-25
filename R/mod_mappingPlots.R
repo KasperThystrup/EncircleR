@@ -32,12 +32,11 @@ mod_mappingPlots_ui <- function(id){
 mod_mappingPlots_server <- function(input, output, session, r){
   ns <- session$ns
   
-  observeEvent(eventExpr = r$filt_ready, handlerExpr = {
+  observeEvent(eventExpr = r$r$circ_ready, handlerExpr = {
     
     if (r$circ_ready) {
       output$alignPercent <- renderPlot(plotAlignmentPecentages(r$object))
-      browser()
-      
+
       output$SJvsLibSize <- renderPlot(plotSpliceLibSize(r$object))
       
       output$readStats <- renderPlot(plotReadStats(r$object))

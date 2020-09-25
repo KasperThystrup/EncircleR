@@ -97,8 +97,7 @@ mod_STAR_call_server <- function(input, output, session, r){
       # incProgress(amount = 1, message = "Attaching Genome into memory")
       # attachSTARGenome(star = input$star, genome_dir = r$star_dir)   ### Not sure how to set up with bam sorting limit
 
-      list.files(r$exp_dir)
-      
+
         lapply(sample, function(smpl){
   
           sample_subset <- subset(r$meta, Sample == smpl)

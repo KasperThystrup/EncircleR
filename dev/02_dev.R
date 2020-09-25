@@ -29,6 +29,7 @@ golem::add_module( name = "callFastp" )
 golem::add_module( name = "STAR_idx" )
 golem::add_module( name = "STAR_call" )
 golem::add_module( name = "deplyCirculaR" )
+golem::add_module( name = "applyFilters" )
 golem::add_module( name = "mappingPlots" )
 
 ## Add helper functions ----

@@ -82,18 +82,6 @@ mod_deplyCirculaR_ui <- function(id){
           label = "Max genomic distance",
           value = 1e5,
           step = 1
-        ),
-        
-        checkboxInput(
-          inputId = ns("span_only"),
-          label = "Only include Backsplice junction Spanning reads (enable this to exclude backsplice spanning reads=",
-          value = TRUE
-        ),
-        
-        checkboxInput(
-          inputId = ns("rm_bad_pairs"),
-          label = "Remove bad read mate pairs",
-          value = TRUE
         )
       )
     )
@@ -133,9 +121,9 @@ mod_deplyCirculaR_server <- function(input, output, session, r){
           message = "Checking for exising datasets"
         )
         
-        load_results <- file.path(r$cache_dir, "Saves", paste.(input$exp_name, "RData"))
-        if (file.exists(load_results)) {
-          object <-  readRDS(load_results)
+        r$exp_file <- file.path(r$cache_dir, "Saves", paste.(input$exp_name, "RData"))
+        if (file.exists(r$exp_file)) {
+          object <-  readRDS(r$exp_file)
         } else {
         
           incProgress(
@@ -211,54 +199,25 @@ mod_deplyCirculaR_server <- function(input, output, session, r){
             cores = input$threads
           )
           
+          
           incProgress(
             amount = 0.15, session = session,
             message = "calculating overall backsplice junction statistics"
           )
           
           object <- circulaR::summarizeBSJreads(
-            object = object, cores = input$threads, applyFilter = TRUE
+            object = object,
+            cores = input$threads,
+            applyFilter = TRUE
           )
-          
-          incProgress(
-            amount = 0.15, session = session,
-            message = "Updating filters"
-          )
-          
-          if (input$rm_bad_pairs) {
-            PEok_filter <- lapply(circulaR::bsj.reads(object), function(sample) {
-              dplyr::pull(sample, PEok)
-            })
-            
-            object <- circulaR::addFilter(
-              object = object, filter = PEok_filter, mode = "strict"
-            )
-          }
-          
-          if (input$span_only) {
-            span_filt <- lapply(circulaR::bsj.reads(object), function(sample) {
-              types <- dplyr::pull(sample, X7)
-              
-              types > -1
-            })
-            
-            r$filt_ready <- TRUE
-            
-            object <- circulaR::addFilter(
-              object = object, filter = span_filt, mode = "strict"
-            )
-          }
-          saveRDS(object = object, file  = load_results)
           
         }
-        
+        r$filt_ready <- TRUE
         r$exp_name <- input$exp_name
         r$object <- object
         r$circ_ready = TRUE # Should be filt_ready??
       })
-    
   })
- 
 }
     
 ## To be copied in the UI
