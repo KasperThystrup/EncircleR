@@ -19,7 +19,7 @@ mod_applyFilters_ui <- function(id){
         sliderInput(
           inputId = ns("min_samples"), 
           label = "Minimum sample abbundance", 
-          value = 1,
+          value = 2,
           min = 1,
           max = 1,
           step = 1
@@ -28,17 +28,24 @@ mod_applyFilters_ui <- function(id){
         sliderInput(
           inputId = ns("min_count"),
           label = "Minimum count value",
-          value = 1,
+          value = 2,
           min = 0,
           max = 20,
           step = 1
         ),
         
-        # checkboxInput(
-        #   inputId = ns("independent"),
-        #   label = "Apply filters independtently so both criteria must be true (Strict filtration)",
-        #   value = FALSE
-        # ),
+        checkboxInput(
+          inputId = ns("span_only"),
+          label = "Only include Backsplice junction Spanning reads (enable this to exclude backsplice spanning reads)",
+          value = TRUE
+        ),
+        
+        checkboxInput(
+          inputId = ns("rm_bad_pairs"),
+          label = "Remove bad read mate pairs",
+          value = TRUE
+        ),
+        
         
         actionButton(
           inputId = ns("filter_reads"),
@@ -46,16 +53,22 @@ mod_applyFilters_ui <- function(id){
           icon = icon("funnel")
         ),
         
-        # checkboxInput(
-        #   inputId = ns("filter_cleanup"),
-        #   label = "Remove backsplice reads that fails filtration criteria",
-        #   value = TRUE
-        # ),
-        
         helpText("Chose this option to clean up RAM and object size"),
         
-        actionButton(
-          inputId = ns("save"), label = "Save object", icon = icon("save")
+        verbatimTextOutput(outputId = ns("circs")),
+        
+        column(
+          width = 6, 
+          actionButton(
+            inputId = ns("reset"), label = "Reset filter", icon = icon("undo")
+          )
+        ),
+        
+        column(
+          width = 6,
+          actionButton(
+            inputId = ns("save"), label = "Save object", icon = icon("save")
+            )
         )
       )
     )
@@ -83,63 +96,86 @@ mod_applyFilters_server <- function(input, output, session, r){
     }
   })
   
+  observeEvent(eventExpr = input$reset, handlerExpr = {
+    bsj.reads(r$object) <- lapply(bsj.reads(r$object), function(x) {
+      x$include.read <- TRUE
+      return(x)
+    })
+    
+    output$circs <- renderText("Filters reset")
+  })
+  
   observeEvent(eventExpr = input$filter_reads, handlerExpr = {
-    r$circ_ready <- FALSE
-    browser()
-    
-    # Generate filter that ensures BSJ are covered with in 1 or more samples with more than one read
-    bsID_summarized <- bsj.reads(r$object, returnAs = "table") %>%
-      dplyr::filter(include.read) %>%
-      group_by(bsID) %>%
-      summarise(
-        bsID_grouped,
-        n.samples = length(unique(sample.id)),
-        totalCount = n()
+    withProgress(value = 0, message = "Identifying filtration criteria", expr = {
+      
+      incProgress(
+        amount = 0.15, session = session,
+        message = "Updating filters"
       )
+      
+      if (input$rm_bad_pairs) {
+        PEok_filter <- lapply(circulaR::bsj.reads(r$object), function(sample) {
+          dplyr::pull(sample, PEok)
+        })
+        
+        r$object <- circulaR::addFilter(
+          object = r$object, filter = PEok_filter, mode = "strict"
+        )
+      }
+      
+      if (input$span_only) {
+        span_filt <- lapply(circulaR::bsj.reads(r$object), function(sample) {
+          types <- dplyr::pull(sample, X7)
+          
+          types > -1
+        })
+        
+        
+        r$object <- circulaR::addFilter(
+          object = r$object, filter = span_filt, mode = "strict"
+        )
+      }
+      
+      r$circ_ready <- FALSE
+      
+      # Generate filter that ensures BSJ are covered with in 1 or more samples with more than one read
+      bsID_summarized <- bsj.reads(r$object, returnAs = "table") %>%
+        dplyr::filter(include.read) %>%
+        group_by(bsID) %>%
+        summarise(
+          n.samples = length(unique(sample.id)),
+          totalCount = n()
+        )
+      
+      # if (input$independent) {
+      
+      incProgress(amount = 0.5, session = session, message = "Identifying passed backsplice reads")
+      
+      # Filter by minimal sample abbundance and count.
+      bsID_passed <- dplyr::filter(
+        bsID_summarized,
+        n.samples >= input$min_samples & totalCount >= input$min_count
+      ) %>%
+        dplyr::pull(bsID)
+      
+      # Convert filter to list of lists
+      bsID_included <- bsj.reads(r$object) %>%
+        lapply(function(x)x$bsID %in% bsID_passed)
+      
+      
+      incProgress(amount = 0.25, session = session, message = "Updating filters and summarizing backsplice statistics")
+      r$object <- circulaR::addFilter(r$object, bsID_included, mode = "strict")
+      
+      r$object <- summarizeBSJreads(r$object)
+      
+      output$circs <- renderText({
+        paste("Unique backsplice reads which passed filtration:", length(bsID_passed))
+      })
     
-    # if (input$independent) {
+      r$circ_ready <- TRUE
+    })
     
-    # Filter by minimal sample abbundance and count.
-    bsID_passed <- dplyr::filter(
-      bsID_summarized,
-      n.samples >= input$min_samples & totalCount >= input$min_count
-    ) %>%
-      dplyr::pull(bsID)
     
-    # Convert filter to list of lists
-    bsID_included <- bsj.reads(r$object) %>%
-      lapply(function(x)x$bsID %in% bsID_passed)
-    
-    r$object <- circulaR::addFilter(r$object, bsID_included, mode = "strict")
-    # } else {  ### Are there any difference in doing filter A first, then B? Contra A & B simultanously??
-    #   
-    #   # First filter by minimal sample abbundance
-    #   bsID_passed <- dplyr::filter(
-    #     bsID_summarized,
-    #     n.samples >= input$min_samples
-    #   )
-    #   
-    #   # Convert filter to list of lists
-    #   bsID_included <- bsj.reads(r$object) %>%
-    #     lapply(function(x)x$bsID %in% bsID_passed)
-    #   
-    #   r$object <- circulaR::addFilter(r$object, bsID_included, mode = "strict")
-    #   
-    #   # Next filter by minimal sample abbundance
-    #   bsID_passed <- dplyr::filter(
-    #     bsID_summarized,
-    #     n.samples >= input$min_count
-    #   )
-    #   
-    #   # Convert filter to list of lists
-    #   bsID_included <- bsj.reads(r$object) %>%
-    #     lapply(function(x)x$bsID %in% bsID_passed)
-    #   
-    #   r$object <- circulaR::addFilter(r$object, bsID_included, mode = "strict")
-    # }
-    
-    r$object <- summarizeBSJreads(r$object)
-    r$circ_ready <- TRUE
   })
   
   observeEvent(eventExpr = input$save, handlerExpr = {

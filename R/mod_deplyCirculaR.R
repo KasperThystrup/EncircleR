@@ -82,18 +82,6 @@ mod_deplyCirculaR_ui <- function(id){
           label = "Max genomic distance",
           value = 1e5,
           step = 1
-        ),
-        
-        checkboxInput(
-          inputId = ns("span_only"),
-          label = "Only include Backsplice junction Spanning reads (enable this to exclude backsplice spanning reads=",
-          value = TRUE
-        ),
-        
-        checkboxInput(
-          inputId = ns("rm_bad_pairs"),
-          label = "Remove bad read mate pairs",
-          value = TRUE
         )
       )
     )
@@ -210,34 +198,6 @@ mod_deplyCirculaR_server <- function(input, output, session, r){
             object = object, known.junctions = known_junctions,
             cores = input$threads
           )
-          
-          incProgress(
-            amount = 0.15, session = session,
-            message = "Updating filters"
-          )
-          
-          if (input$rm_bad_pairs) {
-            PEok_filter <- lapply(circulaR::bsj.reads(object), function(sample) {
-              dplyr::pull(sample, PEok)
-            })
-            
-            object <- circulaR::addFilter(
-              object = object, filter = PEok_filter, mode = "strict"
-            )
-          }
-          
-          if (input$span_only) {
-            span_filt <- lapply(circulaR::bsj.reads(object), function(sample) {
-              types <- dplyr::pull(sample, X7)
-              
-              types > -1
-            })
-            
-            
-            object <- circulaR::addFilter(
-              object = object, filter = span_filt, mode = "strict"
-            )
-          }
           
           
           incProgress(
