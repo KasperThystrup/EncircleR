@@ -36,7 +36,6 @@ mod_mappingPlots_server <- function(input, output, session, r){
     
     if (r$circ_ready) {
       output$alignPercent <- renderPlot(plotAlignmentPecentages(r$object))
-      browser()
       
       output$SJvsLibSize <- renderPlot(plotSpliceLibSize(r$object))
       

@@ -63,6 +63,7 @@ mod_setupExperiment_server <- function(input, output, session, r){
       r$exp_ready <- FALSE
 
       incProgress(amount = 0.25, message = "Preparing experimental directory")
+      
       # Check on experimental directory
       r$exp_dir <- input$exp_dir
       r$smpl_dir <- file.path(input$exp_dir, "Samples")

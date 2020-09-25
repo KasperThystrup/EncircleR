@@ -147,6 +147,7 @@ mod_callFastp_server <- function(input, output, session, r){
             overwrite = input$overwrite, threads = input$threads
           )
         }
+        incProgress(amount = 1, message = "Finished read trimmming and QC.")
         r$fastp_ready <- TRUE
       }
     )
