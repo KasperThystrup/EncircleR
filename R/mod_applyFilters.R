@@ -202,18 +202,33 @@ mod_applyFilters_server <- function(input, output, session, r){
       
       r$object <- summarizeBSJreads(r$object)
       
-      output$circs <- renderText({
-        paste("Unique detected backsplice junctions which passed filtration:", length(bsID_passed))
-      })
-    
     })
+    
+    output$circs <- renderText({
+      bsids <- bsj.reads(r$object, returnAs = "table") %>%
+        dplyr::filter(include.read) %>%
+        dplyr::pull(bsID)
+      
+      bsj_pool <- unique(bsids) %>%
+        length
+      
+      paste("Unique detected backsplice junctions in the whole dataset, which passed filtration:", bsj_pool)
+    })
+    
+    object_filtered <- r$object
+    bsj.reads(object_filtered) <- lapply(
+      bsj.reads(r$object), function(x) dplyr::filter(x, include.read) %>% return
+    )
+    
+    r$object_filtered <- circulaR::summarizeBSJreads(object_filtered)
     
     r$circ_ready <- TRUE
   })
   
   observeEvent(eventExpr = input$save, handlerExpr = {
-    withProgress(value = 0.25, message = "Saving object")
-    saveRDS(object = r$object, file  = r$exp_file)
+    withProgress(value = 0.50, message = "Saving file", expr = {
+      saveRDS(object = r$object, file  = r$exp_file)
+    })
   })
 }
 

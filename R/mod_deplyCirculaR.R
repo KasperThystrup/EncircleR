@@ -129,6 +129,7 @@ mod_deplyCirculaR_server <- function(input, output, session, r){
         
         r$exp_file <- file.path(r$cache_dir, "Saves", paste.(input$exp_name, "RData"))
         if (file.exists(r$exp_file) & !input$overwrite) {
+          incProgress(amount = 0.65, session = session, message = "Loading existing dataset")
           object <-  readRDS(r$exp_file)
         } else {
         

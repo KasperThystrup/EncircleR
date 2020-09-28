@@ -3,3 +3,4 @@
 .Rproj.user
 cache*
 R/utils_DEFAULTS.R
+ignore*
