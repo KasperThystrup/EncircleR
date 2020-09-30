@@ -18,7 +18,7 @@ mod_deplyCirculaR_ui <- function(id){
         textInput(
           inputId = ns("exp_name"),
           label = "Name the experiment",
-          value = "Test",
+          value = "HeLa_NoFilt_trimmed",
           placeholder = "Please provide a name for your experiment"
         ),
         

@@ -45,9 +45,9 @@ app_ui <- function(request) {
           ),
           
           menuItem(
-            tabName = "results",
+            tabName = "statistics",
             icon = icon("book"),
-            text = "Results"
+            text = "Statstics"
           )
         )
       ),
@@ -106,7 +106,7 @@ app_ui <- function(request) {
           ),
           
           tabItem(
-            tabName = "results",
+            tabName = "statistics",
             
               mod_mappingPlots_ui("mappingPlots_ui_1")
           )

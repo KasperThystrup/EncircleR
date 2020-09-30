@@ -12,15 +12,25 @@ mod_mappingPlots_ui <- function(id){
   tagList(
     div(
       id = "mapping",
-      shinydashboard::box(
-        title = "Mapping statistics",
+      
+      column(
+        width = 6,
         plotOutput(outputId = ns("alignPercent")),
         "The linear mapping statistics of each sample shown in percentages",
         
         plotOutput(ns("SJvsLibSize")),
         "Splice junctions compared to Total Library size, the dashed line denotes the linear ratio, calculated with a linar model",
         
-        plotOutput(ns("readStats"))
+      ), 
+      
+      column(
+        width = 6,
+        
+        plotOutput(ns("readStats")),
+        "More statistics"#,
+        
+        # plotOutput(outputId = ns("filtration")),
+        # "Statistics on chimeric read filtration"
       )
     )
   )
@@ -40,6 +50,8 @@ mod_mappingPlots_server <- function(input, output, session, r){
       output$SJvsLibSize <- renderPlot(plotSpliceLibSize(r$object))
       
       output$readStats <- renderPlot(plotReadStats(r$object))
+      
+      # output$filtration <- renderPlot(plotFiltrationStats(r$object))
     }
   })
 }
