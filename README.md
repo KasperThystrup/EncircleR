@@ -38,10 +38,12 @@ This is a basic example which shows you how to solve a common problem:
     EncircleR::run_app()
     ## basic example code
 
-How to run
+Trobuleshoot IF package won't run with above code
 ==========
+Instal the golem package
+    install.packages("golem")
 
-Clone the repository and open `EncircleR.Rproj` with Rstudio. First up
+Next, Clone the repository and open `EncircleR.Rproj` with Rstudio. First up
 open `R/utils_DEFUALTS.R` and set the appropriate values
 
 Next: Try to run the entire script in `dev/run_dev.R`, install any
