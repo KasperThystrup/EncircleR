@@ -20,11 +20,11 @@ app_ui <- function(request) {
       
       sidebar = dashboardSidebar(
         sidebarMenu(
-          menuItem(
-            tabName = "home",
-            icon = icon("home"),
-            text = "Home"
-          ),
+          # menuItem(
+          #   tabName = "home",
+          #   icon = icon("home"),
+          #   text = "Home"
+          # ),
           
           menuItem(
             tabName = "setup",
@@ -54,10 +54,10 @@ app_ui <- function(request) {
         
       body = dashboardBody(
         tabItems(
-          tabItem(
-            tabName = "home",
-            tags$h1("Welcome!")
-          ),
+          # tabItem(
+          #   tabName = "home",
+          #   tags$h1("Welcome!")
+          # ),
           
           tabItem(
             tabName = "setup",

@@ -15,26 +15,35 @@ knitr::opts_chunk$set(
 
 # EncircleR
 
-<!-- badges: start -->
-[![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
-<!-- badges: end -->
-
-The goal of EncircleR is to ...
+The goal of EncircleR is to automate and streamline circRNA analysis, by providing a graphical interface for selecting and downloading reference files, Perform read trimming and read mapping, and finally to perform circRNA detection by exploring backsplice junction contents.
 
 ## Installation
 
-You can install the released version of EncircleR from [CRAN](https://CRAN.R-project.org) with:
+First install the circRNA detection algorithm 
+``` r
+devtools::install_github("https://github.com/KasperThystrup/circulaR")
+```
+
+You can then install the latest release of EncircleR from Github with:
 
 ``` r
-install.packages("EncircleR")
+devtools::install_github("https://github.com/KasperThystrup/EncircleR")
 ```
+
+### Dependencies
+
+ * STAR aligner (https://github.com/alexdobin/STAR)
+ * fastp (https://github.com/OpenGene/fastp)
 
 ## Example
 
 This is a basic example which shows you how to solve a common problem:
 
-```{r example}
+```{r example, eval=FALSE}
 library(EncircleR)
+
+# Run
+EncircleR::run_app()
 ## basic example code
 ```
 

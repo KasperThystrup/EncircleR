@@ -4,21 +4,28 @@
 EncircleR
 =========
 
-<!-- badges: start -->
-
-[![Lifecycle:
-experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
-<!-- badges: end -->
-
-The goal of EncircleR is to …
+The goal of EncircleR is to automate and streamline circRNA analysis, by
+providing a graphical interface for selecting and downloading reference
+files, Perform read trimming and read mapping, and finally to perform
+circRNA detection by exploring backsplice junction contents.
 
 Installation
 ------------
 
-You can install the released version of EncircleR from
-[CRAN](https://CRAN.R-project.org) with:
+First install the circRNA detection algorithm
 
-    install.packages("EncircleR")
+    devtools::install_github("https://github.com/KasperThystrup/circulaR")
+
+You can then install the latest release of EncircleR from Github with:
+
+    devtools::install_github("https://github.com/KasperThystrup/EncircleR")
+
+### Dependencies
+
+-   STAR aligner
+    (<a href="https://github.com/alexdobin/STAR" class="uri">https://github.com/alexdobin/STAR</a>)
+-   fastp
+    (<a href="https://github.com/OpenGene/fastp" class="uri">https://github.com/OpenGene/fastp</a>)
 
 Example
 -------
@@ -26,24 +33,9 @@ Example
 This is a basic example which shows you how to solve a common problem:
 
     library(EncircleR)
-    #> Warning: replacing previous import 'IRanges::collapse' by 'dplyr::collapse' when
-    #> loading 'circulaR'
-    #> Warning: replacing previous import 'IRanges::union' by 'dplyr::union' when
-    #> loading 'circulaR'
-    #> Warning: replacing previous import 'IRanges::slice' by 'dplyr::slice' when
-    #> loading 'circulaR'
-    #> Warning: replacing previous import 'IRanges::intersect' by 'dplyr::intersect'
-    #> when loading 'circulaR'
-    #> Warning: replacing previous import 'IRanges::setdiff' by 'dplyr::setdiff' when
-    #> loading 'circulaR'
-    #> Warning: replacing previous import 'IRanges::desc' by 'dplyr::desc' when loading
-    #> 'circulaR'
-    #> Warning: replacing previous import 'BiocGenerics::combine' by 'dplyr::combine'
-    #> when loading 'circulaR'
-    #> Warning: replacing previous import 'dplyr::select' by 'AnnotationDbi::select'
-    #> when loading 'circulaR'
-    #> Warning: replacing previous import 'shiny::runExample' by 'shinyjs::runExample'
-    #> when loading 'EncircleR'
+
+    # Run
+    EncircleR::run_app()
     ## basic example code
 
 How to run
