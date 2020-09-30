@@ -19,4 +19,5 @@ app_server <- function( input, output, session ) {
   callModule(mod_deplyCirculaR_server, "deplyCirculaR_ui_1", r)
   callModule(mod_applyFilters_server, "applyFilters_ui_1", r)
   callModule(mod_mappingPlots_server, "mappingPlots_ui_1", r)
+  callModule(mod_circTable_server, "circTable_ui_1", r)
 }
