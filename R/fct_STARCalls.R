@@ -92,10 +92,10 @@ callSTAR <- function(
     # outSAMtype = "--outSAMtype BAM SortedByCoordinate",
     outSAMtype = "--outSAMtype None",
     outSAMunmapped = "--outSAMunmapped Within KeepPairs",
-    outBAMsortingThreadN = paste("--outBAMsortingThreadN", round(threads/2, digits = 0)),
+    outBAMsortingThreadN = paste("--outBAMsortingThreadN", round(threads/2, digits = 0)), # BAM not used Disable!
     chimSegmentMin = paste("--chimSegmentMin", chim_segMin),
     quantMode = "--quantMode GeneCounts",
-    bamRemoveDuplicatesType = "--bamRemoveDuplicatesType UniqueIdentical",
+    bamRemoveDuplicatesType = "--bamRemoveDuplicatesType UniqueIdentical", # BAM not used Disable!
     readFilesCommand = readFilesCommand
   )
 

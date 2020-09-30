@@ -116,6 +116,7 @@ mod_deplyCirculaR_server <- function(input, output, session, r){
   })
   
   observeEvent(eventExpr = input$circular, handlerExpr = {
+    r$exec <- Sys.time()
     withProgress(
       value = 0, session = session, message = "Initiating circRNA analysis",
       expr = {
@@ -224,6 +225,12 @@ mod_deplyCirculaR_server <- function(input, output, session, r){
         r$object <- object
         r$circ_ready = TRUE # Should be filt_ready??
       })
+    
+    logger::log_info(
+      "CircRNA analysis for all samples: ", 
+      difftime(time1 =  r$exec, time2 = Sys.time(), units = "secs")
+    )
+    
   })
 }
     

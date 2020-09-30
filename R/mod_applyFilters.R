@@ -223,6 +223,10 @@ mod_applyFilters_server <- function(input, output, session, r){
     r$object_filtered <- circulaR::summarizeBSJreads(object_filtered)
     
     r$circ_ready <- TRUE
+    logger::log_info(
+      "CircRNA analysis and filtration finsihed: ",
+      difftime(time1 =  r$exec, time2 = Sys.time(), units = "secs")
+    )
   })
   
   observeEvent(eventExpr = input$save, handlerExpr = {

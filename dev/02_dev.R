@@ -47,6 +47,7 @@ golem::add_fct( "IdxCommands" )
 golem::add_fct( "STARCalls" )
 golem::add_utils( "check_cores" )
 golem::add_fct( "generateAlignmentStats" )
+golem::add_fct( "generateFiltrationStats" )
 
 
 ## External resources
