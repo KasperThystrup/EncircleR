@@ -27,7 +27,7 @@ mod_mappingPlots_ui <- function(id){
         width = 6,
         
         plotOutput(ns("readStats")),
-        "More statistics"#,
+        "Input chimeric read statistics"#,
         
         # plotOutput(outputId = ns("filtration")),
         # "Statistics on chimeric read filtration"

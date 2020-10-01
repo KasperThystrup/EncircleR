@@ -46,8 +46,14 @@ app_ui <- function(request) {
           
           menuItem(
             tabName = "statistics",
-            icon = icon("book"),
+            icon = icon("chart-area"),
             text = "Statstics"
+          ),
+          
+          menuItem(
+            tabName = "circtables",
+            icon = icon("table"),
+            text = "Detected circRNA"
           )
         )
       ),
@@ -107,8 +113,12 @@ app_ui <- function(request) {
           
           tabItem(
             tabName = "statistics",
-            
-              mod_mappingPlots_ui("mappingPlots_ui_1")
+            mod_mappingPlots_ui("mappingPlots_ui_1")
+          ),
+          
+          tabItem(
+            tabName = "circtables",
+            mod_circTable_ui("circTable_ui_1")
           )
         )
       ),

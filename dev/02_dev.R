@@ -31,6 +31,7 @@ golem::add_module( name = "STAR_call" )
 golem::add_module( name = "deplyCirculaR" )
 golem::add_module( name = "applyFilters" )
 golem::add_module( name = "mappingPlots" )
+golem::add_module( name = "circTable" )
 
 ## Add helper functions ----
 ## Creates ftc_* and utils_*
@@ -48,7 +49,7 @@ golem::add_fct( "STARCalls" )
 golem::add_utils( "check_cores" )
 golem::add_fct( "generateAlignmentStats" )
 golem::add_fct( "generateFiltrationStats" )
-
+golem::add_fct( "circTable" )
 
 ## External resources
 ## Creates .js and .css files at inst/app/www
