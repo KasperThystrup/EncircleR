@@ -1,65 +1,39 @@
-library(rtracklayer)
-library(circulaR)
-object <- readRDS("~/.EncircleR/Saves/HeLa_NoFilt_trimmed.RData")
-
-bsids <- c("GRCh38:1:100061950:100049908:+",
-           "GRCh38:1:100102954:100110484:-",
-           "GRCh38:1:100442997:100424221:+")
-
-circbase <- rtracklayer::import.bed(con = "cache/HeLa/circbase/hsa_hg38_circRNA_lifted.bed") %>%
-  keepStandardChromosomes(pruning.mode = "coarse")
-
-map <- mapSeqlevels(seqnames = seqlevels(circbase), style = "NCBI")
-
-circbase <- renameSeqlevels(x = circbase, value = map)
-
-unique(circbase)
-
-overlaps <- findOverlaps(query = bsj.counts(object, returnAs = "gr"), subject = circbase)
-
-baseIDs <- circbase[subjectHits(overlaps)]$name
-
-links <- paste0("http://circbase.org/cgi-bin/singlerecord.cgi?id=", baseIDs)
-
-circLinks <- rep(NA, queryLength(overlaps))
-circLinks[queryHits(overlaps)] <-
-
-circbase <- readr::read_tsv(file = "cache/HeLa/circbase/hsa_hg19_CircBase.txt")
-
-ah <- AnnotationHub::AnnotationHub()[["AH79689"]]
-parent_genes <- circulaR::annotateByOverlap(bsids = bsids, db = ah) %>%
-  dplyr::group_by(bsID) %>%
-  summarize(`Parent gene` = paste(GENENAME, collapse = ", "))
-
-
-
-
-function(object, ah) {
-  smpls <- circulaR::samples(object)
-  circs <- circulaR::bsj.counts(object, returnAs = "list") %>%
-    lapply(function(x) dplyr::mutate(x, Sample = circulaR::sample.id(object)))
+#' Make circRNA tables
+#' 
+#' This function generates a data table containing detected circRNAs
+#'
+#' @param object 
+#' @param ah 
+#'
+#' @return
+#' @examples
+#' ahdb <- AnnotationHub()[["AH79689"]] # Ensembl EnsDb Release 100
+#' circs <- makeTable(object= circObject, ah = ahdb)
+#' 
+#' @importFrom dplyr mutate group_by %>% summarise
+#' @importFrom tibble tibble
+#' @importFrom plyranges mutate
+#' 
+#' @export
+makeTables <- function(object, ah) {
+  smpls <- circulaR::sample.id(object)
   
-  
-  
-  circID <- circs$bsID
-  
-  parent_genes <- circulaR::annotateByOverlap(bsids = circID, db = ah) %>%
+  circs <- circulaR::bsj.counts(object, returnAs = "gr") %>%
+    unlist
+
+  parent_genes <- circulaR::annotateByOverlap(bsids = unique(circs$bsID), db = ah) %>%
     dplyr::group_by(bsID) %>%
-    summarize(Symbol = paste(GENENAME, collapse = ", "))
+    dplyr::summarise(
+      Symbol = paste(GENENAME, collapse = ", "),
+      Ensembl = paste(paste0("<a target=\"_blank\" href='", "https://www.ensembl.org/Homo_sapiens/Gene/Summary?db=core;g=", GENEID, "' >", GENEID, "</a>"), collapse = ", "),
+      Biotype = paste(GENEBIOTYPE, collapse = ", "),
+   )
   
-  tibble::tibble(
-    "circRNA" = circID,
+  base_tbl <- tibble::tibble(
+    "circRNA" = circs$bsID,
     "Count" = circs$count,
-    `Parent gene` = parent_genes$Symbol
+    
   )
-
-}
   
-
-
-aim <- tibble(
-  "circRNA" = bsids,
-  "Count" = c(1,1,2),
-  `Parent genes` = parent_genes
-)
-
+  dplyr::right_join(base_tbl, parent_genes, by = c("circRNA" = "bsID"))
+}

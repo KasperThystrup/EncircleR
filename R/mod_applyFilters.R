@@ -16,7 +16,7 @@ mod_applyFilters_ui <- function(id){
       sliderInput(
         inputId = ns("min_samples"), 
         label = "Minimum sample abbundance", 
-        value = 2,
+        value = 1,
         min = 1,
         max = 1,
         step = 1
@@ -25,7 +25,7 @@ mod_applyFilters_ui <- function(id){
       sliderInput(
         inputId = ns("min_count"),
         label = "Minimum count value",
-        value = 2,
+        value = 1,
         min = 0,
         max = 20,
         step = 1

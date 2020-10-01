@@ -46,7 +46,7 @@ app_ui <- function(request) {
           
           menuItem(
             tabName = "statistics",
-            icon = icon("chart_area"),
+            icon = icon("chart-area"),
             text = "Statstics"
           ),
           

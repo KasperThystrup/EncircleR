@@ -116,10 +116,22 @@ mod_deplyCirculaR_server <- function(input, output, session, r){
   })
   
   observeEvent(eventExpr = input$circular, handlerExpr = {
-    r$exec <- Sys.time()
     withProgress(
       value = 0, session = session, message = "Initiating circRNA analysis",
       expr = {
+        
+        ah_title <- paste(
+          "Ensembl", extractEnsemblReleaseNumerics(r$rel), "EnsDb for", names(r$org)
+        )
+    
+        r$ahdb <- AnnotationHub::subset(r$ah, title == ah_title)
+        if (length(r$ahdb) != 1)
+          stop("Something went wrong, select or create a new reference gnome!")
+        
+        r$ahdb <- r$ahdb[[names(r$ahdb)]]
+        
+        r$exec <- Sys.time()
+    
         
         r$filt_ready <- FALSE
         
@@ -142,11 +154,11 @@ mod_deplyCirculaR_server <- function(input, output, session, r){
             "Ensembl", extractEnsemblReleaseNumerics(r$rel), "EnsDb for", names(r$org)
           )
   
-          ahdb <- AnnotationHub::subset(r$ah, title == ah_title)
-          if (length(ahdb) != 1)
+          r$ahdb <- AnnotationHub::subset(r$ah, title == ah_title)
+          if (length(r$ahdb) != 1)
             stop("Something went wrong, select or create a new reference gnome!")
           
-          ahdb <- ahdb[[names(ahdb)]]
+          r$ahdb <- r$ahdb[[names(r$ahdb)]]
           
           incProgress(
             amount = 0.15, session = session,
@@ -154,12 +166,12 @@ mod_deplyCirculaR_server <- function(input, output, session, r){
           )
           
           known_junctions <- circulaR::constructSJDB(
-            annotationDB = ahdb, force = input$sjdb_overwrite
+            annotationDB = r$ahdb, force = input$sjdb_overwrite
           )
           
-          chrom <- seqlevels(ahdb)
+          chrom <- seqlevels(r$ahdb)
           if (input$chr_standard)
-            chrom <- standardChromosomes(ahdb)
+            chrom <- standardChromosomes(r$ahdb)
           
           incProgress(
             amount = 0.15, session = session,
