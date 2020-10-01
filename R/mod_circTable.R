@@ -13,7 +13,7 @@ mod_circTable_ui <- function(id){
     div(
       id = ns("circTables"),
       
-      actionButton(inputId = ns("GO"), label = "label"),
+      actionButton(inputId = ns("GO"), label = "Generate circRNA table"),
       DT::DTOutput(outputId = ns("circRNAs"))
     )
   )
@@ -24,12 +24,30 @@ mod_circTable_ui <- function(id){
 #' @noRd 
 #' 
 #' @importFrom DT datatable
+#' @importFrom readr read_tsv
 mod_circTable_server <- function(input, output, session, r){
   ns <- session$ns
   
   observeEvent(eventExpr = input$GO, handlerExpr = {
-    
-    output$circRNAs <- DT::renderDT(DT::datatable(makeTables(object = r$object, ah = r$ahdb), escape = FALSE))
+    withProgress(value = 0, message = "Fetching circBase resources", expr = {
+      circBase_link <- switch (r$org,
+        "Homo_sapiens" = "http://www.circbase.org/download/hsa_hg19_circRNA.txt",
+        "Mus_musculus" = "http://www.circbase.org/download/mmu_mm9_circRNA.txt"
+      )
+      circbase_colums <- c(
+        c("chrom", "start", "end", "strand", "circRNAID", "genomicLength",
+          "splicedSeqLength", "samples", "repeats", "annotation",
+          "bestTranscript", "symbol", "study"
+        )
+        
+      )
+      
+      circbase <- readr::read_tsv(circBase_link, col_names = circbase_colums, skip = 1L)
+      
+      output$circRNAs <- DT::renderDT(DT::datatable(makeTables(object = r$object, ah = r$ahdb, circbase), escape = FALSE))
+      
+      
+    })
   })
   
 }

@@ -4,7 +4,7 @@
 \alias{makeTables}
 \title{Make circRNA tables}
 \usage{
-makeTables(object, ah)
+makeTables(object, ah, circbase)
 }
 \arguments{
 \item{object}{}

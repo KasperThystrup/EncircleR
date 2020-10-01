@@ -112,8 +112,6 @@ mod_selectReferences_server <- function(input, output, session, r){
 
           if (dir.exists(r$star_dir)) {
             
-            
-            
             incProgress(
               amount = 0.25, session = session, 
               message = "Reference files found, loading AnnotationHub."

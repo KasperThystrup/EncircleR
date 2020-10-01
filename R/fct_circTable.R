@@ -10,24 +10,30 @@
 #' ahdb <- AnnotationHub()[["AH79689"]] # Ensembl EnsDb Release 100
 #' circs <- makeTable(object= circObject, ah = ahdb)
 #' 
-#' @importFrom dplyr mutate group_by %>% summarise
+#' @importFrom dplyr mutate group_by %>% summarise right_join filter
 #' @importFrom tibble tibble
 #' @importFrom plyranges mutate
 #' 
 #' @export
-makeTables <- function(object, ah) {
+makeTables <- function(object, ah, circbase) {
   smpls <- circulaR::sample.id(object)
   
   circs <- circulaR::bsj.counts(object, returnAs = "gr") %>%
     unlist
 
-  parent_genes <- circulaR::annotateByOverlap(bsids = unique(circs$bsID), db = ah) %>%
+  circbase
+  parent_genes <- circulaR::annotateByOverlap(bsids = unique(circs$bsID), db = ah)
+  
+  circOverlaps <- dplyr::right_join(parent_genes, circbase, by = c("GENENAME" = "symbol")) %>%
+    dplyr::filter(!is.na(GENENAME)) %>%
     dplyr::group_by(bsID) %>%
     dplyr::summarise(
-      Symbol = paste(GENENAME, collapse = ", "),
-      Ensembl = paste(paste0("<a target=\"_blank\" href='", "https://www.ensembl.org/Homo_sapiens/Gene/Summary?db=core;g=", GENEID, "' >", GENEID, "</a>"), collapse = ", "),
-      Biotype = paste(GENEBIOTYPE, collapse = ", "),
-   )
+      Symbol = paste(unique(GENENAME), collapse = ", "),
+      Ensembl = paste(unique(paste0("<a target=\"_blank\" href='", "https://www.ensembl.org/Homo_sapiens/Gene/Summary?db=core;g=", GENEID, "' >", GENEID, "</a>")), collapse = ", "),
+      Biotype = paste(unique(GENEBIOTYPE), collapse = ", "),
+      circBase = paste(unique(paste0("<a target=\"_blank\" href='", "http://www.circbase.org/cgi-bin/singlerecord.cgi?id=", circRNAID, "' >", "[", seq_along(circRNAID), "]" , "</a>")), collapse = " ")
+    )
+  
   
   base_tbl <- tibble::tibble(
     "circRNA" = circs$bsID,
@@ -35,5 +41,5 @@ makeTables <- function(object, ah) {
     
   )
   
-  dplyr::right_join(base_tbl, parent_genes, by = c("circRNA" = "bsID"))
+  dplyr::right_join(base_tbl, circOverlaps, by = c("circRNA" = "bsID"))
 }
