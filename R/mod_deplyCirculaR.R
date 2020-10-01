@@ -117,7 +117,7 @@ mod_deplyCirculaR_server <- function(input, output, session, r){
   
   observeEvent(eventExpr = input$circular, handlerExpr = {
     withProgress(
-      value = 0, session = session, message = "Initiating circRNA analysis",
+      value = 0, session = session, message = "Fetching gene annotation object",
       expr = {
         
         ah_title <- paste(
@@ -131,7 +131,6 @@ mod_deplyCirculaR_server <- function(input, output, session, r){
         r$ahdb <- r$ahdb[[names(r$ahdb)]]
         
         r$exec <- Sys.time()
-    
         
         r$filt_ready <- FALSE
         
