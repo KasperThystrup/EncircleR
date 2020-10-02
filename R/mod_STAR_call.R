@@ -18,6 +18,10 @@ mod_STAR_call_ui <- function(id){
         label = "Locate binary star file or provide default system call",
         value = star_default
       ),
+      helpText(
+        "Usually the binary file for STAR can be found in the `bin/Linux_x86_64` or `bin/MacOs_x86_64` instalation folder eg:",
+        "/home/user/aligners/STAR/bin/Linux_x86_64/STAR"
+      ),
 
       numericInput(
         inputId = ns("ram_lim"),

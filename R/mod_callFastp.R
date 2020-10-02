@@ -20,6 +20,10 @@ mod_callFastp_ui <- function(id){
         placeholder = "Please enter system command or full path to fastp binary file",
         value = fastp_default
       ),
+      helpText(
+        "Usually the binary file for fastp can be found in the `fastp/bin/fastp`, eg:",
+        "/home/user/trimmers/fastp/bin/fastp OR /home/user/miniconda/pkgs/fastp-[version]/bin/fastp"
+      ),
 
       sliderInput(
         inputId = ns("threads"),

@@ -18,9 +18,10 @@ mod_deplyCirculaR_ui <- function(id){
         textInput(
           inputId = ns("exp_name"),
           label = "Name the experiment",
-          value = "HeLa_NoFilt_trimmed",
+          value = "",
           placeholder = "Please provide a name for your experiment"
         ),
+        helpText("this name will be used to as filename for the finsihed circRNA RData object."),
         
         selectInput(
           inputId = ns("direction"),
@@ -28,7 +29,7 @@ mod_deplyCirculaR_ui <- function(id){
           choices = c(
             "First read first strand" = TRUE,
             "First read second strand" = FALSE,
-            "Unstranded" = NULL
+            "Unstranded" = NA
           ),
         ),
         
@@ -182,7 +183,7 @@ mod_deplyCirculaR_server <- function(input, output, session, r){
             name = input$exp_name
           )
           
-          if (input$paired & is.null(input$direction)) {
+          if (input$paired & is.na(input$direction)) {
             updateSelectInput(session = session, inputId = "Direction", selected = FALSE)
           } else {
             r$direction <- as.logical(input$direction)  ## Input is not logical
