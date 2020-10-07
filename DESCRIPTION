@@ -3,7 +3,7 @@ Title: EncricleR
 Version: 0.0.0.9001
 Authors@R: person('Kasper Thystrup', 'Karstensen', email = 'kathka@gmail.com', role = c('cre', 'aut'))
 Description: An complete user interface for uploading, reprocessing, and performing circRNA quantification and identification from raw fastq files.
-License: MIT + file LICENSE
+License: GPL-3
 Imports: 
     config (>= 0.3),
     golem (>= 0.2.1.9031),
