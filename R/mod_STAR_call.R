@@ -98,11 +98,6 @@ mod_STAR_call_server <- function(input, output, session, r){
         message = "Loading genome index"
       )
 
-      
-      # incProgress(amount = 1, message = "Attaching Genome into memory")
-      # attachSTARGenome(star = input$star, genome_dir = r$star_dir)   ### Not sure how to set up with bam sorting limit
-
-
         lapply(sample, function(smpl){
   
           sample_subset <- subset(r$meta, Sample == smpl)
@@ -116,8 +111,6 @@ mod_STAR_call_server <- function(input, output, session, r){
           )
         })
 
-      # incProgress(amount = 1, message = "Dettaching genome and cleaning up")
-      # dettachSTARGenome(star = input$star, genome_dir = r$star_dir)
     })
     }
     r$star_ready <- TRUE

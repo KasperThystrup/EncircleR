@@ -9,42 +9,66 @@ providing a graphical interface for selecting and downloading reference
 files, Perform read trimming and read mapping, and finally to perform
 circRNA detection by exploring backsplice junction contents.
 
-Installation
+Installation and startup
+========================
+
+Dependencies
 ------------
 
-First install the circRNA detection algorithm
+The package requires the following external software to be installed
+
+-   STAR aligner
+    (<a href="https://github.com/alexdobin/STAR" class="uri">https://github.com/alexdobin/STAR</a>),
+    Alignment and chimeric read detection
+-   fastp
+    (<a href="https://github.com/OpenGene/fastp" class="uri">https://github.com/OpenGene/fastp</a>),
+    Read trimming and quality parametrics
+-   R
+    (<a href="https://cran.rstudio.com/" class="uri">https://cran.rstudio.com/</a>),
+    Statistical programming language for running EncircleR
+-   Rstudio
+    (<a href="https://rstudio.com/products/rstudio/download/#download" class="uri">https://rstudio.com/products/rstudio/download/#download</a>),
+    Graphical R interface which simplifies executing and openning
+    EncircleR
+
+After Rstudio has been successfully installed a few R packages must be
+installed, to make this process easier, open Rstudio and follow the
+steps below.
+
+### R packages
+
+Most official R package dependencies should be installed during
+installation of EncircleR, however there are a few packages that needs
+to be installed manually first:
+
+    install.packages(c("devtools", "BiocManager"))
+
+Once BiocManager has been installed, the following Bioconductor packages
+will have to be installed as well.
+
+    BiocManager::install(c("AnnotationHub", "plyranges"))
+
+The circRNA detection algorithm (circulaR) used by EncircleR are
+installed via GitHub:
 
     devtools::install_github("https://github.com/KasperThystrup/circulaR")
 
-You can then install the latest release of EncircleR from Github with:
+Finally, you can then install EncircleR via Github:
 
     devtools::install_github("https://github.com/KasperThystrup/EncircleR")
 
-### Dependencies
+### How to run
 
--   STAR aligner
-    (<a href="https://github.com/alexdobin/STAR" class="uri">https://github.com/alexdobin/STAR</a>)
--   fastp
-    (<a href="https://github.com/OpenGene/fastp" class="uri">https://github.com/OpenGene/fastp</a>)
+After EncricleR has been successfully installed, it can be executed by
+opening RStudio and execute:
 
-Example
--------
-
-This is a basic example which shows you how to solve a common problem:
-
-    library(EncircleR)
-
-    # Run
     EncircleR::run_app()
-    ## basic example code
 
-Trobuleshoot IF package won't run with above code
-==========
-Instal the golem package
-    install.packages("golem")
+If package will not execute with above code
+-------------------------------------------
 
-Next, Clone the repository and open `EncircleR.Rproj` with Rstudio. First up
-open `R/utils_DEFUALTS.R` and set the appropriate values
+Clone the repository and open `EncircleR.Rproj` with Rstudio, first
+enter: File &gt; New project &gt; Version control &gt; Git
 
 Next: Try to run the entire script in `dev/run_dev.R`, install any
 packages that is missing.

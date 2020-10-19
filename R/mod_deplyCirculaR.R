@@ -17,11 +17,11 @@ mod_deplyCirculaR_ui <- function(id){
       div(
         textInput(
           inputId = ns("exp_name"),
-          label = "Name the experiment",
+          label = "Please provide a name for your experiment",
           value = "",
-          placeholder = "Please provide a name for your experiment"
+          placeholder = "Experiment_name"
         ),
-        helpText("this name will be used to as filename for the finsihed circRNA RData object."),
+        helpText("This will be used to as filename for the finsihed circRNA RData object, so please avoid using spaces and special characters."),
         
         selectInput(
           inputId = ns("direction"),
@@ -32,8 +32,16 @@ mod_deplyCirculaR_ui <- function(id){
             "Unstranded" = NA
           ),
         ),
+        helpText(
+          "This information is used to determine whether or not,",
+          "the sequencing data represents the reverse complement of the sample template RNA.",
+          "For TruSeq stranded libraries use First read first strand."
+        ),
         
         checkboxInput(inputId = ns("paired"), label = "Paired end reads", value = TRUE),
+        helpText(
+          "Currently, only paired-end sequencing data are tested, supported, and recommended."
+        ),
         
         checkboxInput(
           inputId = ns("circ_qc"),
@@ -44,7 +52,7 @@ mod_deplyCirculaR_ui <- function(id){
         sliderInput(
           inputId = ns("threads"),
           label = "Determine number of cores",
-          min = 0,
+          min = 1,
           max = max_cores,
           value = 4,
           step = 1
@@ -108,14 +116,6 @@ mod_deplyCirculaR_server <- function(input, output, session, r){
       show(id = "circ_call")
   })
   
-  shinyjs::hideElement(id = "circular")
-  
-  observeEvent(eventExpr = input$threads, handlerExpr = {
-    shinyjs::hideElement(id = "circular")
-    if (input$threads > 0 & !is.null(input$exp_name))
-      shinyjs::showElement(id = "circular")
-  })
-  
   observeEvent(eventExpr = input$circular, handlerExpr = {
     withProgress(
       value = 0, session = session, message = "Fetching gene annotation object",
@@ -142,23 +142,13 @@ mod_deplyCirculaR_server <- function(input, output, session, r){
         
         r$exp_file <- file.path(r$cache_dir, "Saves", paste.(input$exp_name, "RData"))
         if (file.exists(r$exp_file) & !input$overwrite) {
-          incProgress(amount = 0.65, session = session, message = "Loading existing dataset")
+          incProgress(amount = 0.55, session = session, message = "Loading existing dataset")
           object <-  readRDS(r$exp_file)
         } else {
-        
-          incProgress(
-            amount = 0.15, session = session, 
-            message = "Getting EnsDb object for annotation"
-          )
-          ah_title <- paste(
-            "Ensembl", extractEnsemblReleaseNumerics(r$rel), "EnsDb for", names(r$org)
-          )
-  
-          r$ahdb <- AnnotationHub::subset(r$ah, title == ah_title)
-          if (length(r$ahdb) != 1)
-            stop("Something went wrong, select or create a new reference gnome!")
           
-          r$ahdb <- r$ahdb[[names(r$ahdb)]]
+          cmd_makedir <- paste("mkdir", dir_name(r$exp_file))
+          
+          system(cmd_makedir)
           
           incProgress(
             amount = 0.15, session = session,
@@ -200,13 +190,13 @@ mod_deplyCirculaR_server <- function(input, output, session, r){
             maxGenomicDist = input$max_genom_dist,
             onlySpanning = FALSE,
             removeBadPairs = FALSE,
-            cores = 1  ## Reading Backsplice data with multicores sometimes leads to an error
+            cores = 1
           )
           
           object <- circulaR::readLSJdata(
             object = object,
             chromosomes = chrom,
-            cores = 1  ## Disabled since readBSJdata with multicore sometimes fails
+            cores = 1
           )
           
           incProgress(

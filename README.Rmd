@@ -17,39 +17,53 @@ knitr::opts_chunk$set(
 
 The goal of EncircleR is to automate and streamline circRNA analysis, by providing a graphical interface for selecting and downloading reference files, Perform read trimming and read mapping, and finally to perform circRNA detection by exploring backsplice junction contents.
 
-## Installation
+# Installation and startup
 
-First install the circRNA detection algorithm 
+## Dependencies
+The package requires the following external software to be installed
+
+ * STAR aligner (https://github.com/alexdobin/STAR), Alignment and chimeric read detection
+ * fastp (https://github.com/OpenGene/fastp), Read trimming and quality parametrics
+ * R (https://cran.rstudio.com/), Statistical programming language for running EncircleR
+ * Rstudio (https://rstudio.com/products/rstudio/download/#download), Graphical R interface which simplifies executing and openning EncircleR
+
+After Rstudio has been successfully installed a few R packages must be installed, to make this process easier, open Rstudio and follow the steps below.
+
+### R packages
+
+Most official R package dependencies should be installed during installation of EncircleR, however there are a few packages that needs to be installed manually first:
+```{r CRAN dep, eval=FALSE}
+install.packages(c("devtools", "BiocManager"))
+```
+
+Once BiocManager has been installed, the following Bioconductor packages will have to be installed as well.
+```{r BioC deps, eval=FALSE}
+BiocManager::install(c("AnnotationHub", "plyranges"))
+```
+
+
+The circRNA detection algorithm (circulaR) used by EncircleR are installed via GitHub:
 ``` r
 devtools::install_github("https://github.com/KasperThystrup/circulaR")
 ```
 
-You can then install the latest release of EncircleR from Github with:
-
+Finally, you can then install EncircleR via Github:
 ``` r
 devtools::install_github("https://github.com/KasperThystrup/EncircleR")
 ```
+### How to run
 
-### Dependencies
-
- * STAR aligner (https://github.com/alexdobin/STAR)
- * fastp (https://github.com/OpenGene/fastp)
-
-## Example
-
-This is a basic example which shows you how to solve a common problem:
+After EncricleR has been successfully installed, it can be executed by opening RStudio and execute:
 
 ```{r example, eval=FALSE}
-library(EncircleR)
-
-# Run
 EncircleR::run_app()
-## basic example code
 ```
 
-# How to run
-Clone the repository and open `EncircleR.Rproj` with Rstudio.
-First up open `R/utils_DEFUALTS.R` and set the appropriate values
+## If package will not execute with above code
+
+Clone the repository and open `EncircleR.Rproj` with Rstudio, first enter:
+ File > New project > Version control > Git
+ 
 
 Next: Try to run the entire script in `dev/run_dev.R`, install any packages that is missing.
 

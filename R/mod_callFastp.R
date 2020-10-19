@@ -17,7 +17,7 @@ mod_callFastp_ui <- function(id){
       textInput(
         inputId = ns("fastp"),
         label = "Please enter the system command or path to program",
-        placeholder = "Please enter system command or full path to fastp binary file",
+        placeholder = "e.g. ~/fastp/bin/fastp",
         value = fastp_default
       ),
       helpText(
@@ -28,9 +28,9 @@ mod_callFastp_ui <- function(id){
       sliderInput(
         inputId = ns("threads"),
         label = "Determine number of cores",
-        min = 0,
+        min = 1,
         max = max_cores,
-        value = 4,
+        value = 1,
         step = 1
       ),
 
@@ -116,13 +116,6 @@ mod_callFastp_server <- function(input, output, session, r){
       show(id = "fastp_setup")
     
   })
-  
-  shinyjs::hideElement(id = "run_fastp")
-  observeEvent(eventExpr = input$threads, handlerExpr = {
-    shinyjs::hideElement(id = "run_fastp")
-    if (input$threads > 0)
-      shinyjs::showElement(id = "run_fastp")
-  })
 
   observeEvent(eventExpr = input$run_fastp, handlerExpr = {
     r$fastp_ready <- FALSE
@@ -133,7 +126,6 @@ mod_callFastp_server <- function(input, output, session, r){
       max = length(samples) + 1, value = 0,
       message = paste("Running fastp on", length(samples), "samples"),
       expr = {
-        Sys.sleep(0.75)
         compressed <- "gz"
         
         r$paired <- input$paired

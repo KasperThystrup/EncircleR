@@ -48,7 +48,7 @@ mod_importMetadata_server <- function(input, output, session, r){
 
     if (all(files_exists)) {
       file_check$status <- "All sample files were located, ready to continue!"
-      r$meta_ready <- TRUE
+      r$meta_ready <- TRUE  ## update
     }
   })
 

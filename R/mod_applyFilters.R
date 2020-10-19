@@ -26,7 +26,7 @@ mod_applyFilters_ui <- function(id){
         inputId = ns("min_count"),
         label = "Minimum count value",
         value = 1,
-        min = 0,
+        min = 1,
         max = 20,
         step = 1
       ),
@@ -49,11 +49,7 @@ mod_applyFilters_ui <- function(id){
         value = TRUE
       ),
       
-      actionButton(
-        inputId = ns("filter_reads"),
-        label = "Filter reads",
-        icon = icon("funnel")
-      ),
+      
       
       helpText("Chose this option to clean up RAM and object size"),
       
@@ -62,7 +58,9 @@ mod_applyFilters_ui <- function(id){
       column(
         width = 6, 
         actionButton(
-          inputId = ns("reset"), label = "Reset filter", icon = icon("undo")
+          inputId = ns("filter_reads"),
+          label = "Filter reads",
+          icon = icon("funnel")
         )
       ),
       
@@ -70,7 +68,7 @@ mod_applyFilters_ui <- function(id){
         width = 6,
         actionButton(
           inputId = ns("save"), label = "Save object", icon = icon("save")
-          )
+        )
       )
     )
   )
@@ -91,23 +89,17 @@ mod_applyFilters_server <- function(input, output, session, r){
         length
       updateSliderInput(session = session, inputId = "min_samples", max = nsamples)
       
-      #### Update counter as well??
-      
       show(id = "filter")
     }
   })
   
-  observeEvent(eventExpr = input$reset, handlerExpr = {
-    bsj.reads(r$object) <- lapply(bsj.reads(r$object), function(x) {
-      x$include.read <- TRUE
-      return(x)
-    })
-    
-    output$circs <- renderText("Filters reset")
-  })
-  
   observeEvent(eventExpr = input$filter_reads, handlerExpr = {
-    withProgress(value = 0, message = "Identifying filtration criteria", expr = {
+    withProgress(value = 0, message = "Resetting fitlered reads", expr = {
+      
+      bsj.reads(r$object) <- lapply(bsj.reads(r$object), function(x) {
+        x$include.read <- TRUE
+        return(x)
+      })
       
       r$circ_ready <- FALSE
       
@@ -230,7 +222,8 @@ mod_applyFilters_server <- function(input, output, session, r){
   })
   
   observeEvent(eventExpr = input$save, handlerExpr = {
-    withProgress(value = 0.50, message = "Saving file", expr = {
+    withProgress(value = 0.50, message = "Setting up output directory", expr = {
+      dir.create(r$exp_dir)
       saveRDS(object = r$object, file  = r$exp_file)
     })
   })

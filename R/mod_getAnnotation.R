@@ -59,12 +59,10 @@ mod_getAnnotation_server <- function(input, output, session, r){
       expr = {
         if (r$select_ready) {
           
-          incProgress(amount = 0.25, message = "Fetching information from AnnotationHub")
+          incProgress(amount = 0.35, message = "Fetching information from AnnotationHub")
           logger::log_debug("Fetching annotation object")
           r$ah <- AnnotationHub::AnnotationHub()
-          incProgress(amount = 0.25, message = "Information fetched")
           show(id = "ref")
-          Sys.sleep(0.75)
         }
       }
     )
@@ -135,7 +133,7 @@ mod_getAnnotation_server <- function(input, output, session, r){
       logger::log_debug("Determining target URLs")
       urls <- getDownloadLinks(meta = meta, organism = input$org, build = build, release = input$rel)
       
-      r$genome_dir <- file.path("~/.EncircleR/Genome", paste("release", input$rel, sep = "-"), input$org)
+      r$genome_dir <- file.path(r$cache_dir, "Genome", paste("release", input$rel, sep = "-"), input$org)
       
       incProgress(amount = 0.25, message = "Downloading and unzipping reference annotation")
       r$gtf_fn <- downloadFile(url = urls$gtf, out_dir = r$genome_dir)
