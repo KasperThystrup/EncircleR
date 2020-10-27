@@ -77,6 +77,20 @@ opening RStudio and execute:
 
     EncircleR::run_app()
 
+### Metadata
+
+In order to perform the analysis, a metadata sheet must be generated.
+This metadtasheet is a tsv file, which contains the following columns:
+
+-   A sample name column (It will be used for naming output files, so
+    make it simple - No \[ ,.\*\|\] etc.)
+-   A file path column (to reduce risk of errors, make sure to write the
+    full file path -
+    e.g. /home/Me/RNAdata/Sample1/fastq/sample01\_1.fq.gz)
+-   A read mate column (used to distinguishes read mates 1 and 2, this
+    means that paired end reads contains two rows for each sample, the
+    number must be an integer)
+
 If package will not execute with above code
 -------------------------------------------
 
