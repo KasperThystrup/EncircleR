@@ -31,11 +31,24 @@ The package requires the following external software to be installed
     Graphical R interface which simplifies executing and openning
     EncircleR
 
+#### Locate the binary execution files
+
+In order to make EncircleR call the STAR aligner and fastp software, you
+must provide the absolute path to their binary execution files.
+
+For STAR aligner on linux, this can be located in:
+
+    /path/to/STAR/bin/Linux_x86_64/STAR
+
+For fastp (when installed through Bioconda (Miniconda3)):
+
+    /path/to/bioconda/bin/fastp
+
+### R packages
+
 After Rstudio has been successfully installed a few R packages must be
 installed, to make this process easier, open Rstudio and follow the
 steps below.
-
-### R packages
 
 Most official R package dependencies should be installed during
 installation of EncircleR, however there are a few packages that needs
