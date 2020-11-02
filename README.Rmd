@@ -40,6 +40,8 @@ For fastp (when installed through Bioconda (Miniconda3)):
 /path/to/bioconda/bin/fastp
 ```
 
+Remember these destinations, as they are to be copy pasted into the app, when asking to locate the binary of each the softwares.
+
 ### R packages
 After Rstudio has been successfully installed a few R packages must be installed, to make this process easier, open Rstudio and follow the steps below.
 
@@ -95,6 +97,5 @@ As a final step, the circulaR algorithm is used to run circRNA analysis.
 
 Clone the repository and open `EncircleR.Rproj` with Rstudio, first enter:
  File > New project > Version control > Git
- 
 
 Next: Try to run the entire script in `dev/run_dev.R`, install any packages that is missing.

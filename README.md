@@ -1,19 +1,16 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-EncircleR
-=========
+# EncircleR
 
 The goal of EncircleR is to automate and streamline circRNA analysis, by
 providing a graphical interface for selecting and downloading reference
 files, Perform read trimming and read mapping, and finally to perform
 circRNA detection by exploring backsplice junction contents.
 
-Installation and startup
-========================
+# Installation and startup
 
-Dependencies
-------------
+## Dependencies
 
 The package requires the following external software to be installed
 
@@ -43,6 +40,9 @@ For STAR aligner on linux, this can be located in:
 For fastp (when installed through Bioconda (Miniconda3)):
 
     /path/to/bioconda/bin/fastp
+
+Remember these destinations, as they are to be copy pasted into the app,
+when asking to locate the binary of each the softwares.
 
 ### R packages
 
@@ -80,39 +80,38 @@ opening RStudio and execute:
 ### Metadata
 
 In order to perform the analysis, a metadata sheet must be generated.
-This metadtasheet is a tsv file, which contains the following columns:
+This metadatasheet is a tsv file, which must contains the following
+columns:
 
--   A sample name column (It will be used for naming output files, so
-    make it simple - No \[ ,.\*\|\] etc.)
--   A file path column (to reduce risk of errors, make sure to write the
-    full file path -
-    e.g. /home/Me/RNAdata/Sample1/fastq/sample01\_1.fq.gz)
--   A read mate column (used to distinguishes read mates 1 and 2, this
-    means that paired end reads contains two rows for each sample, the
-    number must be an integer)
+1.  Sample name
+2.  Full filepath
+3.  Read Mate
 
-If package will not execute with above code
--------------------------------------------
+Please see `data/Metadata_example.tsv` in this git repository for an
+example.
+
+The sample name column will be used to organize input and output files,
+and are used for naming files, so please mind to keep sample names
+simple, and refrain from using use special characters and spaces, in the
+sample names. The file path column is used by the app to locate the
+local input files. The mate column is used to ensure that read mates are
+correctly distinguished from each other. For paired end reads, their
+will always be two rows for each sample.
+
+## Execution
+
+The app currently copies (it is possible to move files instead of
+copying) fastq files to an experimental directory, defined by the user.
+For each sample, fastp trimming and STAR alignment is run, with
+predefined settings. It is possible to tweak these settings in the app
+by accessing advanced settings. Newly created files are located
+systematically within the experimental directory. As a final step, the
+circulaR algorithm is used to run circRNA analysis.
+
+## If package will not execute with above code
 
 Clone the repository and open `EncircleR.Rproj` with Rstudio, first
 enter: File &gt; New project &gt; Version control &gt; Git
 
 Next: Try to run the entire script in `dev/run_dev.R`, install any
 packages that is missing.
-
-The process is stepwise, where options by default are hidden, until the
-appropriate steps have been taken. Note that STAR\_idx takes ALOT of RAM
-and FASTP and STAR alignment takes a lot of cpu time as well.
-
-The app requires gz compressed (or uncompressed) fastq files, a metadata
-file with the following columns:
-
-1.  Sample name
-2.  Full filepath
-3.  Read Mate
-
-The app currently copies (option to move instead) fastq files to a
-experimental directory (default set in `R/utils_DEFAULTS.R` fastp and
-STAR is run on each sample, and relocated systematically Finally, the
-circulaR algorithm is used to run circRNA analysis (circulaR must be
-installed, but have not yet been uplaoded to github)
