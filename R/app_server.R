@@ -6,8 +6,8 @@
 #' @import logger
 #' @noRd
 app_server <- function( input, output, session ) {
-  # List the first level callModules here
-  # logger::log_shiny_input_changes(input)
+  # List the first level callModules here 
+  logger::log_shiny_input_changes(input)
   r <- reactiveValues()
   callModule(mod_importMetadata_server, "importMetadata_ui_1", r)
   callModule(mod_setupExperiment_server, "setupExperiment_ui_1", r)

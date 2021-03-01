@@ -6,7 +6,8 @@ Description: An complete user interface for uploading, reprocessing, and perform
 License: GPL-3
 Imports: 
     config (>= 0.3),
-    golem (>= 0.2.1.9031),
+    golem (>= 0.2.1),
+    shinyjs (>= 2.0.0),
     shiny (>= 1.5.0),
     processx (>= 3.4.4),
     attempt (>= 0.3.1),

@@ -105,7 +105,7 @@ mod_STAR_call_server <- function(input, output, session, r){
           callSTAR(
             star = input$star, genome_dir = r$star_dir,
             threads = input$threads, sample = smpl, meta = r$meta,
-            paired = r$paired, out_dir = r$smpl_dir,
+            paired = r$paired, out_dir = file.path(r$smpl_dir, "STAR"),
             RAM_limit = input$ram_lim, chim_segMin = input$min_seq,
             compression = "gz"
           )

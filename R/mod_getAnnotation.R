@@ -7,7 +7,6 @@
 #' @noRd 
 #'
 #' @importFrom shiny NS tagList 
-#' @import shinyjs
 #' @import dplyr
 mod_getAnnotation_ui <- function(id){
   ns <- NS(id)

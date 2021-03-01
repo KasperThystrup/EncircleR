@@ -18,7 +18,7 @@ mod_deplyCirculaR_ui <- function(id){
         textInput(
           inputId = ns("exp_name"),
           label = "Please provide a name for your experiment",
-          value = "",
+          value = exp_default,
           placeholder = "Experiment_name"
         ),
         helpText("This will be used to as filename for the finsihed circRNA RData object, so please avoid using spaces and special characters."),

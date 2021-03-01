@@ -23,14 +23,15 @@ makeTables <- function(object, ah, circbase) {
 
   circbase
   parent_genes <- circulaR::annotateByOverlap(bsids = unique(circs$bsID), db = ah)
-  
+  # Clip off last row (it is a accumulation of all hits)
   circOverlaps <- dplyr::right_join(parent_genes, circbase, by = c("GENENAME" = "symbol")) %>%
-    dplyr::filter(!is.na(GENENAME)) %>%
+    dplyr::filter(!is.na(GENENAME), !is.na(bsID)) %>%
     dplyr::group_by(bsID) %>%
     dplyr::summarise(
       Symbol = paste(unique(GENENAME), collapse = ", "),
       Ensembl = paste(unique(paste0("<a target=\"_blank\" href='", "https://www.ensembl.org/Homo_sapiens/Gene/Summary?db=core;g=", GENEID, "' >", GENEID, "</a>")), collapse = ", "),
       Biotype = paste(unique(GENEBIOTYPE), collapse = ", "),
+      circBase_Hits = length(circRNAID),
       circBase = paste(unique(paste0("<a target=\"_blank\" href='", "http://www.circbase.org/cgi-bin/singlerecord.cgi?id=", circRNAID, "' >", "[", seq_along(circRNAID), "]" , "</a>")), collapse = " ")
     )
   

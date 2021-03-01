@@ -24,9 +24,12 @@ callSTAR <- function(
   chim_segMin, compression = "gz"
 ) {
 
-  cmd_makedir <- paste("mkdir -p", out_dir)
+  star_out <- file.path(out_dir, sample, "STAR")
+  cmd_makedir <- paste("mkdir -p", star_out)
+  logger::log_info(cmd_makedir)
   system(cmd_makedir)
 
+  star_prefix <- file.path(star_out, paste0(sample, "."))
   mate1_raw <- subset(meta, Mate == 1 & Sample == sample) %>%
     dplyr::pull(var = Filepath)
   
@@ -86,7 +89,7 @@ callSTAR <- function(
     # genomeLoad = "--genomeLoad LoadAndKeep",
     runThreadN = paste("--runThreadN", threads),
     readFilesIn = paste("--readFilesIn", paste(mate1, mate2, collapse = " ")),
-    outFileNamePrefix = paste("--outFileNamePrefix", file.path(out_dir, sample, "STAR", paste0(sample, "."))),
+    outFileNamePrefix = paste("--outFileNamePrefix", star_prefix),
     # limitBAMsortRAM = paste("--limitBAMsortRAM", RAM_limit),
     outReadsUnmapped = "--outReadsUnmapped Fastq",
     # outSAMtype = "--outSAMtype BAM SortedByCoordinate",
