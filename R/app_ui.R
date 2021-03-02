@@ -4,7 +4,7 @@
 #'     DO NOT REMOVE.
 #' @importFrom shinyjs useShinyjs hideElement showElement
 #' @import shiny
-#' @import shinydashboard
+#' @importFrom shinydashboard dashboardBody dashboardHeader dashboardPage dashboardSidebar menuItem sidebarMenu tabItem tabItems
 #' @noRd
 app_ui <- function(request) {
   tagList(
@@ -14,43 +14,43 @@ app_ui <- function(request) {
     
     # List the first level UI elements here 
     shinydashboard::dashboardPage(
-      header = dashboardHeader(
+      header = shinydashboard::dashboardHeader(
         title = "EncircleR"
       ),
       
-      sidebar = dashboardSidebar(
-        sidebarMenu(
-          # menuItem(
+      sidebar = shinydashboard::dashboardSidebar(
+        shinydashboard::sidebarMenu(
+          # shinydashboard::menuItem(
           #   tabName = "home",
           #   icon = icon("home"),
           #   text = "Home"
           # ),
           
-          menuItem(
+          shinydashboard::menuItem(
             tabName = "setup",
             icon = icon("vials"),
             text = "Experimental setup"
           ),
           
-          menuItem(
+          shinydashboard::menuItem(
             tabName = "preparation",
             icon = icon("dna"),
             text = "Read preparation"
           ),
           
-          menuItem(
+          shinydashboard::menuItem(
             tabName = "circ",
             icon = icon("microscope"),
             text = "CircRNA analysis"
           ),
           
-          menuItem(
+          shinydashboard::menuItem(
             tabName = "statistics",
             icon = icon("chart-area"),
             text = "Statstics"
           ),
           
-          menuItem(
+          shinydashboard::menuItem(
             tabName = "circtables",
             icon = icon("table"),
             text = "Detected circRNA"
@@ -58,14 +58,14 @@ app_ui <- function(request) {
         )
       ),
         
-      body = dashboardBody(
-        tabItems(
-          # tabItem(
+      body = shinydashboard::dashboardBody(
+        shinydashboard::tabItems(
+          # shinydashboard::tabItem(
           #   tabName = "home",
           #   tags$h1("Welcome!")
           # ),
           
-          tabItem(
+          shinydashboard::tabItem(
             tabName = "setup",
             column(
               width = 4,
@@ -85,7 +85,7 @@ app_ui <- function(request) {
             )
           ),
           
-          tabItem(
+          shinydashboard::tabItem(
             tabName = "preparation",
             column(
               width = 6,
@@ -98,7 +98,7 @@ app_ui <- function(request) {
             )
           ),
           
-          tabItem(
+          shinydashboard::tabItem(
             tabName = "circ",
             column(
               width = 6,
@@ -111,12 +111,12 @@ app_ui <- function(request) {
             )
           ),
           
-          tabItem(
+          shinydashboard::tabItem(
             tabName = "statistics",
             mod_mappingPlots_ui("mappingPlots_ui_1")
           ),
           
-          tabItem(
+          shinydashboard::tabItem(
             tabName = "circtables",
             mod_circTable_ui("circTable_ui_1")
           )
