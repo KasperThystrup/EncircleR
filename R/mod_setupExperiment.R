@@ -7,6 +7,7 @@
 #' @noRd
 #'
 #' @import shiny
+#' @importFrom shinyjs hide show
 #' @importfrom shinydashboard box
 mod_setupExperiment_ui <- function(id){
   ns <- NS(id)
@@ -51,11 +52,11 @@ mod_setupExperiment_ui <- function(id){
 mod_setupExperiment_server <- function(input, output, session, r){
   ns <- session$ns
   
-  hide(id = "exp")
+  shinyjs::hide(id = "exp")
   observeEvent(eventExpr = r$meta_ready, handlerExpr = {
-    hide(id = "exp")
+    shinyjs::hide(id = "exp")
     if (r$meta_ready)
-      show(id = "exp")
+      shinyjs::show(id = "exp")
   })
   
   observeEvent(eventExpr = input$exp_start, handlerExpr = {

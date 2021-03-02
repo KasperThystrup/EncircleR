@@ -180,7 +180,7 @@ display <- function(tag) {
 #' 
 #' @importFrom htmltools tags
 jq_hide <- function(id) {
-  tags$script(sprintf("$('#%s').hide()", id))
+  htmltools::tags$script(sprintf("$('#%s').hide()", id))
 }
 
 #' Add a red star at the end of the text

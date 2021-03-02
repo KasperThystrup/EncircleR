@@ -7,6 +7,7 @@
 #' @noRd
 #'
 #' @importFrom shiny NS tagList
+#' @importFrom shinyjs hide show
 mod_STAR_call_ui <- function(id){
   ns <- NS(id)
   tagList(
@@ -65,11 +66,11 @@ mod_STAR_call_ui <- function(id){
 mod_STAR_call_server <- function(input, output, session, r){
   ns <- session$ns
   
-  hide(id = "star_setup")
+  shinyjs::hide(id = "star_setup")
   observeEvent(eventExpr = r$fastp_ready, handlerExpr = {
-    hide(id = "star_setup")
+    shinyjs::hide(id = "star_setup")
     if (r$fastp_ready)
-      show(id = "star_setup")
+      shinyjs::show(id = "star_setup")
   })
   
   shinyjs::hideElement(id = "star_call")

@@ -7,6 +7,7 @@
 #' @noRd 
 #'
 #' @importFrom shiny NS tagList 
+#' @importFrom shinyjs hide show
 mod_selectReferences_ui <- function(id){
   ns <- NS(id)
   tagList(
@@ -51,11 +52,11 @@ mod_selectReferences_ui <- function(id){
 mod_selectReferences_server <- function(input, output, session, r){
   ns <- session$ns
   
-  hide(id = "ref")
+  shinyjs::hide(id = "ref")
   observeEvent(eventExpr = r$exp_ready, handlerExpr = {
-    hide(id = "ref")
+    shinyjs::hide(id = "ref")
     if (r$exp_ready)
-      show(id = "ref")
+      shinyjs::show(id = "ref")
   })
   
   shinyjs::hideElement(id = "continue")

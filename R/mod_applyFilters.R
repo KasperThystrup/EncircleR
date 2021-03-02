@@ -6,7 +6,8 @@
 #'
 #' @noRd 
 #'
-#' @importFrom shiny NS tagList 
+#' @importFrom shiny NS tagList
+#' @importFrom shinyjs hide show
 mod_applyFilters_ui <- function(id){
   ns <- NS(id)
   tagList(
@@ -80,16 +81,16 @@ mod_applyFilters_ui <- function(id){
 mod_applyFilters_server <- function(input, output, session, r){
   ns <- session$ns
   
-  hide(id = "filter")
+  shinyjs::hide(id = "filter")
   observeEvent(eventExpr = r$filt_ready, handlerExpr = {
-    hide(id = "filter")
+    shinyjs::hide(id = "filter")
     if(r$filt_ready) {
       
       nsamples <- samples(r$object) %>%
         length
       updateSliderInput(session = session, inputId = "min_samples", max = nsamples)
       
-      show(id = "filter")
+      shinyjs::show(id = "filter")
     }
   })
   

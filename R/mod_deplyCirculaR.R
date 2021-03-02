@@ -8,6 +8,7 @@
 #'
 #' @import circulaR
 #' @importFrom shiny NS tagList 
+#' @importFrom shinyjs hide show
 #' @importFrom AnnotationHub subset
 mod_deplyCirculaR_ui <- function(id){
   ns <- NS(id)
@@ -109,11 +110,11 @@ mod_deplyCirculaR_ui <- function(id){
 mod_deplyCirculaR_server <- function(input, output, session, r){
   ns <- session$ns
   
-  hide(id = "circ_call")
+  shinyjs::hide(id = "circ_call")
   observeEvent(eventExpr = r$star_ready, handlerExpr = {
-    hide(id = "circ_call")
+    shinyjs::hide(id = "circ_call")
     if (r$star_ready)
-      show(id = "circ_call")
+      shinyjs::show(id = "circ_call")
   })
   
   observeEvent(eventExpr = input$circular, handlerExpr = {

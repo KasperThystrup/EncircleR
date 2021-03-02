@@ -7,7 +7,7 @@
 #' @noRd 
 #'
 #' @importFrom shiny NS tagList 
-#' @import shinyjs
+#' @importFrom shinyjs hide show
 #' @import dplyr
 mod_getAnnotation_ui <- function(id){
   ns <- NS(id)
@@ -48,11 +48,11 @@ mod_getAnnotation_ui <- function(id){
 mod_getAnnotation_server <- function(input, output, session, r){
   ns <- session$ns
   
-  hide(id = "ref")
+  shinyjs::hide(id = "ref")
   shinyjs::hideElement(id = "rel")
   shinyjs::hideElement(id = "step")
   observeEvent(eventExpr = r$select_ready, handlerExpr = {
-    hide(id = "ref")
+    shinyjs::hide(id = "ref")
     shinyjs::hideElement(id = "rel")
     withProgress(
       value = 0.5, message = "Determining whether reference genome is ready",
@@ -62,7 +62,7 @@ mod_getAnnotation_server <- function(input, output, session, r){
           incProgress(amount = 0.35, message = "Fetching information from AnnotationHub")
           logger::log_debug("Fetching annotation object")
           r$ah <- AnnotationHub::AnnotationHub()
-          show(id = "ref")
+          shinyjs::show(id = "ref")
         }
       }
     )

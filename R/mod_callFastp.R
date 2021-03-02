@@ -7,6 +7,7 @@
 #' @noRd
 #'
 #' @importFrom shiny NS tagList
+#' @importFrom shinyjs hide show
 mod_callFastp_ui <- function(id){
   ns <- NS(id)
   tagList(
@@ -109,11 +110,11 @@ mod_callFastp_server <- function(input, output, session, r){
   shinyjs::hide(id = "fastp_setup")
   r$trimmed <- TRUE
   
-  hide(id = "fastp_setup")
+  shinyjs::hide(id = "fastp_setup")
   observeEvent(eventExpr = r$ref_ready, handlerExpr = {
-    hide(id = "fastp_setup")
+    shinyjs::hide(id = "fastp_setup")
     if (r$ref_ready)
-      show(id = "fastp_setup")
+      shinyjs::show(id = "fastp_setup")
     
   })
 

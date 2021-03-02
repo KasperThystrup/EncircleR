@@ -7,6 +7,7 @@
 #' @noRd
 #'
 #' @importFrom shiny NS tagList
+#' @importFrom shinyjs hide show
 #' @import shinydashboard
 mod_STAR_idx_ui <- function(id){
   ns <- NS(id)
@@ -68,7 +69,7 @@ mod_STAR_idx_ui <- function(id){
 mod_STAR_idx_server <- function(input, output, session, r){
   ns <- session$ns
   
-  hide(id = "star_idx")
+  shinyjs::hide(id = "star_idx")
   observeEvent(eventExpr = input$threads, handlerExpr = {
     shinyjs::showElement(id = "idx")
     if (input$threads == 0)
@@ -76,9 +77,9 @@ mod_STAR_idx_server <- function(input, output, session, r){
   })
   
   observeEvent(eventExpr = r$annot_ready, handlerExpr = {
-    hide(id = "star_idx")
+    shinyjs::hide(id = "star_idx")
     if (r$annot_ready){
-      show(id = "star_idx")
+      shinyjs::show(id = "star_idx")
     }
   })
   
