@@ -16,5 +16,5 @@ A tibble with filtration statistics
 Very simple helper function to import chimeric reads, and record which the quantity of included and excluded backsplice junction covering reads
 }
 \examples{
-stats <- arbitrayFilterStats(object = circObject)
+#stats <- arbitrayFilterStats(object = circObject)
 }

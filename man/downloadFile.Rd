@@ -18,13 +18,13 @@ Downloaded and unzipped file name
 Download and decompress reference files
 }
 \examples{
-ah <- AnnotationHub()
-organism <- "Homo_sapiens"
-build <- "GRCh38"
-release <- 100
-qry <- subset(ah, species == "Homo sapiens", rdataprovider == "Ensembl")
-meta <- mcols(qry)
-urls <- getDownloadLinks(meta, organism, build, release)
-# Not run
-file1 <- downloadFile(url = urls[1], out_dir = "/tmp/file1"
+#ah <- AnnotationHub()
+#organism <- "Homo_sapiens"
+#build <- "GRCh38"
+#release <- 100
+#qry <- subset(ah, species == "Homo sapiens", rdataprovider == "Ensembl")
+#meta <- mcols(qry)
+#urls <- getDownloadLinks(meta, organism, build, release)
+## Not run
+#file1 <- downloadFile(url = urls[1], out_dir = "/tmp/file1"
 }

@@ -18,12 +18,12 @@ A numeric vector with Ensembl releases, containing both annotation object and re
 Determine avialable releases based on extremities
 }
 \examples{
-#' ah <- AnnotationHub()
-organism <- "Homo_sapiens"
-meta <- extractReferenceMeta(ah, organism)
-ref_extremes <- referenceExtremities(meta)
-ens_extremes <- EnsDbExtremities(queries)
-extremes <- determineExtremities(ens_extremes, ref_extremes)
-min_release <- extremes[1]
-max_release <- extremes[2]
+#ah <- AnnotationHub()
+#organism <- "Homo_sapiens"
+#meta <- extractReferenceMeta(ah, organism)
+#ref_extremes <- referenceExtremities(meta)
+#ens_extremes <- EnsDbExtremities(queries)
+#extremes <- determineExtremities(ens_extremes, ref_extremes)
+#min_release <- extremes[1]
+#max_release <- extremes[2]
 }

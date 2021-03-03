@@ -18,7 +18,7 @@ makeTables(object, ah, circbase)
 This function generates a data table containing detected circRNAs
 }
 \examples{
-ahdb <- AnnotationHub()[["AH79689"]] # Ensembl EnsDb Release 100
-circs <- makeTable(object= circObject, ah = ahdb)
+#ahdb <- AnnotationHub()[["AH79689"]] # Ensembl EnsDb Release 100
+#circs <- makeTable(object= circObject, ah = ahdb)
 
 }

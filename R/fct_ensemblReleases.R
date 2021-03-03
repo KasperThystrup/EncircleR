@@ -9,7 +9,7 @@
 #' @return A character vector with the title of available EnsDb objects
 #'
 #' @examples
-#' availableEnsemblReleases()
+#' #availableEnsemblReleases()
 #' 
 #' @importFrom AnnotationHub subset
 #' @export
@@ -34,10 +34,10 @@ availableEnsemblReleases <- function(ahub, organism){
 #' @return
 #'
 #' @examples
-#' ah <- AnnotationHub()
-#' organism <- "Homo_sapiens"
-#' queries <- availableEnsemblReleases(ah, organism)
-#' releases <- extractEnsemblReleaseNumerics(queries)
+#' #ah <- AnnotationHub()
+#' #organism <- "Homo_sapiens"
+#' #queries <- availableEnsemblReleases(ah, organism)
+#' #releases <- extractEnsemblReleaseNumerics(queries)
 #' @export
 extractEnsemblReleaseNumerics <- function(queries) {
   releases <- gsub(x = queries, pattern = "\\D", replacement = "")
@@ -55,9 +55,9 @@ extractEnsemblReleaseNumerics <- function(queries) {
 #' @export
 #'
 #' @examples
-#' ah <- AnnotationHub()
-#' organism <- "Homo_sapiens"
-#' meta <- extractReferenceMeta(ah, organism)
+#' #ah <- AnnotationHub()
+#' #organism <- "Homo_sapiens"
+#' #meta <- extractReferenceMeta(ah, organism)
 #' @importFrom S4Vectors mcols
 #' @importMethodsFrom AnnotationHub mcols
 extractReferenceMeta <- function(ahub, organism, release = NULL) {
@@ -83,10 +83,10 @@ extractReferenceMeta <- function(ahub, organism, release = NULL) {
 #' @export
 #'
 #' @examples
-#' ah <- AnnotationHub()
-#' organism <- "Homo_sapiens"
-#' meta <- extractReferenceMeta(ah, organism)
-#' referenceExtremities(meta)
+#' #ah <- AnnotationHub()
+#' #organism <- "Homo_sapiens"
+#' #meta <- extractReferenceMeta(ah, organism)
+#' #referenceExtremities(meta)
 referenceExtremities <- function(meta) {
   versions <- stringr::str_extract(
     string = meta$sourceurl,
@@ -112,10 +112,10 @@ referenceExtremities <- function(meta) {
 #' @export
 #'
 #' @examples
-#' ah <- AnnotationHub()
-#' organism <- "Homo_sapiens"
-#' queries <- availableEnsemblReleases(ah, organism)
-#' ens_extremes <- EnsDbExtremities(queries)
+#' #ah <- AnnotationHub()
+#' #organism <- "Homo_sapiens"
+#' #queries <- availableEnsemblReleases(ah, organism)
+#' #ens_extremes <- EnsDbExtremities(queries)
 EnsDbExtremities <- function(queries) {
   releases <- extractEnsemblReleaseNumerics(queries)
   
@@ -136,14 +136,14 @@ EnsDbExtremities <- function(queries) {
 #' @export
 #'
 #' @examples
-#' #' ah <- AnnotationHub()
-#' organism <- "Homo_sapiens"
-#' meta <- extractReferenceMeta(ah, organism)
-#' ref_extremes <- referenceExtremities(meta)
-#' ens_extremes <- EnsDbExtremities(queries)
-#' extremes <- determineExtremities(ens_extremes, ref_extremes)
-#' min_release <- extremes[1]
-#' max_release <- extremes[2]
+#' #ah <- AnnotationHub()
+#' #organism <- "Homo_sapiens"
+#' #meta <- extractReferenceMeta(ah, organism)
+#' #ref_extremes <- referenceExtremities(meta)
+#' #ens_extremes <- EnsDbExtremities(queries)
+#' #extremes <- determineExtremities(ens_extremes, ref_extremes)
+#' #min_release <- extremes[1]
+#' #max_release <- extremes[2]
 determineExtremities <- function(ens_extremes, ref_extremes) {
   mn <- max(ens_extremes[1], ref_extremes[1])
   mx <- min(ens_extremes[2], ref_extremes[2])

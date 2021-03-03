@@ -19,6 +19,6 @@ This function subsets an AnnotationhHub object according to provided species,
 and extracts the title of existing EnsDb objects.
 }
 \examples{
-availableEnsemblReleases()
+#availableEnsemblReleases()
 
 }

@@ -6,7 +6,7 @@
 #' Statistics on included and excluded reads after filtration
 #'
 #' @examples
-#' plotFiltrationStats(circObject)
+#' #plotFiltrationStats(circObject)
 #' @import dplyr
 #' @import ggplot2
 #' @importFrom scales comma
@@ -35,7 +35,7 @@ plotFiltrationStats <- function(object) {
 #' @return
 #' A tibble with filtration statistics
 #' @examples
-#' stats <- arbitrayFilterStats(object = circObject)
+#' #stats <- arbitrayFilterStats(object = circObject)
 #' @import dplyr 
 #' @importFrom tidyr pivot_longer
 #' @export

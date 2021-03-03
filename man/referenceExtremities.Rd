@@ -16,8 +16,8 @@ A numeric vector of the length two, containing the oldest and latest available r
 Determine avialable reference files release extermities
 }
 \examples{
-ah <- AnnotationHub()
-organism <- "Homo_sapiens"
-meta <- extractReferenceMeta(ah, organism)
-referenceExtremities(meta)
+#ah <- AnnotationHub()
+#organism <- "Homo_sapiens"
+#meta <- extractReferenceMeta(ah, organism)
+#referenceExtremities(meta)
 }
