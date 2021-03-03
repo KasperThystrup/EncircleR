@@ -6,39 +6,37 @@
 #'
 #' @noRd
 #'
-#' @import shiny
 #' @importFrom shinyjs hide show
-#' @importfrom shinydashboard box
 mod_setupExperiment_ui <- function(id){
-  ns <- NS(id)
-  tagList(
-    div(
+  ns <- shiny::NS(id)
+  shiny::tagList(
+    shiny::div(
       id = ns("exp"),
-      textInput(
+      shiny::textInput(
         inputId = ns("exp_dir"),
         label = "Please enter the desired output path of the experimental directory",
         placeholder = "Enter the full path to the top folder",
         value = exp_default
       ),
   
-      actionButton(
+      shiny::actionButton(
         inputId = ns("exp_start"),
         label = "Setup experiment",
-        icon = icon("truck-loading")
+        icon = shiny::icon("truck-loading")
       ),
-      helpText(paste(
+      shiny::helpText(paste(
         "This initiates sample import either by copying or moving fastq files.",
         "Next fastq files are automatically renamed according to sample names",
         "and read mate data from the metadata file."
       )),
   
-      checkboxInput(
+      shiny::checkboxInput(
         inputId = ns("keep"),
         label = "Copy fastq files to experimental dir (Fastq files are moved instead if disabled)",
         value = TRUE
       ),
       
-      helpText(paste(
+      shiny::helpText(paste(
         "WARNING: Do not uncheck the option, if you have no backup of your fast files.",
         "In this case, copy your files instead!"
       ))
@@ -53,17 +51,17 @@ mod_setupExperiment_server <- function(input, output, session, r){
   ns <- session$ns
   
   shinyjs::hide(id = "exp")
-  observeEvent(eventExpr = r$meta_ready, handlerExpr = {
+  shiny::observeEvent(eventExpr = r$meta_ready, handlerExpr = {
     shinyjs::hide(id = "exp")
     if (r$meta_ready)
       shinyjs::show(id = "exp")
   })
   
-  observeEvent(eventExpr = input$exp_start, handlerExpr = {
+  shiny::observeEvent(eventExpr = input$exp_start, handlerExpr = {
     shiny::withProgress(value = 0, message = "Preparaing sample files", expr = {
       r$exp_ready <- FALSE
 
-      incProgress(amount = 0.25, message = "Preparing experimental directory")
+      shiny::incProgress(amount = 0.25, message = "Preparing experimental directory")
       
       # Check on experimental directory
       r$exp_dir <- input$exp_dir
@@ -74,7 +72,7 @@ mod_setupExperiment_server <- function(input, output, session, r){
 
       system(cmd_makedir)
 
-      incProgress(
+      shiny::incProgress(
         amount = 0.5,
         message = "Setting up samples in Experimental folder (may take some time)"
       )

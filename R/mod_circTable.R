@@ -8,12 +8,12 @@
 #'
 #' @importFrom shiny NS tagList 
 mod_circTable_ui <- function(id){
-  ns <- NS(id)
-  tagList(
-    div(
+  ns <- shiny::NS(id)
+  shiny::tagList(
+    shiny::div(
       id = ns("circTables"),
       
-      actionButton(inputId = ns("GO"), label = "Generate circRNA table"),
+      shiny::actionButton(inputId = ns("GO"), label = "Generate circRNA table"),
       DT::DTOutput(outputId = ns("circRNAs"))
     )
   )
@@ -28,8 +28,8 @@ mod_circTable_ui <- function(id){
 mod_circTable_server <- function(input, output, session, r){
   ns <- session$ns
   
-  observeEvent(eventExpr = input$GO, handlerExpr = {
-    withProgress(value = 0, message = "Fetching circBase resources", expr = {
+  shiny::observeEvent(eventExpr = input$GO, handlerExpr = {
+    shiny::withProgress(value = 0, message = "Fetching circBase resources", expr = {
       circBase_link <- switch (r$org,
         "Homo_sapiens" = "http://www.circbase.org/download/hsa_hg19_circRNA.txt",
         "Mus_musculus" = "http://www.circbase.org/download/mmu_mm9_circRNA.txt"

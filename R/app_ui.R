@@ -2,12 +2,12 @@
 #' 
 #' @param request Internal parameter for `{shiny}`. 
 #'     DO NOT REMOVE.
-#' @importFrom shinyjs useShinyjs hideElement showElement
-#' @import shiny
-#' @importFrom shinydashboard dashboardBody dashboardHeader dashboardPage dashboardSidebar menuItem sidebarMenu tabItem tabItems
+#' @importFrom shinyjs hide hideElement show showElement useShinyjs
+#' @importFrom shiny actionButton checkboxInput column div fileInput helpText icon incProgress NS numericInput observeEvent plotOutput reactiveValues renderPlot renderText selectInput sliderInput tagList textInput updateSelectInput updateSliderInput verbatimTextOutput withProgress
+#' @importFrom shinydashboard box dashboardBody dashboardHeader dashboardPage dashboardSidebar menuItem sidebarMenu tabItem tabItems
 #' @noRd
 app_ui <- function(request) {
-  tagList(
+  shiny::tagList(
     # Leave this function for adding external resources
     golem_add_external_resources(),
     shinyjs::useShinyjs(),
@@ -22,37 +22,37 @@ app_ui <- function(request) {
         shinydashboard::sidebarMenu(
           # shinydashboard::menuItem(
           #   tabName = "home",
-          #   icon = icon("home"),
+          #   icon = shiny::icon("home"),
           #   text = "Home"
           # ),
           
           shinydashboard::menuItem(
             tabName = "setup",
-            icon = icon("vials"),
+            icon = shiny::icon("vials"),
             text = "Experimental setup"
           ),
           
           shinydashboard::menuItem(
             tabName = "preparation",
-            icon = icon("dna"),
+            icon = shiny::icon("dna"),
             text = "Read preparation"
           ),
           
           shinydashboard::menuItem(
             tabName = "circ",
-            icon = icon("microscope"),
+            icon = shiny::icon("microscope"),
             text = "CircRNA analysis"
           ),
           
           shinydashboard::menuItem(
             tabName = "statistics",
-            icon = icon("chart-area"),
+            icon = shiny::icon("chart-area"),
             text = "Statstics"
           ),
           
           shinydashboard::menuItem(
             tabName = "circtables",
-            icon = icon("table"),
+            icon = shiny::icon("table"),
             text = "Detected circRNA"
           )
         )
@@ -62,24 +62,24 @@ app_ui <- function(request) {
         shinydashboard::tabItems(
           # shinydashboard::tabItem(
           #   tabName = "home",
-          #   tags$h1("Welcome!")
+          #   shiny::tags$h1("Welcome!")
           # ),
           
           shinydashboard::tabItem(
             tabName = "setup",
-            column(
+            shiny::column(
               width = 4,
               mod_importMetadata_ui("importMetadata_ui_1"),
               mod_setupExperiment_ui("setupExperiment_ui_1")
             ),
             
-            column(
+            shiny::column(
               width = 4,
               mod_selectReferences_ui("selectReferences_ui_1"),
               mod_getAnnotation_ui("getAnnotation_ui_1")
             ),
             
-            column(
+            shiny::column(
               width = 4,
               mod_STAR_idx_ui("STAR_idx_ui_1")
             )
@@ -87,12 +87,12 @@ app_ui <- function(request) {
           
           shinydashboard::tabItem(
             tabName = "preparation",
-            column(
+            shiny::column(
               width = 6,
               mod_callFastp_ui("callFastp_ui_1")
             ),
             
-            column(
+            shiny::column(
               width = 6,
               mod_STAR_call_ui("STAR_call_ui_1")
             )
@@ -100,12 +100,12 @@ app_ui <- function(request) {
           
           shinydashboard::tabItem(
             tabName = "circ",
-            column(
+            shiny::column(
               width = 6,
               mod_deplyCirculaR_ui("deplyCirculaR_ui_1")
             ),
             
-            column(
+            shiny::column(
               width = 6,
               mod_applyFilters_ui("applyFilters_ui_1")
             )
@@ -132,7 +132,6 @@ app_ui <- function(request) {
 #' This function is internally used to add external 
 #' resources inside the Shiny application. 
 #' 
-#' @import shiny
 #' @importFrom golem add_resource_path activate_js favicon bundle_resources
 #' @noRd
 golem_add_external_resources <- function(){
