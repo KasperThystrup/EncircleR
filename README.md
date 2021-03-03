@@ -30,7 +30,7 @@ install the following Biocodncutor packages:
 
 ``` r
 install.packages("BiocManager")
-BiocManager::install(c("AnnotationDbi", "BiocGenerics", "BSgenome", "DESeq2", "ensembldb", "GenomeInfoDb", "GenomicFeatures", "GenomicRanges", "Gviz", "IRanges", "Rsamtools", "S4Vectors"))
+BiocManager::install(c("AnnotationHub", "S4Vectors", "plyranges"))
 ```
 
 In addition, `devtools` r package must be installed, to enable easy
@@ -40,6 +40,8 @@ installation of `EncirclaR` from github.
 install.packages("devtools")
 devtools::install_github("https://github.com/KasperThystrup/EncircleR")
 ```
+
+## Troubleshooting
 
 This should install all dependencies from the official CRAN repository.
 However, if something does not work out, try to install the CRAN

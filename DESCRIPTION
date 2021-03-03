@@ -7,7 +7,7 @@ License: GPL-3
 Imports: 
     AnnotationHub (>= 2.20.2),
     S4Vectors (>= 0.26.1),
-    logger (>= 0.2.0),
+    logger (>= 0.1),
     plyranges (>= 1.8.0),
     config (>= 0.3),
     ggplot2 (>= 3.3.2),
@@ -26,7 +26,7 @@ Imports:
     scales (>= 1.1.1),
     stringr (>= 1.4.0),
     dplyr (>= 1.0.2),
-    circulaR (>= 0.0.0.9000)
+    circulaR
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.1.1
