@@ -6,36 +6,36 @@
 #'
 #' @noRd
 #'
-#' @importFrom shiny NS tagList
+#' @importFrom shinyjs hide show
 mod_STAR_call_ui <- function(id){
-  ns <- NS(id)
-  tagList(
-    div(
+  ns <- shiny::NS(id)
+  shiny::tagList(
+    shiny::div(
       id = ns("star_setup"),
         
-      textInput(
+      shiny::textInput(
         inputId = ns("star"),
         label = "Locate binary star file or provide default system call",
         value = star_default
       ),
-      helpText(
+      shiny::helpText(
         "Usually the binary file for STAR can be found in the `bin/Linux_x86_64` or `bin/MacOs_x86_64` instalation folder eg:",
         "/home/user/aligners/STAR/bin/Linux_x86_64/STAR"
       ),
 
-      numericInput(
+      shiny::numericInput(
         inputId = ns("ram_lim"),
         label = "RAM limit dedicated for BAM sorting",
         value = 5e9, min = 1e6
       ),
 
-      numericInput(
+      shiny::numericInput(
         inputId = ns("min_seq"),
         label = "Minimal segment length on chimeric reads",
         value = 20, min = 5
       ),
       
-      sliderInput(
+      shiny::sliderInput(
         inputId = ns("threads"),
         label = "Determine number of cores",
         min = 0,
@@ -44,13 +44,13 @@ mod_STAR_call_ui <- function(id){
         step = 1
       ),
 
-      actionButton(
+      shiny::actionButton(
         inputId = ns("star_call"),
         label = "Begin alignment",
-        icon = icon("star") # align-center ## microscope
+        icon = shiny::icon("star") # align-center ## microscope
       ),
       
-      checkboxInput(
+      shiny::checkboxInput(
         inputId = ns("star_overwrite"),
         label = "Overwrite alignment files",
         value = FALSE
@@ -65,21 +65,21 @@ mod_STAR_call_ui <- function(id){
 mod_STAR_call_server <- function(input, output, session, r){
   ns <- session$ns
   
-  hide(id = "star_setup")
-  observeEvent(eventExpr = r$fastp_ready, handlerExpr = {
-    hide(id = "star_setup")
+  shinyjs::hide(id = "star_setup")
+  shiny::observeEvent(eventExpr = r$fastp_ready, handlerExpr = {
+    shinyjs::hide(id = "star_setup")
     if (r$fastp_ready)
-      show(id = "star_setup")
+      shinyjs::show(id = "star_setup")
   })
   
   shinyjs::hideElement(id = "star_call")
-  observeEvent(eventExpr = input$threads, handlerExpr = {
+  shiny::observeEvent(eventExpr = input$threads, handlerExpr = {
     shinyjs::hideElement(id = "star_call")
     if (input$threads > 0)
       shinyjs::showElement(id = "star_call")
   })
 
-  observeEvent(eventExpr = input$star_call, handlerExpr = {
+  shiny::observeEvent(eventExpr = input$star_call, handlerExpr = {
     r$star_ready <- FALSE
     logger::log_debug("Generating sample data table")
 
@@ -91,9 +91,9 @@ mod_STAR_call_server <- function(input, output, session, r){
     if (input$star_overwrite | any(!dir.exists(file.path(r$smpl_dir, sample, "STAR")))) {
     # Progress counter
 
-    withProgress(value = 0, min = 0, max = length(sample) + 2, message = "Initiating STAR alignment", expr = {
+      shiny::withProgress(value = 0, min = 0, max = length(sample) + 2, message = "Initiating STAR alignment", expr = {
       Sys.sleep(0.75)
-      incProgress(
+        shiny::incProgress(
         amount = 0.15, session = session,
         message = "Loading genome index"
       )
@@ -101,7 +101,7 @@ mod_STAR_call_server <- function(input, output, session, r){
         lapply(sample, function(smpl){
   
           sample_subset <- subset(r$meta, Sample == smpl)
-          incProgress(amount = 1, message = paste("Aligning sample:", smpl))
+          shiny::incProgress(amount = 1, message = paste("Aligning sample:", smpl))
           callSTAR(
             star = input$star, genome_dir = r$star_dir,
             threads = input$threads, sample = smpl, meta = r$meta,

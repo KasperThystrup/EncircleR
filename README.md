@@ -8,110 +8,62 @@ providing a graphical interface for selecting and downloading reference
 files, Perform read trimming and read mapping, and finally to perform
 circRNA detection by exploring backsplice junction contents.
 
-# Installation and startup
+### Dependencies
 
-## Dependencies
+Install the latest version of R and R-studio
 
-The package requires the following external software to be installed
-
--   STAR aligner
-    (<a href="https://github.com/alexdobin/STAR" class="uri">https://github.com/alexdobin/STAR</a>),
-    Alignment and chimeric read detection
--   fastp
-    (<a href="https://github.com/OpenGene/fastp" class="uri">https://github.com/OpenGene/fastp</a>),
-    Read trimming and quality parametrics
--   R
-    (<a href="https://cran.rstudio.com/" class="uri">https://cran.rstudio.com/</a>),
-    Statistical programming language for running EncircleR
--   Rstudio
-    (<a href="https://rstudio.com/products/rstudio/download/#download" class="uri">https://rstudio.com/products/rstudio/download/#download</a>),
+-   R (<https://cran.rstudio.com/>), Statistical programming language
+    for running EncircleR
+-   Rstudio (<https://rstudio.com/products/rstudio/download/#download>),
     Graphical R interface which simplifies executing and openning
-    EncircleR
+    EncircleR.
 
-#### Locate the binary execution files
+Install the `circulaR` package from github, following its readme:
+<https://github.com/KasperThystrup/circulaR>
 
-In order to make EncircleR call the STAR aligner and fastp software, you
-must provide the absolute path to their binary execution files.
+In order to install the `EncirclaR` R package, you must ensure to
+install the following Biocodncutor packages:
 
-For STAR aligner on linux, this can be located in:
+-   AnnotationHub
+-   S4Vectors
+-   plyranges
 
-    /path/to/STAR/bin/Linux_x86_64/STAR
+``` r
+install.packages("BiocManager")
+BiocManager::install(c("AnnotationDbi", "BiocGenerics", "BSgenome", "DESeq2", "ensembldb", "GenomeInfoDb", "GenomicFeatures", "GenomicRanges", "Gviz", "IRanges", "Rsamtools", "S4Vectors"))
+```
 
-For fastp (when installed through Bioconda (Miniconda3)):
+In addition, `devtools` r package must be installed, to enable easy
+installation of `EncirclaR` from github.
 
-    /path/to/bioconda/bin/fastp
+``` r
+install.packages("devtools")
+devtools::install_github("https://github.com/KasperThystrup/EncircleR")
+```
 
-Remember these destinations, as they are to be copy pasted into the app,
-when asking to locate the binary of each the softwares.
+This should install all dependencies from the official CRAN repository.
+However, if something does not work out, try to install the CRAN
+dependencies manually before running the install github command again:
 
-### R packages
+-   logger
+-   config
+-   ggplot2
+-   golem
+-   shinyjs
+-   shiny
+-   processx
+-   attempt
+-   DT
+-   glue
+-   htmltools
+-   shinydashboard
+-   readr
+-   tibble
+-   tidyr
+-   scales
+-   stringr
+-   dplyr
 
-After Rstudio has been successfully installed a few R packages must be
-installed, to make this process easier, open Rstudio and follow the
-steps below.
-
-Most official R package dependencies should be installed during
-installation of EncircleR, however there are a few packages that needs
-to be installed manually first:
-
-    install.packages(c("devtools", "BiocManager"))
-
-Once BiocManager has been installed, the following Bioconductor packages
-will have to be installed as well.
-
-    BiocManager::install(c("AnnotationHub", "plyranges"))
-
-The circRNA detection algorithm (circulaR) used by EncircleR are
-installed via GitHub:
-
-    devtools::install_github("https://github.com/KasperThystrup/circulaR")
-
-Finally, you can then install EncircleR via Github:
-
-    devtools::install_github("https://github.com/KasperThystrup/EncircleR")
-
-### How to run
-
-After EncricleR has been successfully installed, it can be executed by
-opening RStudio and execute:
-
-    EncircleR::run_app()
-
-### Metadata
-
-In order to perform the analysis, a metadata sheet must be generated.
-This metadatasheet is a tsv file, which must contains the following
-columns:
-
-1.  Sample name
-2.  Full filepath
-3.  Read Mate
-
-Please see `data/Metadata_example.tsv` in this git repository for an
-example.
-
-The sample name column will be used to organize input and output files,
-and are used for naming files, so please mind to keep sample names
-simple, and refrain from using use special characters and spaces, in the
-sample names. The file path column is used by the app to locate the
-local input files. The mate column is used to ensure that read mates are
-correctly distinguished from each other. For paired end reads, their
-will always be two rows for each sample.
-
-## Execution
-
-The app currently copies (it is possible to move files instead of
-copying) fastq files to an experimental directory, defined by the user.
-For each sample, fastp trimming and STAR alignment is run, with
-predefined settings. It is possible to tweak these settings in the app
-by accessing advanced settings. Newly created files are located
-systematically within the experimental directory. As a final step, the
-circulaR algorithm is used to run circRNA analysis.
-
-## If package will not execute with above code
-
-Clone the repository and open `EncircleR.Rproj` with Rstudio, first
-enter: File &gt; New project &gt; Version control &gt; Git
-
-Next: Try to run the entire script in `dev/run_dev.R`, install any
-packages that is missing.
+``` r
+install.packages(c("logger", "config", "ggplot2", "golem", "shinyjs", "shiny", "processx", "attempt", "DT", "glue", "htmltools", "shinydashboard", "readr", "tibble", "tidyr", "scales", "stringr", "dplyr", "circulaR"))
+```

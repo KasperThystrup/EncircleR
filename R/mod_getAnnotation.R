@@ -6,16 +6,15 @@
 #'
 #' @noRd 
 #'
-#' @importFrom shiny NS tagList 
-#' @import shinyjs
+#' @importFrom shinyjs hide show
 #' @import dplyr
 mod_getAnnotation_ui <- function(id){
-  ns <- NS(id)
-  tagList(
+  ns <- shiny::NS(id)
+  shiny::tagList(
     shiny::div(
       id = ns("ref"),
 
-      selectInput(
+      shiny::selectInput(
         inputId = ns("org"),
         label = "Please select a host organism",
         choices = c(
@@ -24,7 +23,7 @@ mod_getAnnotation_ui <- function(id){
         )
       ),
       
-      sliderInput(
+      shiny::sliderInput(
         inputId = ns("rel"),
         label = "Please select an Ensembl release version", 
         min = -1,
@@ -33,10 +32,10 @@ mod_getAnnotation_ui <- function(id){
         step = 1
       ),
       
-      actionButton(
+      shiny::actionButton(
         inputId = ns("step"),
         label = "Download reference files",
-        icon = icon("cart-arrow-down")
+        icon = shiny::icon("cart-arrow-down")
       )
     )
   )
@@ -48,41 +47,41 @@ mod_getAnnotation_ui <- function(id){
 mod_getAnnotation_server <- function(input, output, session, r){
   ns <- session$ns
   
-  hide(id = "ref")
+  shinyjs::hide(id = "ref")
   shinyjs::hideElement(id = "rel")
   shinyjs::hideElement(id = "step")
-  observeEvent(eventExpr = r$select_ready, handlerExpr = {
-    hide(id = "ref")
+  shiny::observeEvent(eventExpr = r$select_ready, handlerExpr = {
+    shinyjs::hide(id = "ref")
     shinyjs::hideElement(id = "rel")
-    withProgress(
+    shiny::withProgress(
       value = 0.5, message = "Determining whether reference genome is ready",
       expr = {
         if (r$select_ready) {
           
-          incProgress(amount = 0.35, message = "Fetching information from AnnotationHub")
+          shiny::incProgress(amount = 0.35, message = "Fetching information from AnnotationHub")
           logger::log_debug("Fetching annotation object")
           r$ah <- AnnotationHub::AnnotationHub()
-          show(id = "ref")
+          shinyjs::show(id = "ref")
         }
       }
     )
   })
   
   
-  observeEvent(eventExpr = input$org, handlerExpr = {
+  shiny::observeEvent(eventExpr = input$org, handlerExpr = {
     shinyjs::hideElement(id = "step")
 
     if (input$org %in% supported_organisms) {
       logger::log_info("Querying selected organism")
       shiny::withProgress(expr = {
-        incProgress(amount = 0.25, message = "Determining available EnsDb releases") 
+        shiny::incProgress(amount = 0.25, message = "Determining available EnsDb releases") 
         
         logger::log_debug("Listing available resources")
         queries <- availableEnsemblReleases(ahub = r$ah, organism = input$org)
         logger::log_debug("Determining extremities")
         ens_extremes <- EnsDbExtremities(queries)
         
-        incProgress(amount = 0.25, message = "Determining available reference releases") 
+        shiny::incProgress(amount = 0.25, message = "Determining available reference releases") 
         logger::log_debug("Extracting reference metadata")
         meta <- extractReferenceMeta(ahub = r$ah, organism = input$org, release = NULL)
         logger::log_debug("Defining release extermities of reference and annotation objects")
@@ -90,9 +89,9 @@ mod_getAnnotation_server <- function(input, output, session, r){
         logger::log_debug("Selecting common extremities.")
         extremes <- determineExtremities(ens_extremes, ref_extremes)
         
-        incProgress(amount = 0.25, message = "Updating available releases")
+        shiny::incProgress(amount = 0.25, message = "Updating available releases")
         
-        updateSliderInput(
+        shiny::updateSliderInput(
           session = session, inputId = "rel",
           min = extremes[1], max = extremes[2], value = extremes[2]
         )
@@ -112,7 +111,7 @@ mod_getAnnotation_server <- function(input, output, session, r){
   
   
   # Select organisms
-  observeEvent(eventExpr = input$step, handlerExpr = {
+  shiny::observeEvent(eventExpr = input$step, handlerExpr = {
     r$annot_ready <- FALSE
     
     shinyjs::hideElement(id = "step")
@@ -125,7 +124,7 @@ mod_getAnnotation_server <- function(input, output, session, r){
       r$org <- input$org
       r$rel <- input$rel
       
-      incProgress(amount = 0.25, message = "Looking up reference URLs")
+      shiny::incProgress(amount = 0.25, message = "Looking up reference URLs")
       
       logger::log_debug("Extracting reference metadata")
       meta <- extractReferenceMeta(ahub = r$ah, organism = input$org, release = input$rel)
@@ -135,13 +134,13 @@ mod_getAnnotation_server <- function(input, output, session, r){
       
       r$genome_dir <- file.path(r$cache_dir, "Genome", paste("release", input$rel, sep = "-"), input$org)
       
-      incProgress(amount = 0.25, message = "Downloading and unzipping reference annotation")
+      shiny::incProgress(amount = 0.25, message = "Downloading and unzipping reference annotation")
       r$gtf_fn <- downloadFile(url = urls$gtf, out_dir = r$genome_dir)
       
-      incProgress(amount = 0.25, message = "Downloading and unzipping reference genome")
+      shiny::incProgress(amount = 0.25, message = "Downloading and unzipping reference genome")
       r$fa_fn <- downloadFile(url = urls$fa, out_dir = r$genome_dir)
       
-      incProgress(
+      shiny::incProgress(
         amount = 0.25,
         message = paste(names(input$org), "Fasta and GTF file downloaded!")
       )

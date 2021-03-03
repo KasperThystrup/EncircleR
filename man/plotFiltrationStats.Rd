@@ -16,5 +16,5 @@ Statistics on included and excluded reads after filtration
 Plot filtration stats
 }
 \examples{
-plotFiltrationStats(circObject)
+#plotFiltrationStats(circObject)
 }

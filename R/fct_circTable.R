@@ -7,8 +7,8 @@
 #'
 #' @return
 #' @examples
-#' ahdb <- AnnotationHub()[["AH79689"]] # Ensembl EnsDb Release 100
-#' circs <- makeTable(object= circObject, ah = ahdb)
+#' #ahdb <- AnnotationHub()[["AH79689"]] # Ensembl EnsDb Release 100
+#' #circs <- makeTable(object= circObject, ah = ahdb)
 #' 
 #' @importFrom dplyr mutate group_by %>% summarise right_join filter
 #' @importFrom tibble tibble

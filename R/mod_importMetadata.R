@@ -6,18 +6,17 @@
 #'
 #' @noRd
 #'
-#' @importFrom shiny NS tagList
 mod_importMetadata_ui <- function(id){
-  ns <- NS(id)
-  tagList(
+  ns <- shiny::NS(id)
+  shiny::tagList(
       
-    fileInput(
+    shiny::fileInput(
       inputId = ns("meta_file"),
       label = "Please upload a Metadata file",
       accept = ".tsv"
     ),
 
-    verbatimTextOutput(outputId = ns("file_status"))
+    shiny::verbatimTextOutput(outputId = ns("file_status"))
   )
 }
 
@@ -27,9 +26,9 @@ mod_importMetadata_ui <- function(id){
 mod_importMetadata_server <- function(input, output, session, r){
   ns <- session$ns
 
-  file_check <- reactiveValues(status = "Metadata file have not yet been uploaded")
+  file_check <- shiny::reactiveValues(status = "Metadata file have not yet been uploaded")
 
-  observeEvent(eventExpr = input$meta_file, handlerExpr = {
+  shiny::observeEvent(eventExpr = input$meta_file, handlerExpr = {
 
     logger::log_info("Uploading metadata")
     r$meta <- importMetadata(meta_fn = input$meta_file$datapath)
@@ -52,7 +51,7 @@ mod_importMetadata_server <- function(input, output, session, r){
     }
   })
 
-  output$file_status <- renderText(file_check$status)
+  output$file_status <- shiny::renderText(file_check$status)
 }
 
 # ## To be copied in the UI

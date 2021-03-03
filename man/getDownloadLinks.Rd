@@ -22,11 +22,11 @@ Named list with GTF and FA URLs
 Find links for reference files
 }
 \examples{
-ah <- AnnotationHub()
-organism <- "Homo_sapiens"
-build <- "GRCh38"
-release <- 100
-qry <- subset(ah, species == "Homo sapiens", rdataprovider == "Ensembl")
-meta <- mcols(qry)
-getDownloadLinks(meta, organism, build, release)
+#ah <- AnnotationHub()
+#organism <- "Homo_sapiens"
+#build <- "GRCh38"
+#release <- 100
+#qry <- subset(ah, species == "Homo sapiens", rdataprovider == "Ensembl")
+#meta <- mcols(qry)
+#getDownloadLinks(meta, organism, build, release)
 }

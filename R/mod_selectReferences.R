@@ -6,14 +6,14 @@
 #'
 #' @noRd 
 #'
-#' @importFrom shiny NS tagList 
+#' @importFrom shinyjs hide show
 mod_selectReferences_ui <- function(id){
-  ns <- NS(id)
-  tagList(
-    div(
+  ns <- shiny::NS(id)
+  shiny::tagList(
+    shiny::div(
       id = ns("ref"),
       
-      selectInput(
+      shiny::selectInput(
         inputId = ns("ref_select"),
         label = "Choose an existing reference genome",
         choices = c(
@@ -21,24 +21,24 @@ mod_selectReferences_ui <- function(id){
           available_references),
       ),
       
-      verbatimTextOutput(outputId = ns("ref_status"), placeholder = TRUE),
+      shiny::verbatimTextOutput(outputId = ns("ref_status"), placeholder = TRUE),
       
-      column(
+      shiny::column(
         width = 6,
         
-        actionButton(
+        shiny::actionButton(
           inputId = ns("ref_new"),
           label = "New Reference Genome",
-          icon = icon("plus-circle")
+          icon = shiny::icon("plus-circle")
         )
       ),
       
-      column(
+      shiny::column(
         width = 6,
-        actionButton(
+        shiny::actionButton(
           inputId = ns("continue"),
           label = "Load existing reference genome",
-          icon = icon("play")
+          icon = shiny::icon("play")
         )
       )
     )
@@ -51,18 +51,18 @@ mod_selectReferences_ui <- function(id){
 mod_selectReferences_server <- function(input, output, session, r){
   ns <- session$ns
   
-  hide(id = "ref")
-  observeEvent(eventExpr = r$exp_ready, handlerExpr = {
-    hide(id = "ref")
+  shinyjs::hide(id = "ref")
+  shiny::observeEvent(eventExpr = r$exp_ready, handlerExpr = {
+    shinyjs::hide(id = "ref")
     if (r$exp_ready)
-      show(id = "ref")
+      shinyjs::show(id = "ref")
   })
   
   shinyjs::hideElement(id = "continue")
   
-  msgs <- reactiveValues(status = "No reference genome selected.")
-  observeEvent(eventExpr = input$ref_select, handlerExpr = {
-    withProgress(
+  msgs <- shiny::reactiveValues(status = "No reference genome selected.")
+  shiny::observeEvent(eventExpr = input$ref_select, handlerExpr = {
+    shiny::withProgress(
       value = 0, session = session, message = "Searching for existing files",
       expr = {
         shinyjs::showElement(id = "ref_new")
@@ -112,7 +112,7 @@ mod_selectReferences_server <- function(input, output, session, r){
 
           if (dir.exists(r$star_dir)) {
             
-            incProgress(
+            shiny::incProgress(
               amount = 0.25, session = session, 
               message = "Reference files found, loading AnnotationHub."
             )
@@ -128,12 +128,12 @@ mod_selectReferences_server <- function(input, output, session, r){
     )
   })
   
-  observeEvent(eventExpr = input$ref_new, handlerExpr = {
+  shiny::observeEvent(eventExpr = input$ref_new, handlerExpr = {
     if (!r$ref_ready)
       r$select_ready <- TRUE
   })
     
-  output$ref_status <- renderText(msgs$status)
+  output$ref_status <- shiny::renderText(msgs$status)
 }
     
 ## To be copied in the UI

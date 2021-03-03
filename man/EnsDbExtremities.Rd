@@ -18,8 +18,8 @@ Determine Ensembl release extremities
 Extracts the minimal and maximum Ensembl release number
 }
 \examples{
-ah <- AnnotationHub()
-organism <- "Homo_sapiens"
-queries <- availableEnsemblReleases(ah, organism)
-ens_extremes <- EnsDbExtremities(queries)
+#ah <- AnnotationHub()
+#organism <- "Homo_sapiens"
+#queries <- availableEnsemblReleases(ah, organism)
+#ens_extremes <- EnsDbExtremities(queries)
 }

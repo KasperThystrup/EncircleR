@@ -6,30 +6,29 @@
 #'
 #' @noRd 
 #'
-#' @importFrom shiny NS tagList 
 mod_mappingPlots_ui <- function(id){
-  ns <- NS(id)
-  tagList(
-    div(
+  ns <- shiny::NS(id)
+  shiny::tagList(
+    shiny::div(
       id = "mapping",
       
-      column(
+      shiny::column(
         width = 6,
-        plotOutput(outputId = ns("alignPercent")),
+        shiny::plotOutput(outputId = ns("alignPercent")),
         "The linear mapping statistics of each sample shown in percentages",
         
-        plotOutput(ns("SJvsLibSize")),
+        shiny::plotOutput(ns("SJvsLibSize")),
         "Splice junctions compared to Total Library size, the dashed line denotes the linear ratio, calculated with a linar model",
         
       ), 
       
-      column(
+      shiny::column(
         width = 6,
         
-        plotOutput(ns("readStats")),
+        shiny::plotOutput(ns("readStats")),
         "Input chimeric read statistics"#,
         
-        # plotOutput(outputId = ns("filtration")),
+        # shiny::plotOutput(outputId = ns("filtration")),
         # "Statistics on chimeric read filtration"
       )
     )
@@ -42,16 +41,16 @@ mod_mappingPlots_ui <- function(id){
 mod_mappingPlots_server <- function(input, output, session, r){
   ns <- session$ns
   
-  observeEvent(eventExpr = r$circ_ready, handlerExpr = {
+  shiny::observeEvent(eventExpr = r$circ_ready, handlerExpr = {
     
     if (r$circ_ready) {
-      output$alignPercent <- renderPlot(plotAlignmentPecentages(r$object))
+      output$alignPercent <- shiny::renderPlot(plotAlignmentPecentages(r$object))
 
-      output$SJvsLibSize <- renderPlot(plotSpliceLibSize(r$object))
+      output$SJvsLibSize <- shiny::renderPlot(plotSpliceLibSize(r$object))
       
-      output$readStats <- renderPlot(plotReadStats(r$object))
+      output$readStats <- shiny::renderPlot(plotReadStats(r$object))
       
-      # output$filtration <- renderPlot(plotFiltrationStats(r$object))
+      # output$filtration <- shiny::renderPlot(plotFiltrationStats(r$object))
     }
   })
 }

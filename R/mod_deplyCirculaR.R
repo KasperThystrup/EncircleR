@@ -7,23 +7,23 @@
 #' @noRd 
 #'
 #' @import circulaR
-#' @importFrom shiny NS tagList 
+#' @importFrom shinyjs hide show
 #' @importFrom AnnotationHub subset
 mod_deplyCirculaR_ui <- function(id){
-  ns <- NS(id)
-  tagList(
-    div(
+  ns <- shiny::NS(id)
+  shiny::tagList(
+    shiny::div(
       id = ns("circ_call"),
-      div(
-        textInput(
+      shiny::div(
+        shiny::textInput(
           inputId = ns("exp_name"),
           label = "Please provide a name for your experiment",
           value = exp_default,
           placeholder = "Experiment_name"
         ),
-        helpText("This will be used to as filename for the finsihed circRNA RData object, so please avoid using spaces and special characters."),
+        shiny::helpText("This will be used to as filename for the finsihed circRNA RData object, so please avoid using spaces and special characters."),
         
-        selectInput(
+        shiny::selectInput(
           inputId = ns("direction"),
           label = "Sequencing directionality",
           choices = c(
@@ -32,24 +32,24 @@ mod_deplyCirculaR_ui <- function(id){
             "Unstranded" = NA
           ),
         ),
-        helpText(
+        shiny::helpText(
           "This information is used to determine whether or not,",
           "the sequencing data represents the reverse complement of the sample template RNA.",
           "For TruSeq stranded libraries use First read first strand."
         ),
         
-        checkboxInput(inputId = ns("paired"), label = "Paired end reads", value = TRUE),
-        helpText(
+        shiny::checkboxInput(inputId = ns("paired"), label = "Paired end reads", value = TRUE),
+        shiny::helpText(
           "Currently, only paired-end sequencing data are tested, supported, and recommended."
         ),
         
-        checkboxInput(
+        shiny::checkboxInput(
           inputId = ns("circ_qc"),
           label = "Calculate quality parametrics",
           value = TRUE
         ),
         
-        sliderInput(
+        shiny::sliderInput(
           inputId = ns("threads"),
           label = "Determine number of cores",
           min = 1,
@@ -58,16 +58,16 @@ mod_deplyCirculaR_ui <- function(id){
           step = 1
         ),
         
-        checkboxInput(
+        shiny::checkboxInput(
           inputId = ns("overwrite"),
           label = "Overwrite previous circRNA object",
           value = FALSE
         ),
         
-        actionButton(
+        shiny::actionButton(
           inputId = ns("circular"),
           label = "Perform circRNA analysis",
-          icon = icon("circle-notch")
+          icon = shiny::icon("circle-notch")
         )
       ), 
       
@@ -76,23 +76,23 @@ mod_deplyCirculaR_ui <- function(id){
         collapsible = TRUE,
         collapsed = TRUE,
         
-        checkboxInput(
+        shiny::checkboxInput(
           inputId = ns("chr_standard"),
           label = "Use standard chromosomes",
           value = TRUE
         ),
-        helpText("Disable if you wish to inlcude chromosome patches as well."),
+        shiny::helpText("Disable if you wish to inlcude chromosome patches as well."),
         
-        checkboxInput(
+        shiny::checkboxInput(
           inputId = ns("sjdb_overwrite"),
           label = "Overwrite existing splice junction databases",
           value = FALSE
         ),
-        helpText(
+        shiny::helpText(
           "Enable if the process fails during generation of database of known splice junction sites"
         ),
         
-        numericInput(
+        shiny::numericInput(
           inputId = ns("max_genom_dist"),
           label = "Max genomic distance",
           value = 1e5,
@@ -109,15 +109,15 @@ mod_deplyCirculaR_ui <- function(id){
 mod_deplyCirculaR_server <- function(input, output, session, r){
   ns <- session$ns
   
-  hide(id = "circ_call")
-  observeEvent(eventExpr = r$star_ready, handlerExpr = {
-    hide(id = "circ_call")
+  shinyjs::hide(id = "circ_call")
+  shiny::observeEvent(eventExpr = r$star_ready, handlerExpr = {
+    shinyjs::hide(id = "circ_call")
     if (r$star_ready)
-      show(id = "circ_call")
+      shinyjs::show(id = "circ_call")
   })
   
-  observeEvent(eventExpr = input$circular, handlerExpr = {
-    withProgress(
+  shiny::observeEvent(eventExpr = input$circular, handlerExpr = {
+    shiny::withProgress(
       value = 0, session = session, message = "Fetching gene annotation object",
       expr = {
         
@@ -135,14 +135,14 @@ mod_deplyCirculaR_server <- function(input, output, session, r){
         
         r$filt_ready <- FALSE
         
-        incProgress(
+        shiny::incProgress(
           amount = 0.15, session = session, 
           message = "Checking for exising datasets"
         )
         
         r$exp_file <- file.path(r$cache_dir, "Saves", paste.(input$exp_name, "RData"))
         if (file.exists(r$exp_file) & !input$overwrite) {
-          incProgress(amount = 0.55, session = session, message = "Loading existing dataset")
+          shiny::incProgress(amount = 0.55, session = session, message = "Loading existing dataset")
           object <-  readRDS(r$exp_file)
         } else {
           
@@ -150,7 +150,7 @@ mod_deplyCirculaR_server <- function(input, output, session, r){
           
           system(cmd_makedir)
           
-          incProgress(
+          shiny::incProgress(
             amount = 0.15, session = session,
             message = "Generating database of known splice junctions. This can take some time!"
           )
@@ -163,7 +163,7 @@ mod_deplyCirculaR_server <- function(input, output, session, r){
           if (input$chr_standard)
             chrom <- standardChromosomes(r$ahdb)
           
-          incProgress(
+          shiny::incProgress(
             amount = 0.15, session = session,
             message = "Importing backsplice junction reads"
           )
@@ -174,7 +174,7 @@ mod_deplyCirculaR_server <- function(input, output, session, r){
           )
           
           if (input$paired & is.na(input$direction)) {
-            updateSelectInput(session = session, inputId = "Direction", selected = FALSE)
+            shiny::updateSelectInput(session = session, inputId = "Direction", selected = FALSE)
           } else {
             r$direction <- as.logical(input$direction)  ## Input is not logical
           }
@@ -199,7 +199,7 @@ mod_deplyCirculaR_server <- function(input, output, session, r){
             cores = 1
           )
           
-          incProgress(
+          shiny::incProgress(
             amount = 0.15, session = session,
             message = "Comparing backsplice junction to known splice sites"
           )
@@ -210,7 +210,7 @@ mod_deplyCirculaR_server <- function(input, output, session, r){
           )
           
           
-          incProgress(
+          shiny::incProgress(
             amount = 0.15, session = session,
             message = "calculating overall backsplice junction statistics"
           )

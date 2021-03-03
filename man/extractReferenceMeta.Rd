@@ -18,7 +18,7 @@ extractReferenceMeta(ahub, organism, release = NULL)
 Extract reference data from Annotation object
 }
 \examples{
-ah <- AnnotationHub()
-organism <- "Homo_sapiens"
-meta <- extractReferenceMeta(ah, organism)
+#ah <- AnnotationHub()
+#organism <- "Homo_sapiens"
+#meta <- extractReferenceMeta(ah, organism)
 }

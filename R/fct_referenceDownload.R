@@ -11,13 +11,13 @@
 #' @export
 #'
 #' @examples
-#' ah <- AnnotationHub()
-#' organism <- "Homo_sapiens"
-#' build <- "GRCh38"
-#' release <- 100
-#' qry <- subset(ah, species == "Homo sapiens", rdataprovider == "Ensembl")
-#' meta <- mcols(qry)
-#' getDownloadLinks(meta, organism, build, release)
+#' #ah <- AnnotationHub()
+#' #organism <- "Homo_sapiens"
+#' #build <- "GRCh38"
+#' #release <- 100
+#' #qry <- subset(ah, species == "Homo sapiens", rdataprovider == "Ensembl")
+#' #meta <- mcols(qry)
+#' #getDownloadLinks(meta, organism, build, release)
 getDownloadLinks <- function(meta, organism, build, release) {
   gtf_ptrn <- paste(organism, build, release, "gtf", sep = ".")
   fa_ptrn <- paste0(
@@ -47,15 +47,15 @@ getDownloadLinks <- function(meta, organism, build, release) {
 #' @export
 #'
 #' @examples
-#' ah <- AnnotationHub()
-#' organism <- "Homo_sapiens"
-#' build <- "GRCh38"
-#' release <- 100
-#' qry <- subset(ah, species == "Homo sapiens", rdataprovider == "Ensembl")
-#' meta <- mcols(qry)
-#' urls <- getDownloadLinks(meta, organism, build, release)
-#' # Not run
-#' file1 <- downloadFile(url = urls[1], out_dir = "/tmp/file1"
+#' #ah <- AnnotationHub()
+#' #organism <- "Homo_sapiens"
+#' #build <- "GRCh38"
+#' #release <- 100
+#' #qry <- subset(ah, species == "Homo sapiens", rdataprovider == "Ensembl")
+#' #meta <- mcols(qry)
+#' #urls <- getDownloadLinks(meta, organism, build, release)
+#' ## Not run
+#' #file1 <- downloadFile(url = urls[1], out_dir = "/tmp/file1"
 downloadFile <- function(url, out_dir) {
   # Split url elements
   url_split <- strsplit(x = url, split = "/") %>%

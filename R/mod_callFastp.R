@@ -6,26 +6,26 @@
 #'
 #' @noRd
 #'
-#' @importFrom shiny NS tagList
+#' @importFrom shinyjs hide show
 mod_callFastp_ui <- function(id){
-  ns <- NS(id)
-  tagList(
+  ns <- shiny::NS(id)
+  shiny::tagList(
 
-    div(
+    shiny::div(
       id = ns("fastp_setup"),
 
-      textInput(
+      shiny::textInput(
         inputId = ns("fastp"),
         label = "Please enter the system command or path to program",
         placeholder = "e.g. ~/fastp/bin/fastp",
         value = fastp_default
       ),
-      helpText(
+      shiny::helpText(
         "Usually the binary file for fastp can be found in the `fastp/bin/fastp`, eg:",
         "/home/user/trimmers/fastp/bin/fastp OR /home/user/miniconda/pkgs/fastp-[version]/bin/fastp"
       ),
 
-      sliderInput(
+      shiny::sliderInput(
         inputId = ns("threads"),
         label = "Determine number of cores",
         min = 1,
@@ -34,13 +34,13 @@ mod_callFastp_ui <- function(id){
         step = 1
       ),
 
-      actionButton(
+      shiny::actionButton(
         inputId = ns("run_fastp"),
         label = "Begin read QC and Trimming",
-        icon = icon("sliders-h")
+        icon = shiny::icon("sliders-h")
       ),
 
-      checkboxInput(
+      shiny::checkboxInput(
         inputId = ns("overwrite"),
         label = "Overwrite existing trimmed reads",
         value = FALSE
@@ -51,7 +51,7 @@ mod_callFastp_ui <- function(id){
         title = "Advanced settings",
         collapsible = TRUE,
         collapsed = TRUE,
-        numericInput(
+        shiny::numericInput(
           inputId = ns("trim_front"),
           label = "Bases trimmed at the 5' tail",
           value = 7,  ## should be 0 !!
@@ -59,13 +59,13 @@ mod_callFastp_ui <- function(id){
           step = 1
         ),
 
-        checkboxInput(
+        shiny::checkboxInput(
           inputId = ns("cut_front"),
           label = "Drop low quality bases from the 5' tail",
           value = TRUE  ## should be FALSE !!
         ),
 
-        numericInput(
+        shiny::numericInput(
           inputId = ns("trim_tail"),
           label = "Bases trimmed at the 3' tail",
           value = 7,
@@ -73,25 +73,25 @@ mod_callFastp_ui <- function(id){
           step = 1
         ),
 
-        checkboxInput(
+        shiny::checkboxInput(
           inputId = ns("cut_tail"),
           label = "Drop low quality bases from the 3' tail",
           value = TRUE   ## should be FALSE !!
         ),
 
-        checkboxInput(
+        shiny::checkboxInput(
           inputId = ns("overrep"),
           label = "Overrepressentation analysis",
           value = TRUE
         ),
 
-        checkboxInput(
+        shiny::checkboxInput(
           inputId = ns("paired"),
           label = "Paired end sequencing data",
           value = TRUE
         ),
 
-        checkboxInput(
+        shiny::checkboxInput(
           inputId = ns("correction"),
           label = "Base correction (paired-end only)",
           value = TRUE    ## should be FALSE !!
@@ -109,20 +109,20 @@ mod_callFastp_server <- function(input, output, session, r){
   shinyjs::hide(id = "fastp_setup")
   r$trimmed <- TRUE
   
-  hide(id = "fastp_setup")
-  observeEvent(eventExpr = r$ref_ready, handlerExpr = {
-    hide(id = "fastp_setup")
+  shinyjs::hide(id = "fastp_setup")
+  shiny::observeEvent(eventExpr = r$ref_ready, handlerExpr = {
+    shinyjs::hide(id = "fastp_setup")
     if (r$ref_ready)
-      show(id = "fastp_setup")
+      shinyjs::show(id = "fastp_setup")
     
   })
 
-  observeEvent(eventExpr = input$run_fastp, handlerExpr = {
+  shiny::observeEvent(eventExpr = input$run_fastp, handlerExpr = {
     r$fastp_ready <- FALSE
     samples <- dplyr::pull(r$meta, Sample) %>%
       unique
 
-    withProgress(
+    shiny::withProgress(
       max = length(samples) + 1, value = 0,
       message = paste("Running fastp on", length(samples), "samples"),
       expr = {
@@ -132,7 +132,7 @@ mod_callFastp_server <- function(input, output, session, r){
 
         for (smpl in samples) {
 
-          incProgress(amount = 1, message = paste("Running fastp on", smpl))
+          shiny::incProgress(amount = 1, message = paste("Running fastp on", smpl))
 
           fastpCommand(
             fastp = input$fastp, sample = smpl, meta = r$meta,
@@ -143,7 +143,7 @@ mod_callFastp_server <- function(input, output, session, r){
             overwrite = input$overwrite, threads = input$threads
           )
         }
-        incProgress(amount = 1, message = "Finished read trimmming and QC.")
+        shiny::incProgress(amount = 1, message = "Finished read trimmming and QC.")
         r$fastp_ready <- TRUE
       }
     )

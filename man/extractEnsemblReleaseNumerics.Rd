@@ -18,8 +18,8 @@ Extract ensembl releases
 Extracts the numeric value of Ensembl release numbers from the titles of EnsDb objects, as provided by `AnnotationHub`.
 }
 \examples{
-ah <- AnnotationHub()
-organism <- "Homo_sapiens"
-queries <- availableEnsemblReleases(ah, organism)
-releases <- extractEnsemblReleaseNumerics(queries)
+#ah <- AnnotationHub()
+#organism <- "Homo_sapiens"
+#queries <- availableEnsemblReleases(ah, organism)
+#releases <- extractEnsemblReleaseNumerics(queries)
 }

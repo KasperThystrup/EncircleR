@@ -6,26 +6,25 @@
 #'
 #' @noRd
 #'
-#' @importFrom shiny NS tagList
-#' @import shinydashboard
+#' @importFrom shinyjs hide show
 mod_STAR_idx_ui <- function(id){
-  ns <- NS(id)
-  tagList(
-    div(
+  ns <- shiny::NS(id)
+  shiny::tagList(
+    shiny::div(
       id = ns("star_idx"),
       
-      textInput(
+      shiny::textInput(
         inputId = ns("star"),
         label = "Locate binary star file or provide default system call",
         value = star_default, 
         placeholder = "Provide command or path for STAR binary"
       ),
-      helpText(
+      shiny::helpText(
         "Usually the binary file for STAR can be found in the `bin/Linux_x86_64` or `bin/MacOs_x86_64` instalation folder eg:",
         "/home/user/aligners/STAR/bin/Linux_x86_64/STAR"
       ),
   
-      sliderInput(
+      shiny::sliderInput(
         inputId = ns("threads"),
         label = "Determine number of cores",
         min = 0,
@@ -34,26 +33,26 @@ mod_STAR_idx_ui <- function(id){
         step = 1
       ),
   
-      numericInput(
+      shiny::numericInput(
         inputId = ns("read_length"),
         label = "Read length",
         min = 0,
         value = 100
       ),
   
-      actionButton(
+      shiny::actionButton(
         inputId = ns("idx"),
         label = "Prepare STAR index",
-        icon = icon("dolly")
+        icon = shiny::icon("dolly")
       ),
       
-      checkboxInput(
+      shiny::checkboxInput(
         inputId = ns("idx_overwrite"),
         label = "Overwrite existing STAR index files",
         value = FALSE
       ),
       
-      checkboxInput(
+      shiny::checkboxInput(
         inputId = ns("idx_cleanup"),
         label = "Clean up Fasta and GTF files",
         value = TRUE
@@ -68,24 +67,24 @@ mod_STAR_idx_ui <- function(id){
 mod_STAR_idx_server <- function(input, output, session, r){
   ns <- session$ns
   
-  hide(id = "star_idx")
-  observeEvent(eventExpr = input$threads, handlerExpr = {
+  shinyjs::hide(id = "star_idx")
+  shiny::observeEvent(eventExpr = input$threads, handlerExpr = {
     shinyjs::showElement(id = "idx")
     if (input$threads == 0)
       shinyjs::hideElement(id = "idx")
   })
   
-  observeEvent(eventExpr = r$annot_ready, handlerExpr = {
-    hide(id = "star_idx")
+  shiny::observeEvent(eventExpr = r$annot_ready, handlerExpr = {
+    shinyjs::hide(id = "star_idx")
     if (r$annot_ready){
-      show(id = "star_idx")
+      shinyjs::show(id = "star_idx")
     }
   })
   
   
 
-  observeEvent(eventExpr = input$idx, handlerExpr = {
-    withProgress(
+  shiny::observeEvent(eventExpr = input$idx, handlerExpr = {
+    shiny::withProgress(
       value = 0, session = session, message = "Loading STAR index", expr = {
         Sys.sleep(0.75)
         r$idx_ready <- FALSE
@@ -97,7 +96,7 @@ mod_STAR_idx_server <- function(input, output, session, r){
         logger::log_debug("Determining whether index folder exists")
         if (!dir.exists(r$star_dir) | input$idx_overwrite) {
   
-          incProgress(
+          shiny::incProgress(
             amount = 0.15, session = session,
             message = "Generating STAR index - This will take a while!"
           )
@@ -122,13 +121,13 @@ mod_STAR_idx_server <- function(input, output, session, r){
           }
         }
         
-        incProgress(
+        shiny::incProgress(
           amount = 0.75, session = session,
           message = "Updating available reference genomes"
         )
         
         available_references <- listReferences(r$cache_dir)
-        updateSelectInput(
+        shiny::updateSelectInput(
           inputId = "ref_select",
           choices = c("Please select a reference genome" = NA, available_references),
           session = session
