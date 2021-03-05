@@ -69,3 +69,14 @@ dependencies manually before running the install github command again:
 ``` r
 install.packages(c("logger", "config", "ggplot2", "golem", "shinyjs", "shiny", "processx", "attempt", "DT", "glue", "htmltools", "shinydashboard", "readr", "tibble", "tidyr", "scales", "stringr", "dplyr", "circulaR"))
 ```
+
+# Execution
+
+To starting the graphical interface up, the following commands should be
+executed.
+
+``` r
+library(EncircleR)
+EncircleR()
+run_app()
+```

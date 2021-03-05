@@ -22,3 +22,14 @@ run_app <- function(
     golem_opts = list(...)
   )
 }
+
+#' Run EncircleR
+#'
+#' @return
+#' A shiny interface for the app
+#' @export
+#'
+#' @examples
+EncircleR <- function() {
+  source("dev/run_dev.R")
+}

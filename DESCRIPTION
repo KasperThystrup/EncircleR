@@ -7,7 +7,7 @@ License: GPL-3
 Imports: 
     AnnotationHub (>= 2.20.2),
     S4Vectors (>= 0.26.1),
-    logger (>= 0.1),
+    logger (>= 0.2.0),
     plyranges (>= 1.8.0),
     config (>= 0.3),
     ggplot2 (>= 3.3.2),

@@ -8,7 +8,7 @@
 #' 
 #' @examples
 #' list_to_li(c("a","b"))
-#'
+#' @import shiny
 #' @importFrom htmltools tags tagAppendAttributes tagList
 list_to_li <- function(list, class = NULL){
   if (is.null(class)){
