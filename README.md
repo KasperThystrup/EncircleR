@@ -8,45 +8,87 @@ providing a graphical interface for selecting and downloading reference
 files, Perform read trimming and read mapping, and finally to perform
 circRNA detection by exploring backsplice junction contents.
 
-### Dependencies
+### Software
 
-Install the latest version of R and R-studio
+In order to use the tools provided in this guide, and to install the
+required dependencies, the following external software must be
+installed:
 
--   R (<https://cran.rstudio.com/>), Statistical programming language
-    for running EncircleR
--   Rstudio (<https://rstudio.com/products/rstudio/download/#download>),
-    Graphical R interface which simplifies executing and openning
-    EncircleR.
+-   libgit2: [Ubuntu 20.04
+    LTS](https://packages.ubuntu.com/source/focal/libgit2) [Arch
+    Linux](https://archlinux.org/packages/extra/x86_64/libgit2), [Mac
+    Homebrew](https://formulae.brew.sh/formula/libgit2)
+-   gcc-fortran: [Ubuntu 20.04
+    LTS](https://packages.ubuntu.com/focal/gfortran) [Arch
+    Linux](https://archlinux.org/packages/core/x86_64/gcc-fortran) [Mac
+    installation
+    instructions](https://gcc.gnu.org/wiki/GFortranBinariesMacOS)
+-   R: [Ubuntu](https://cran.r-project.org/bin/linux/ubuntu/) \[Arch
+    linux\] (<https://archlinux.org/packages/extra/x86_64/r/>)
+    [Mac](https://cran.r-project.org/)
+-   RStudio: [Ubuntu &
+    Mac](https://rstudio.com/products/rstudio/download/) [Arch
+    linux](https://aur.archlinux.org/packages/rstudio-desktop-bin/)
 
-Install the `circulaR` package from github, following its readme:
-<https://github.com/KasperThystrup/circulaR>
+## The circulaR package
 
-In order to install the `EncirclaR` R package, you must ensure to
-install the following Biocodncutor packages:
+EncircleR uses the `circulaR R` package for performing circRNA
+detection. Therefore, in order to install `EncircleR`, the `circulaR`
+pacakge along with its dependencies, must be installed.
 
--   AnnotationHub
+### R package dependencies
+
+The following Biocodncutor packages are dependencies of both the
+`circulaR` and the `EncircleR` package:
+
+circulaR:
+
+-   AnnotationDbi
+-   BiocGenerics
+-   BSgenome
+-   DESeq2
+-   ensembldb
+-   GenomeInfoDb
+-   GenomicFeatures
+-   GenomicRanges
+-   Gviz
+-   IRanges
+-   Rsamtools
 -   S4Vectors
--   plyranges
+
+EncircleR \* AnnotationHub \* S4Vectors \* plyranges
 
 ``` r
 install.packages("BiocManager")
-BiocManager::install(c("AnnotationHub", "S4Vectors", "plyranges"))
+BiocManager::install(c("AnnotationDbi", "BiocGenerics", "BSgenome", "DESeq2", "ensembldb", "GenomeInfoDb", "GenomicFeatures", "GenomicRanges", "Gviz", "IRanges", "Rsamtools", "S4Vectors", "AnnotationHub", "S4Vectors", "plyranges"))
 ```
 
-In addition, `devtools` r package must be installed, to enable easy
-installation of `EncirclaR` from github.
+The `devtools` R package must be installed, to enable easy installation
+of `circulaR` and `EncircleR` from github.
 
 ``` r
-install.packages("devtools")
+install.packages("devtools", dependencies = TRUE)
+devtools::install_github("https://github.com/KasperThystrup/circulaR")
 devtools::install_github("https://github.com/KasperThystrup/EncircleR")
 ```
 
 ## Troubleshooting
 
 This should install all dependencies from the official CRAN repository.
-However, if something does not work out, try to install the CRAN
-dependencies manually before running the install github command again:
+However, if something does not work out, try to install these CRAN
+dependencies manually with `install.pacakges` before running the install
+github command again:
 
+-   dplyr
+-   ggplot2
+-   parallel
+-   pbmcapply
+-   plyr
+-   readr
+-   RSQLite
+-   stringi
+-   tibble
+-   tidyr
 -   logger
 -   config
 -   ggplot2
@@ -59,16 +101,7 @@ dependencies manually before running the install github command again:
 -   glue
 -   htmltools
 -   shinydashboard
--   readr
--   tibble
--   tidyr
 -   scales
--   stringr
--   dplyr
-
-``` r
-install.packages(c("logger", "config", "ggplot2", "golem", "shinyjs", "shiny", "processx", "attempt", "DT", "glue", "htmltools", "shinydashboard", "readr", "tibble", "tidyr", "scales", "stringr", "dplyr", "circulaR"))
-```
 
 # Execution
 
@@ -77,6 +110,5 @@ executed.
 
 ``` r
 library(EncircleR)
-EncircleR()
 run_app()
 ```
