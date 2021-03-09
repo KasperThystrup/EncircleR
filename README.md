@@ -16,21 +16,21 @@ installed:
 
 ### Dependencies
 
--   libgit2: [Ubuntu 20.04
-    LTS](https://packages.ubuntu.com/source/focal/libgit2) [Arch
-    Linux](https://archlinux.org/packages/extra/x86_64/libgit2), [Mac
-    Homebrew](https://formulae.brew.sh/formula/libgit2)
--   gcc-fortran: [Ubuntu 20.04
-    LTS](https://packages.ubuntu.com/focal/gfortran) [Arch
-    Linux](https://archlinux.org/packages/core/x86_64/gcc-fortran) [Mac
-    installation
-    instructions](https://gcc.gnu.org/wiki/GFortranBinariesMacOS)
--   R: [Ubuntu](https://cran.r-project.org/bin/linux/ubuntu/) [Arch
-    linux](https://wiki.archlinux.org/index.php/R)
-    [Mac](https://cran.r-project.org/)
--   RStudio: [Ubuntu &
-    Mac](https://rstudio.com/products/rstudio/download/) [Arch
-    linux](https://wiki.archlinux.org/index.php/R#RStudio_IDE)
+-   libgit2: \[[Ubuntu 20.04
+    LTS](https://packages.ubuntu.com/source/focal/libgit2)\], \[[Arch
+    Linux](https://archlinux.org/packages/extra/x86_64/libgit2)\],
+    \[[Mac Homebrew](https://formulae.brew.sh/formula/libgit2)\]
+-   gcc-fortran: \[[Ubuntu 20.04
+    LTS](https://packages.ubuntu.com/focal/gfortran)\], \[[Arch
+    Linux](https://archlinux.org/packages/core/x86_64/gcc-fortran)\],
+    \[[Mac installation
+    instructions](https://gcc.gnu.org/wiki/GFortranBinariesMacOS)\]
+-   R: \[[Ubuntu](https://cran.r-project.org/bin/linux/ubuntu/)\],
+    \[[Arch linux](https://wiki.archlinux.org/index.php/R)\],
+    \[[Mac](https://cran.r-project.org/)\]
+-   RStudio: \[[Ubuntu &
+    Mac](https://rstudio.com/products/rstudio/download/)\], \[[Arch
+    linux](https://wiki.archlinux.org/index.php/R#RStudio_IDE)\]
 
 ### Tools
 
@@ -40,8 +40,8 @@ the path to their binary execution file must be noted.
 
 The following tools are evoked during the pipeline:
 
--   STAR-aligner ([GitHub](https://github.com/alexdobin/STAR))
--   fastp ([GitHub](https://github.com/OpenGene/fastp))
+-   STAR-aligner \[[GitHub](https://github.com/alexdobin/STAR)\]
+-   fastp \[[GitHub](https://github.com/OpenGene/fastp)\]
 
 In this guide, I utilize Miniconda to install these tools, as it easily
 handles the depedenencies of these tools. Also, the path to the local
@@ -55,17 +55,20 @@ yield an error message, it is not installed.
 which python3
 ```
 
-Install Python3, if it is not installed. [Ubuntu
-20.04](https://packages.ubuntu.com/focal/python3)[Arch
-Linux](https://wiki.archlinux.org/index.php/python)
-[Mac](https://www.python.org/downloads/mac-osx/)
+Install Python3, if it is not installed. \[[Ubuntu
+20.04](https://packages.ubuntu.com/focal/python3)\], \[[Arch
+Linux](https://wiki.archlinux.org/index.php/python)\],
+\[[Mac](https://www.python.org/downloads/mac-osx/)\]
 
 Next, download and install Miniconda, following their own guide.
-[Download](https://docs.conda.io/en/latest/miniconda.html) [Installation
-instructions](https://conda.io/projects/conda/en/latest/user-guide/install/index.html)
+[Download](https://docs.conda.io/en/latest/miniconda.html) and
+[Installation
+instructions](https://conda.io/projects/conda/en/latest/user-guide/install/index.html).
 
 Note the installation folder (Defaults to:
-`/home/[YOUR USER]/miniconda3`), it is relevant for the next step.
+`/home/[YOUR USER]/miniconda3`), it is relevant for the next step. Also,
+if chosing `[yes]` to initialise conda on terminal startup, make sure to
+restart the terminal to ensure that it is initialized.
 
 #### Installing Tools with Miniconda
 
