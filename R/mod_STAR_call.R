@@ -16,7 +16,8 @@ mod_STAR_call_ui <- function(id){
       shiny::textInput(
         inputId = ns("star"),
         label = "Locate binary star file or provide default system call",
-        value = star_default
+        value = "~/miniconda3/bin/STAR", 
+        placeholder = "Provide command or path for STAR binary"
       ),
       shiny::helpText(
         "Usually the binary file for STAR can be found in the `bin/Linux_x86_64` or `bin/MacOs_x86_64` instalation folder eg:",

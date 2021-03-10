@@ -66,7 +66,7 @@ mod_selectReferences_server <- function(input, output, session, r){
       value = 0, session = session, message = "Searching for existing files",
       expr = {
         shinyjs::showElement(id = "ref_new")
-        r$cache_dir <- cache_default
+        r$cache_dir <- "~/.EncircleR"
         r$ref_ready <- FALSE
         
         if (input$ref_select %in% available_references) {

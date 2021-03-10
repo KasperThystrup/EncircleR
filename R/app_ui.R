@@ -1,5 +1,3 @@
-source("R/utils_DEFAULTS.R")
-
 #' The application User-Interface
 #' 
 #' @param request Internal parameter for `{shiny}`. 

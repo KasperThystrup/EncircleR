@@ -17,8 +17,8 @@ mod_callFastp_ui <- function(id){
       shiny::textInput(
         inputId = ns("fastp"),
         label = "Please enter the system command or path to program",
-        placeholder = "e.g. ~/fastp/bin/fastp",
-        value = fastp_default
+        value = "~/miniconda3/bin/fastp",
+        placeholder = "Provide command or path for fastp binary"
       ),
       shiny::helpText(
         "Usually the binary file for fastp can be found in the `fastp/bin/fastp`, eg:",
