@@ -6,6 +6,7 @@
 #' @import logger
 #' @noRd
 app_server <- function( input, output, session ) {
+  source("R/utils_DEFAULTS.R")
   # List the first level callModules here 
   logger::log_shiny_input_changes(input)
   r <- shiny::reactiveValues()
