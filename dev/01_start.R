@@ -25,7 +25,7 @@ golem::fill_desc(
     "An complete user interface for uploading, reprocessing,",
     "and performing circRNA quantification and identification",
     "from raw fastq files."
-  ), # The Description of the package containing the App 
+  ), # The Description of the package containing the App
   author_first_name = "Kasper Thystrup", # Your First Name
   author_last_name = "Karstensen", # Your Last Name
   author_email = "kathka@gmail.com", # Your Email
