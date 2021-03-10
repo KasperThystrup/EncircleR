@@ -15,8 +15,7 @@ mod_setupExperiment_ui <- function(id){
       shiny::textInput(
         inputId = ns("exp_dir"),
         label = "Please enter the desired output path of the experimental directory",
-        placeholder = "Enter the full path to the top folder",
-        value = exp_default
+        placeholder = "Enter the full path to the top folder"
       ),
   
       shiny::actionButton(

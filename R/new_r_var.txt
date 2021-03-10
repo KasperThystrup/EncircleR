@@ -1,9 +1,0 @@
-r$org
-r$rel
-r$build
-r$genome_dir
-r$star_dir
-r$annot_ready
-r$idx_ready
-r$select_ready
-r$ref_ready

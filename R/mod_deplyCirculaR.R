@@ -18,7 +18,7 @@ mod_deplyCirculaR_ui <- function(id){
         shiny::textInput(
           inputId = ns("exp_name"),
           label = "Please provide a name for your experiment",
-          value = exp_default,
+          # value = , ## Not needed
           placeholder = "Experiment_name"
         ),
         shiny::helpText("This will be used to as filename for the finsihed circRNA RData object, so please avoid using spaces and special characters."),

@@ -20,12 +20,12 @@
 ## 
 golem::fill_desc(
   pkg_name = "EncircleR", # The Name of the package containing the App 
-  pkg_title = "EncricleR", # The Title of the package containing the App 
+  pkg_title = "EncircleR", # The Title of the package containing the App 
   pkg_description = paste(
     "An complete user interface for uploading, reprocessing,",
     "and performing circRNA quantification and identification",
     "from raw fastq files."
-  ), # The Description of the package containing the App 
+  ), # The Description of the package containing the App
   author_first_name = "Kasper Thystrup", # Your First Name
   author_last_name = "Karstensen", # Your Last Name
   author_email = "kathka@gmail.com", # Your Email
@@ -34,7 +34,7 @@ golem::fill_desc(
 
 ## Set {golem} options ----
 golem::set_golem_options(
-  golem_version = "0.0.0.9001"
+  golem_version = "0.0.0.9002"
 )
 
 ## Create Common Files ----

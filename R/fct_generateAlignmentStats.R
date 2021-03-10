@@ -1,3 +1,12 @@
+my_theme <- theme_bw() +
+  theme(
+    panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+    axis.line = element_line(size = 0.7, color = "black"), 
+    strip.background = element_blank(), panel.background = element_blank(),
+    plot.background = element_blank(), legend.background = element_blank(),
+    panel.border = element_blank()
+  )
+
 subsetAlignmentStatistics <- function(object, stat_select = NULL) {
   stts <- circulaR::alignmentStats(object = object, out_type = "long")
   
