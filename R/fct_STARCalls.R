@@ -109,7 +109,7 @@ callSTAR <- function(
     x = cmd_report,
     path = file.path(
       out_dir,
-      paste(sample, "STAR", "STAR_call.tsv")
+      file.path(sample, paste(sample, "STAR", "cmd.txt", sep = "_"))
     )
   )
 
