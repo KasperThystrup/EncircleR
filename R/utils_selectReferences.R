@@ -1,1 +1,1 @@
-available_references <- listReferences(genome_dir = "~/.EncircleR/Genome")
+available_references <- listReferences(cache_dir = "~/.EncircleR")

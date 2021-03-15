@@ -17,6 +17,8 @@ knitr::opts_chunk$set(
 
 The goal of EncircleR is to automate and streamline circRNA analysis, by providing a graphical interface for selecting and downloading reference files, Perform read trimming and read mapping, and finally to perform circRNA detection by exploring backsplice junction contents.
 
+# Installation
+
 ## Third party software
 In order to use the tools provided in this guide, and to install the required dependencies, the following external software must be installed:
 
@@ -64,7 +66,7 @@ The tools should be located at:
 
 Now we are set up for installing the R packages.
 
-## R package dependencies
+### R package dependencies
 EncircleR uses the `circulaR` R package for performing circRNA detection. Therefore, in order to install `EncircleR`, the `circulaR` pacakge along with its dependencies, must be installed.
 
 The following Biocodncutor packages are dependencies of both the `circulaR` and the `EncircleR` package:
@@ -95,47 +97,57 @@ install.packages("BiocManager")
 BiocManager::install(c("AnnotationDbi", "BiocGenerics", "BSgenome", "DESeq2", "ensembldb", "GenomeInfoDb", "GenomicFeatures", "GenomicRanges", "Gviz", "IRanges", "Rsamtools", "S4Vectors", "AnnotationHub", "S4Vectors", "plyranges"))
 ```
 
-### Installation
+### Install from GitHub with devtools
 The `devtools` R package must be installed, to enable easy installation of `circulaR` and `EncircleR` from github.
 ```{r, eval=FALSE}
 install.packages("devtools", dependencies = TRUE)
 devtools::install_github("https://github.com/KasperThystrup/circulaR")
 devtools::install_github("https://github.com/KasperThystrup/EncircleR")
 ```
-
-## Troubleshooting
-This should install all dependencies from the official CRAN repository.
-However, if something does not work out, try to install these CRAN
-dependencies manually with `install.pacakges` before running the install github command again:
-
- * dplyr
- * ggplot2
- * parallel
- * pbmcapply
- * plyr
- * readr
- * RSQLite
- * stringi
- * tibble
- * tidyr
- * logger
- * config
- * ggplot2
- * golem
- * shinyjs
- * shiny
- * processx
- * attempt
- * DT
- * glue
- * htmltools
- * shinydashboard
- * scales
  
-# Execution
-To starting the graphical interface up, the following commands should be executed.
-```{r, eval=FALSE}
-library(EncircleR)
-run_app()
+# How to use
+## Setup
+In this example four Paired end Total RNA samples are downloaded from the ENA browser. These can be found and downloaded from [ENA Browser](https://www.ebi.ac.uk/ena/browser/view/):
+
+ * [SRR10037664](https://www.ebi.ac.uk/ena/browser/view/SRR10037664)
+ * [SRR10545428](https://www.ebi.ac.uk/ena/browser/view/SRR10545428)
+ * [SRR10991486](https://www.ebi.ac.uk/ena/browser/view/SRR10991486)
+ * [SRR12927182](https://www.ebi.ac.uk/ena/browser/view/SRR12927182)
+
+After downloading, a metadata sheet containing sample information must be set up.
+The pipeline takes the following format:
+ 
+ * A sample name column
+ * A file path column
+ * A Read mate column
+ * A Name column
+
+```{r}
+knitr::kable(x = EncircleR::meta_example, caption = "An example metadata sheet")
 ```
 
+
+## Execution
+Start the graphical interface with the following command.
+```{r, eval=FALSE}
+EncircleR::run_app()
+```
+
+### Generation of experiment folder
+This starts the browser which greets you with the `Experimental Setup` panel.
+First, select and upload the metadata file, Next fill out the full path to an output experiment folder (in this example it is `~/Demonstration`), and press `Setup Experiment`. This sets up an experimental folder system, where sample data are either copied (safest) or moved (fastest). It also generates an updated metadata table within the experiment folder (`~/Demonstration/metadata.tsv`), which contains the filepaths to the samples within the experiment folder, and which should be used for future reruns.
+
+### Selection of reference data
+The first time you run this app, you have to download and set up a reference genome. `EncircleR` utilizes Ensembl for reference genome and gene models. Currently, the latest version supported are release 100. 
+
+Click `New Reference Genome` to set up a new reference genome, and select an organism from the `Organism` drop-down menu, this causes the app to query Ensembl for available Ensembl releases. Use the slider to select a release version. Once ready, press `Download Reference files` to download the genome and gene models.
+
+Once finished, fill out the `STAR Index` menu by providing the full path to the STAR-aligner binary execution file (e.g. `~/miniconda3/bin/STAR`), define the amount of cores as well as read length, and press `Prepare STAR index` to initaite the STAR aligner to generate a complete index of the reference genome. This step takes a long time, which is especially affected by the amount of selected cores.
+
+once finished head to the `Choose an existing reference genome` drop-down menu, and select the newly generated reference genome.
+For future runs, you can chose an existing genome, to skip reference donwload and STAR indexing.
+
+Head to the `Read preparation` tab.
+
+## Read preparation
+  

@@ -27,9 +27,9 @@ mod_STAR_idx_ui <- function(id){
       shiny::sliderInput(
         inputId = ns("threads"),
         label = "Determine number of cores",
-        min = 0,
+        min = 1,
         max = max_cores,
-        value = 0,
+        value = 1,
         step = 1
       ),
   
@@ -55,7 +55,7 @@ mod_STAR_idx_ui <- function(id){
       shiny::checkboxInput(
         inputId = ns("idx_cleanup"),
         label = "Clean up Fasta and GTF files",
-        value = TRUE
+        value = FALSE
       )
     )
   )
@@ -126,7 +126,7 @@ mod_STAR_idx_server <- function(input, output, session, r){
           message = "Updating available reference genomes"
         )
         
-        available_references <- listReferences(r$cache_dir)
+        available_references <- listReferences(cache_dir = r$cache_dir)
         shiny::updateSelectInput(
           inputId = "ref_select",
           choices = c("Please select a reference genome" = NA, available_references),
