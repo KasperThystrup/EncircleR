@@ -27,10 +27,16 @@ getDownloadLinks <- function(meta, organism, build, release) {
   )
   
   gtf_url <- dplyr::filter(.data = meta, grepl(x = sourceurl, pattern = gtf_ptrn)) %>%
-    dplyr::pull(sourceurl)
+    dplyr::pull(sourceurl) %>%
+    stringr::str_remove("ftp\\://")
+  
+  logger::log_info(gtf_url)
   
   fa_url <- dplyr::filter(.data = meta, grepl(x = sourceurl, pattern = fa_ptrn)) %>%
-    dplyr::pull(sourceurl)
+    dplyr::pull(sourceurl) %>%
+    stringr::str_remove("ftp\\://")
+  
+  logger::log_info(fa_url)
   
   list(gtf = gtf_url, fa = fa_url)
 }
@@ -87,7 +93,7 @@ downloadFile <- function(url, out_dir) {
     system(paste("mkdir -p", path))
     
     # Download file
-    download.file(url = url, destfile = destination)
+    download.file(url = url, destfile = destination, method = "wget", quiet = TRUE)
   
     if (gz) 
       # Unzip target file

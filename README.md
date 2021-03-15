@@ -167,7 +167,45 @@ github command again:
 -   shinydashboard
 -   scales
 
-# Execution
+# How to use
+
+## Setup
+
+In this example four Paired end Total RNA samples are downloaded from
+the ENA browser. These can be found and downloaded from [ENA
+Browser](https://www.ebi.ac.uk/ena/browser/view/):
+
+-   [SRR10037664](https://www.ebi.ac.uk/ena/browser/view/SRR10037664)
+-   [SRR10545428](https://www.ebi.ac.uk/ena/browser/view/SRR10545428)
+-   [SRR10991486](https://www.ebi.ac.uk/ena/browser/view/SRR10991486)
+-   [SRR12927182](https://www.ebi.ac.uk/ena/browser/view/SRR12927182)
+
+After downloading, a metadata sheet containing sample information must
+be set up. The pipeline takes the following format:
+
+-   A sample name column
+-   A file path column
+-   A Read mate column
+-   A Name column
+
+``` r
+knitr::kable(x = EncircleR::meta_example, caption = "An example metadata sheet")
+```
+
+| Sample      | Filename                                                          | Mate | Name          |
+|:------------|:------------------------------------------------------------------|-----:|:--------------|
+| SRR12927182 | \~/Demonstration/Samples/SRR12927182/rawdata/SRR12927182\_1.fq.gz |    1 | Experiment\_A |
+| SRR12927182 | \~/Demonstration/Samples/SRR12927182/rawdata/SRR12927182\_2.fq.gz |    2 | Experiment\_A |
+| SRR10991486 | \~/Demonstration/Samples/SRR10991486/rawdata/SRR10991486\_1.fq.gz |    1 | Experiment\_A |
+| SRR10991486 | \~/Demonstration/Samples/SRR10991486/rawdata/SRR10991486\_2.fq.gz |    2 | Experiment\_A |
+| SRR10545428 | \~/Demonstration/Samples/SRR10545428/rawdata/SRR10545428\_1.fq.gz |    1 | Experiment\_B |
+| SRR10545428 | \~/Demonstration/Samples/SRR10545428/rawdata/SRR10545428\_2.fq.gz |    2 | Experiment\_B |
+| SRR10037664 | \~/Demonstration/Samples/SRR10037664/rawdata/SRR10037664\_1.fq.gz |    1 | Experiment\_C |
+| SRR10037664 | \~/Demonstration/Samples/SRR10037664/rawdata/SRR10037664\_2.fq.gz |    2 | Experiment\_C |
+
+An example metadata sheet
+
+## Execution
 
 To starting the graphical interface up, the following commands should be
 executed.
