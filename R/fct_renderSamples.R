@@ -92,5 +92,6 @@ reassignSampleFiles <- function(exp_dir, meta, copy) {
     meta[i, ] <- meta_row
   }
 
+  readr::write_tsv(x = meta, file = file.path(exp_dir, "metadata.tsv"))
   meta
 }
