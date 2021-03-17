@@ -8,6 +8,8 @@ providing a graphical interface for selecting and downloading reference
 files, Perform read trimming and read mapping, and finally to perform
 circRNA detection by exploring backsplice junction contents.
 
+# Installation
+
 ## Third party software
 
 In order to use the tools provided in this guide, and to install the
@@ -90,7 +92,7 @@ The tools should be located at:
 
 Now we are set up for installing the R packages.
 
-## R package dependencies
+### R package dependencies
 
 EncircleR uses the `circulaR` R package for performing circRNA
 detection. Therefore, in order to install `EncircleR`, the `circulaR`
@@ -125,7 +127,7 @@ install.packages("BiocManager")
 BiocManager::install(c("AnnotationDbi", "BiocGenerics", "BSgenome", "DESeq2", "ensembldb", "GenomeInfoDb", "GenomicFeatures", "GenomicRanges", "Gviz", "IRanges", "Rsamtools", "S4Vectors", "AnnotationHub", "S4Vectors", "plyranges"))
 ```
 
-### Installation
+### Install from GitHub with devtools
 
 The `devtools` R package must be installed, to enable easy installation
 of `circulaR` and `EncircleR` from github.
@@ -135,37 +137,6 @@ install.packages("devtools", dependencies = TRUE)
 devtools::install_github("https://github.com/KasperThystrup/circulaR")
 devtools::install_github("https://github.com/KasperThystrup/EncircleR")
 ```
-
-## Troubleshooting
-
-This should install all dependencies from the official CRAN repository.
-However, if something does not work out, try to install these CRAN
-dependencies manually with `install.pacakges` before running the install
-github command again:
-
--   dplyr
--   ggplot2
--   parallel
--   pbmcapply
--   plyr
--   readr
--   RSQLite
--   stringi
--   tibble
--   tidyr
--   logger
--   config
--   ggplot2
--   golem
--   shinyjs
--   shiny
--   processx
--   attempt
--   DT
--   glue
--   htmltools
--   shinydashboard
--   scales
 
 # How to use
 
@@ -207,10 +178,94 @@ An example metadata sheet
 
 ## Execution
 
-To starting the graphical interface up, the following commands should be
-executed.
+Start the graphical interface with the following command.
 
 ``` r
-library(EncircleR)
-run_app()
+EncircleR::run_app()
 ```
+
+### Generation of experiment folder
+
+This starts the browser which greets you with the `Experimental Setup`
+panel. First, select and upload the metadata file, Next fill out the
+full path to an output experiment folder (in this example it is
+`~/Demonstration`), and press `Setup Experiment`. This sets up an
+experimental folder system, where sample data are either copied (safest)
+or moved (fastest). It also generates an updated metadata table within
+the experiment folder (`~/Demonstration/metadata.tsv`), which contains
+the filepaths to the samples within the experiment folder, and which
+should be used for future reruns.
+
+### Selection of reference data
+
+The first time you run this app, you have to download and set up a
+reference genome. `EncircleR` utilizes Ensembl for reference genome and
+gene models. Currently, the latest version supported are release 100. On
+subsequent runs, chose the correct version from the
+`Chose an existing reference genome` drop-down menu.
+
+Click `New Reference Genome` to set up a new reference genome, and
+select an organism from the `Organism` drop-down menu, this causes the
+app to query Ensembl for available Ensembl releases. Use the slider to
+select a release version. Once ready, press `Download Reference files`
+to download the genome and gene models. Note that progress is not shown,
+so expect some waiting.
+
+Once finished, fill out the `STAR Index` menu by providing the full path
+to the STAR-aligner binary execution file
+(e.g. `~/miniconda3/bin/STAR`), define the amount of cores as well as
+read length, and press `Prepare STAR index` to initaite the STAR aligner
+to generate a complete index of the reference genome. This step takes a
+long time, which is especially affected by the amount of selected cores.
+
+Once finished head to the `Choose an existing reference genome`
+drop-down menu, and head on to the `Read preparation` tab. !NOTE! if the
+latest reference genome does not show up in the selection box, restart
+the app and use the new `metadata.tsv` file in the experiment directory
+(e.g. `~/Demonstration/metadata.tsv`), as it contains the updated
+locations and file names of the samples. This should update the list
+with the latest genome index.
+
+Head to the `Read preparation` tab.
+
+## Read preparation
+
+Now that a reference genome index have been generated, sample read data
+are ready for processing. The first step is to remove low quality reads
+as well as to ensure trimming of low quality base calls. Provide an
+amount of available cores and click `Begin read QC and Trimming`.
+
+Once finished, a STAR aligner menu shows up. Again, select amount of
+desired cores and click `Begin alignment`. This step will take some
+time.
+
+Once the progress bar disapears, head on to the `CircRNA analysis` tab.
+
+## CircRNA analysis
+
+Enter an experiment name which is used in a file name to save the
+circRNA data, at the end of the circRNA detection. To enable reloading
+the data, mind that the filename is case sensitive and can contain no
+special characters.
+
+Once ready, select amount of cores and press `Perform circRNA analysis`.
+This inititates the `circulaR` circRNa detection algorithm. This step
+will likewise take a while.
+
+Once finished, a Filtration menu shows up. This menu enables you to
+filter out backsplice junctions which may be noisy. Use the top slider
+to set a minimal threshold for how many samples each backsplice junction
+must occur in. Use the buttomn slider to determine the minimal threshold
+for the minimal read counts, each unique backsplice junction must have
+to be considered a circRNA.
+
+Once satisfied, press `Filter reads`. To save the results press
+`Save object`.
+
+## Results
+
+Results are now generated and Mapping statistics as well as backsplice
+junction statistics can be reviewed in the `Statistics` tab.
+
+Head on to the `Detected circRNA` tab and press `Generate circRNA table`
+to make a table of detected circRNAs.

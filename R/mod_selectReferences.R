@@ -132,13 +132,13 @@ mod_selectReferences_server <- function(input, output, session, r){
     if (!r$ref_ready)
       r$select_ready <- TRUE
   })
-    
+  
   output$ref_status <- shiny::renderText(msgs$status)
 }
-    
+
 ## To be copied in the UI
 # mod_selectReferences_ui("selectReferences_ui_1")
-    
+
 ## To be copied in the server
 # callModule(mod_selectReferences_server, "selectReferences_ui_1")
- 
+
