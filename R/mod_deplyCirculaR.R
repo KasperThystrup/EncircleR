@@ -146,7 +146,7 @@ mod_deplyCirculaR_server <- function(input, output, session, r){
           object <-  readRDS(r$exp_file)
         } else {
           
-          cmd_makedir <- paste("mkdir", dir_name(r$exp_file))
+          cmd_makedir <- paste("mkdir", dirname(r$exp_file))
           
           system(cmd_makedir)
           

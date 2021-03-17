@@ -60,7 +60,7 @@ mod_getAnnotation_server <- function(input, output, session, r){
           
           shiny::incProgress(amount = 0.35, message = "Fetching information from AnnotationHub")
           logger::log_debug("Fetching annotation object")
-          r$ah <- AnnotationHub::AnnotationHub()
+          r$ah <- AnnotationHub::AnnotationHub(ask = FALSE)
           shinyjs::show(id = "ref")
         }
       }

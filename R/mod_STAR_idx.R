@@ -27,9 +27,9 @@ mod_STAR_idx_ui <- function(id){
       shiny::sliderInput(
         inputId = ns("threads"),
         label = "Determine number of cores",
-        min = 1,
+        min = 2,
         max = max_cores,
-        value = 1,
+        value = 2,
         step = 1
       ),
   
