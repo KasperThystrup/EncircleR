@@ -23,6 +23,7 @@ callSTAR <- function(
   star, genome_dir, threads, sample, meta, paired, out_dir, RAM_limit,
   chim_segMin, compression = "gz"
 ) {
+  sample_dir <- dirname(out_dir)
 
   star_out <- file.path(out_dir, sample, "STAR")
   cmd_makedir <- paste("mkdir -p", star_out)
@@ -44,7 +45,7 @@ callSTAR <- function(
   mate1_ext <- fileExt(mate1_split)
   
   mate1 <- file.path(
-    out_dir, sample, "fastp",
+    sample_dir, sample, "fastp",
     paste(
       paste(mate1_file, "trimmed", sep = "_"),
       paste(mate1_ext, collapse = "."),
@@ -68,7 +69,7 @@ callSTAR <- function(
     mate2_ext <- fileExt(mate2_split)
     
     mate2 <- file.path(
-      out_dir, sample, "fastp",
+      sample_dir, sample, "fastp",
       paste(
         paste(mate2_file, "trimmed", sep = "_"),
         paste(mate2_ext, collapse = "."),

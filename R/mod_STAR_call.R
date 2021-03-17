@@ -103,6 +103,7 @@ mod_STAR_call_server <- function(input, output, session, r){
   
           sample_subset <- subset(r$meta, Sample == smpl)
           shiny::incProgress(amount = 1, message = paste("Aligning sample:", smpl))
+
           callSTAR(
             star = input$star, genome_dir = r$star_dir,
             threads = input$threads, sample = smpl, meta = r$meta,
